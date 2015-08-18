@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/layout_item_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="#FFFFFF"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/txt_operator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Ope"
+            android:textColor="#ff000000"
+            android:textSize="30dp"
+            android:layout_marginBottom="5dp" />
+
+        <!-- CI -->
+
+        <LinearLayout
+            android:id="@+id/layout_ci"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_operator"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_ci"
+                android:layout_width="0dp"
+                android:layout_weight="0.30"
+                android:layout_height="wrap_content"
+                android:text="CI"
+                android:textStyle="bold"
+                android:textColor="#ff000000" />
+
+            <TextView
+                android:id="@+id/txt_ci"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- CID -->
+
+        <LinearLayout
+            android:id="@+id/layout_cid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_ci"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_cid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="CID"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_cid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- TAC -->
+
+        <LinearLayout
+            android:id="@+id/layout_tac"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_cid"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_tac"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="TAC"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_tac"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- PCI -->
+
+        <LinearLayout
+            android:id="@+id/layout_pci"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_tac"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_pci"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="PCI"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_pci"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- RSSI -->
+
+        <LinearLayout
+            android:id="@+id/layout_rssi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_pci"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_rssi"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="RSSI"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_rssi"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- RSRP -->
+
+        <LinearLayout
+            android:id="@+id/layout_rsrp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_rssi"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_rsrp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="RSRP"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_rsrp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- RSRQ -->
+
+        <LinearLayout
+            android:id="@+id/layout_rsrq"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_rsrp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_rsrq"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="RSRQ"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_rsrq"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- SNR -->
+
+        <LinearLayout
+            android:id="@+id/layout_snr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_rsrq"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_snr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="SNR"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_snr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- DATA -->
+
+        <LinearLayout
+            android:id="@+id/layout_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_snr"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lbl_data"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.30"
+                android:text="TEXT"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txt_data"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textStyle="normal"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
