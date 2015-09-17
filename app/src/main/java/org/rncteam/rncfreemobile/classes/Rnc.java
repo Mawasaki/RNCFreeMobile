@@ -121,7 +121,8 @@ public class Rnc {
     }
 
     public String get_txt() {
-        return _txt;
+        if (this.NOTHING) return "-";
+        else return _txt;
     }
 
     public void set_txt(String _txt) {

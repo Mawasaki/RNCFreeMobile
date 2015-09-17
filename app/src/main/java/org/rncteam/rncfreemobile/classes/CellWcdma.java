@@ -152,6 +152,7 @@ public class CellWcdma {
     public int getCellSignalStrength () {
         return this.cellSignalStrength;
     }
+    public int getCellSignalStrengthDbm () { return (2 * this.cellSignalStrength) - 113; }
 
     public void insertRncInLogs() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);

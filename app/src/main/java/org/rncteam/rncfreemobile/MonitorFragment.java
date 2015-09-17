@@ -38,7 +38,7 @@ public class MonitorFragment extends Fragment {
 
     private Handler handler;
 
-    boolean debug;
+    boolean debug = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class MonitorFragment extends Fragment {
             ArrayList<Rnc> arrayNeighCell = new ArrayList<Rnc>();
 
             // Reseau Free
-            if (tel.getCellNetwork().equals("20815")) {
+            //if (tel.getCellNetwork().equals("20815")) {
                 listViewRncMain.setVisibility(View.VISIBLE);
                 listViewRncPsc.setVisibility(View.VISIBLE);
 
@@ -104,7 +104,8 @@ public class MonitorFragment extends Fragment {
                         Toast.makeText(rncmobile.getAppContext(), "(MonitorUI) Error: No valid RNC detected", Toast.LENGTH_LONG).show();
                     }
                 }
-                    // Display PSCs
+
+                // Display PSCs
                 arrayNeighCell = tel.getNeighbourCell();
 
                 if (arrayNeighCell.size() > 0) {
@@ -113,10 +114,10 @@ public class MonitorFragment extends Fragment {
                 }
                 else listViewRncPsc.setVisibility(View.GONE);
 
-            } else {
+           /* } else {
                 listViewRncMain.setVisibility(View.GONE);
                 listViewRncPsc.setVisibility(View.GONE);
-            }
+            }*/
 
             handler.postDelayed(this, 1000);
         }

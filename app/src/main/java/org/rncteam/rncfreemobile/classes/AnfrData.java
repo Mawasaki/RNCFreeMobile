@@ -154,8 +154,6 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                     }
 
-
-                    Log.d(TAG,"PostExecute2");
                     /*
                     for(int i=0;i<jArray.length();i++) {
 

@@ -72,7 +72,7 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         holder.txtLac.setText(String.valueOf(tWcdma.getLac()));
         holder.txtRnc.setText(String.valueOf(tWcdma.getRnc()));
         holder.txtPsc.setText(String.valueOf(tWcdma.getPsc()));
-        holder.txtRscp.setText(String.valueOf(tWcdma.getCellSignalStrength()) + " dBm");
+        holder.txtRscp.setText(String.valueOf(tWcdma.getCellSignalStrengthDbm()) + " dBm");
         holder.txtData.setText(tWcdma.getText());
 
         return convertView;
