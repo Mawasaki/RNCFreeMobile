@@ -33,6 +33,7 @@ public class rncmobile extends Application {
     public static boolean isAppStart;
 
     public static boolean onTransaction;
+    public static boolean markerClicked;
 
     public static List<RncLogs> listRncLogs;
 

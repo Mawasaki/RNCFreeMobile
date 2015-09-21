@@ -89,6 +89,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
                 maps.initializeMap();
             }
         }
+        rncmobile.onTransaction = false;
     }
 
     private Runnable displayLoading = new Runnable() {

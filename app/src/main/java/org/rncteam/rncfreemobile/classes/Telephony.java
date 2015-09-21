@@ -4,20 +4,8 @@ package org.rncteam.rncfreemobile.classes;
  * Created by cedricf_25 on 14/07/2015.
  */
 import android.content.Context;
-import android.telephony.CellIdentityCdma;
-import android.telephony.CellIdentityGsm;
-import android.telephony.CellIdentityLte;
-import android.telephony.CellIdentityWcdma;
 import android.telephony.CellInfo;
-import android.telephony.CellInfoCdma;
-import android.telephony.CellInfoGsm;
-import android.telephony.CellInfoLte;
-import android.telephony.CellInfoWcdma;
 import android.telephony.CellLocation;
-import android.telephony.CellSignalStrengthCdma;
-import android.telephony.CellSignalStrengthGsm;
-import android.telephony.CellSignalStrengthLte;
-import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -27,11 +15,8 @@ import android.util.Log;
 
 import org.rncteam.rncfreemobile.rncmobile;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class Telephony {
     private static final String TAG = "Telephony";
@@ -138,8 +123,6 @@ public class Telephony {
     }
 
     private void dispatchCellInfo() {
-        cNeigh = new CellNeighbours();
-
         lcWcdma.clear();
         lcLte.clear();
 
@@ -166,7 +149,7 @@ public class Telephony {
                 cWcdma.setCellSignalStrength(-1);
             }
 
-            cWcdma.setRncDB(getRncDB(cWcdma.getRnc(), cWcdma.getExtCid()));
+            cWcdma.setRncDB(getRncDB(cWcdma.getRnc(), cWcdma.getCid()));
             cWcdma.setText(cWcdma.getRncDB().get_txt());
             cWcdma.insertRncInLogs();
 
@@ -196,6 +179,9 @@ public class Telephony {
         }
 
         // Last NeighboringCell Infos
+        cNeigh = new CellNeighbours();
+
+
         List<NeighboringCellInfo> lNci = tm.getNeighboringCellInfo();
 
         for(int i=0;i < lNci.size();i++) {
@@ -238,7 +224,6 @@ public class Telephony {
 
     // RNC TEXT
     private Rnc getRncDB(int rnc, int cid) {
-
         DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
         dbr.open();
 
@@ -266,7 +251,6 @@ public class Telephony {
             super.onSignalStrengthsChanged(signalStrength);
 
             setSignalStrength(signalStrength);
-
             dispatchCellInfo();
         }
 
@@ -275,7 +259,6 @@ public class Telephony {
 
             setCellLocation(location);
             setGsmCellLocation();
-
             dispatchCellInfo();
         }
     }

@@ -99,6 +99,7 @@ public class CellWcdma {
     // CID
     public int getCid() {
         // Extended Cid
+        // check cid 141226603
         if (getStdRnc() >= 256 && getStdRnc() <= 1000) {
             return getExtCid();
         } else {

@@ -62,7 +62,7 @@ public class ListMonitorPscAdapter extends BaseAdapter {
         Rnc rnc = lCell.get(position);
 
         String psc_cid = String.valueOf(rnc.get_psc());
-        psc_cid += (String.valueOf(rnc.get_lac()) != "" ? String.valueOf(rnc.get_lac()) : "/");
+        //psc_cid += (String.valueOf(rnc.get_lac()) != "" ? String.valueOf(rnc.get_lac()) : "/");
         psc_cid += "  " + String.valueOf(rnc.get_rnc());
         psc_cid += ":" + String.valueOf(rnc.get_cid());
 

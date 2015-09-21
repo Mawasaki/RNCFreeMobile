@@ -7,16 +7,20 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
+import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
 import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;
@@ -37,7 +41,7 @@ public class Maps {
     private double antLon;
 
     private ArrayList<Polyline> polyline;
-    private ArrayList<Marker> markers;
+    private Map<Marker, AnfrInfos> markers;
     private ArrayList<Marker> markersMax;
 
 
@@ -47,7 +51,7 @@ public class Maps {
         lastPosLon = 0.0;
 
         polyline = new ArrayList<Polyline>();
-        markers = new ArrayList<Marker>();
+        markers = new HashMap<Marker, AnfrInfos>();
         markersMax = new ArrayList<Marker>();
 
         antLat = 0.0;
@@ -84,8 +88,12 @@ public class Maps {
             this.lastPosLon = longitude;
     }
 
-    public ArrayList<Marker> getMarkers() {
+    public Map<Marker, AnfrInfos> getMarkers() {
         return markers;
+    }
+
+    public AnfrInfos getAnfrInfoMarkers(Marker marker) {
+        return markers.get(marker);
     }
 
     public Rnc getRncByMarker(Marker marker) {
@@ -105,9 +113,10 @@ public class Maps {
     }
 
     public void removeMarkers() {
-        if(markers.size() > 0)
-            for(int i=0;i<markers.size();i++)
-                markers.get(i).remove();
+        markers.clear();
+        //if(markers.size() > 0)
+            //for(int i=0;i<markers.size();i++)
+                //markers.get(i).;
     }
 
     public void removeMaxMarkers() {
@@ -128,6 +137,16 @@ public class Maps {
 
     public void setLastZoom(float zoom) {
         this.lastZoom = zoom;
+    }
+
+    public void setCenterCamera(double lat, double lon) {
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(lat, lon))
+                .zoom(this.lastZoom)
+                .bearing(0)
+                .build();
+
+        this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     public void setMap(GoogleMap map) {
@@ -154,12 +173,12 @@ public class Maps {
         return this.antLon;
     }
 
-    public void setAnfrAntennasMarkers(Rnc rnc, double lat, double lng, String title, int icon) {
+    public void setAnfrAntennasMarkers(Rnc rnc, double lat, double lng, String title, AnfrInfos anfrInfos, int icon) {
 
-        markers.add(mMap.addMarker(new MarkerOptions()
+        markers.put(mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(lat, lng))
                 .title(title)
-                .icon(BitmapDescriptorFactory.fromResource(icon))));
+                .icon(BitmapDescriptorFactory.fromResource(icon))),anfrInfos);
 
     }
 

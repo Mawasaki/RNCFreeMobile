@@ -56,8 +56,9 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
         rncDB.open();
 
         LatLngBounds cs = maps.getProjection();
-        LatLng sw = maps.getProjection().southwest;
-        LatLng ne = maps.getProjection().northeast;
+
+        LatLng sw = cs.southwest;
+        LatLng ne = cs.northeast;
 
         lRnc = rncDB.findListRncByCoo(sw.latitude, ne.latitude, sw.longitude, ne.longitude);
 
@@ -85,7 +86,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject jArray) {
-        Log.d(TAG,"PostExecute1");
+        Log.d(TAG, "PostExecute1");
         rncmobile.getMaps().removeMarkers();
         if(jArray != null) {
             try {
@@ -94,6 +95,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                     JSONArray jData = jArray.getJSONArray("DATA");
 
+                    Log.d(TAG,"Nb antennes : " + jData.length());
                     for(int i=0;i<jData.length();i++) {
 
                         Rnc rnc = new Rnc();
@@ -103,17 +105,18 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                         double anfr_lon = Double.valueOf(jData.getJSONObject(i).getString("lon"));
 
                         int icon = 0;
-                        if(jData.getJSONObject(i).getString("Dte_En_Service") != "null") {
+
+                        if (jData.getJSONObject(i).getString("Dte_En_Service") != "null") {
                             // Check if in RNC Mobile database
 
-                            if(lRnc.size() > 0) {
-                                for(int j=0; j < lRnc.size();j++) {
-                                    double rnc_lat1 = Double.valueOf(lRnc.get(j).get_lat())+0.01;
-                                    double rnc_lon1 = Double.valueOf(lRnc.get(j).get_lon())+0.01;
-                                    double rnc_lat2 = Double.valueOf(lRnc.get(j).get_lat())-0.01;
-                                    double rnc_lon2 = Double.valueOf(lRnc.get(j).get_lon())-0.01;
+                            if (lRnc.size() > 0) {
+                                for (int j = 0; j < lRnc.size(); j++) {
+                                    double rnc_lat1 = Double.valueOf(lRnc.get(j).get_lat()) + 0.01;
+                                    double rnc_lon1 = Double.valueOf(lRnc.get(j).get_lon()) + 0.01;
+                                    double rnc_lat2 = Double.valueOf(lRnc.get(j).get_lat()) - 0.01;
+                                    double rnc_lon2 = Double.valueOf(lRnc.get(j).get_lon()) - 0.01;
 
-                                    if(rnc_lat1 >= anfr_lat && rnc_lat2 <= anfr_lat
+                                    if (rnc_lat1 >= anfr_lat && rnc_lat2 <= anfr_lat
                                             && rnc_lon1 >= anfr_lon && rnc_lon2 <= anfr_lon) {
                                         rnc = lRnc.get(j);
                                         rnc.NOTHING = false;
@@ -122,122 +125,39 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                                 }
                             }
 
-                            if(!rnc.NOTHING)
+                            if (!rnc.NOTHING)
                                 icon = R.drawable.circle_green;
                             else
                                 icon = R.drawable.circle_grey;
 
-                        }
-
-                        else
+                        } else
                             icon = R.drawable.circle_red;
 
-                        String markerTitle = "";
-                        markerTitle = jData.getJSONObject(i).getString("ADR_LB_LIEU") + " ";
+                        String markerTitle = "Rnc Free Mobile";
 
-                        if(jData.getJSONObject(i).getString("ADR_LB_ADD1") != "")
-                            markerTitle += jData.getJSONObject(i).getString("ADR_LB_ADD1") + " ";
+                        AnfrInfos anfrInfos = new AnfrInfos();
 
-                        if(jData.getJSONObject(i).getString("ADR_LB_ADD2") != "")
-                            markerTitle += jData.getJSONObject(i).getString("ADR_LB_ADD2") + " ";
+                        anfrInfos.setLieu(jData.getJSONObject(i).getString("ADR_LB_LIEU"));
+                        anfrInfos.setAdd1(jData.getJSONObject(i).getString("ADR_LB_ADD1"));
+                        anfrInfos.setAdd2(jData.getJSONObject(i).getString("ADR_LB_ADD2"));
+                        anfrInfos.setAdd3(jData.getJSONObject(i).getString("ADR_LB_ADD3"));
+                        anfrInfos.setCp(jData.getJSONObject(i).getString("ADR_NM_CP"));
+                        anfrInfos.setCommune(jData.getJSONObject(i).getString("commune"));
 
-                        if(jData.getJSONObject(i).getString("ADR_LB_ADD3") != "")
-                            markerTitle += jData.getJSONObject(i).getString("ADR_LB_ADD3") + " ";
-
-                        markerTitle += jData.getJSONObject(i).getString("ADR_NM_CP");
+                        anfrInfos.setHauteur("30m");
+                        anfrInfos.setImplantation("10/10/13");
+                        anfrInfos.setActivation("12/04/14");
+                        anfrInfos.setTypeSupport("Pylone Autostable");
 
                         maps.setAnfrAntennasMarkers(rnc,
                                 Double.parseDouble(jData.getJSONObject(i).getString("lat")),
                                 Double.parseDouble(jData.getJSONObject(i).getString("lon")),
                                 markerTitle,
+                                anfrInfos,
                                 icon);
 
                     }
-
-                    /*
-                    for(int i=0;i<jArray.length();i++) {
-
-                        maps.setAnfrAntennasMarkers(
-                                Double.parseDouble(jArray.getJSONObject(i).getString("latitude")),
-                                Double.parseDouble(jArray.getJSONObject(i).getString("longitude")),
-                                jArray.getJSONObject(i).getString("commune"),
-                                jArray.getJSONObject(i).getString("exploitant"));
-
-                    /*
-                    if(jArray.getJSONObject(0).getString("ERROR").equals("NOT_ANTENNAS")) {
-                        Toast.makeText(Wimma.getAppContext(), "Aucune antenne trouvée.", Toast.LENGTH_SHORT).show();
-                        maps.removeMarkers();
-                        maps.removeLineMeToAntennas();
-                        map_info_1.setText("Aucune antenne trouvée");
-                        map_info_2.setText("");
-                        map_info_3.setText("");
-                        return;
-                    }
-                    if(jArray.getJSONObject(0).getString("ERROR").equals("NOT_ENOUGH_MESURES")) {
-                        Toast.makeText(Wimma.getAppContext(), "Pas assez de mesures OpencellID sur cette cellule: "+tel.getCid(), Toast.LENGTH_SHORT).show();
-                        maps.removeLineMeToAntennas();
-                        maps.removeMaxMarkers();
-                        map_info_1.setText("Pas assez de mesures OpencellID sur cette cellule: "+tel.getCid());
-                        map_info_2.setText("");
-                        map_info_3.setText("");
-                        return;
-                    }
                 }
-
-                double latClosestAntennas = 0;
-                double lonClosestAntennas = 0;
-                double latMaxPoint = 0;
-                double lonMaxPoint = 0;
-
-                // Delete All markers before redraw
-                maps.removeMarkers();
-                maps.removeMaxMarkers();
-
-                for(int i=0;i<jArray.length();i++) {
-
-                    maps.setAnfrAntennasMarkers(
-                            Double.parseDouble(jArray.getJSONObject(i).getString("latitude")),
-                            Double.parseDouble(jArray.getJSONObject(i).getString("longitude")),
-                            jArray.getJSONObject(i).getString("commune"),
-                            jArray.getJSONObject(i).getString("exploitant"));
-
-                    if(jArray.getJSONObject(i).getString("closest").equals("1")) {
-                        latClosestAntennas = Double.parseDouble(jArray.getJSONObject(i).getString("latitude"));
-                        lonClosestAntennas = Double.parseDouble(jArray.getJSONObject(i).getString("longitude"));
-                        latMaxPoint = Double.parseDouble(jArray.getJSONObject(i).getString("maxmidpoint_lat"));
-                        lonMaxPoint = Double.parseDouble(jArray.getJSONObject(i).getString("maxmidpoint_lon"));
-
-                        String exploitant = jArray.getJSONObject(i).getString("exploitant");
-                        String commune = jArray.getJSONObject(i).getString("commune");
-                        String code_postal = jArray.getJSONObject(i).getString("code_postal");
-                        String nb_mesures = jArray.getJSONObject(i).getString("nb_mesures");
-                        String adresse = "";
-                        if (!jArray.getJSONObject(i).getString("adresse").equals("null"))
-                            adresse = jArray.getJSONObject(i).getString("adresse")+ " ";
-                        String lieu_dit = "";
-                        if (!jArray.getJSONObject(i).getString("lieu_dit").equals("null"))
-                            lieu_dit = jArray.getJSONObject(i).getString("lieu_dit");
-                        String nature_support = "";
-                        if (!jArray.getJSONObject(i).getString("nature_support").equals("null"))
-                            nature_support = "-"+jArray.getJSONObject(i).getString("nature_support");
-                        String hauteur = "";
-                        if (!jArray.getJSONObject(i).getString("hauteur_m").equals("null"))
-                            hauteur = jArray.getJSONObject(i).getString("hauteur_m");
-
-                        map_info_1.setText("Connecté à " + exploitant + " - " + code_postal +" " + commune);
-                        map_info_2.setText(adresse.trim() + lieu_dit.trim() + nature_support.trim()+": "+hauteur+"m");
-                        map_info_3.setText("Nombre de mesures : "+nb_mesures);
-                    }
-                    */
-                }
-/*
-                maps.removeLineMeToAntennas();
-
-                maps.setLineMeToAntenna(gps.getLatitude(), gps.getLongitude(),
-                        latClosestAntennas, lonClosestAntennas);
-
-                maps.setMaxAntennas(latMaxPoint,lonMaxPoint);
-                */
 
             } catch (JSONException e) {
                 e.printStackTrace();

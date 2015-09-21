@@ -34,11 +34,12 @@ public class MapsChangeListeners implements OnCameraChangeListener {
         this.maps.setLastZoom(position.zoom);
 
         if(position.zoom > 9) {
-            if(rncmobile.onTransaction == false) {
+            if(rncmobile.onTransaction == false && rncmobile.markerClicked == false) {
                 AnfrData anfrData = new AnfrData();
                 anfrData.execute();
                 zoom_info = true;
             }
+            else rncmobile.markerClicked = false;
         }
         else {
             rncmobile.getMaps().removeMarkers();

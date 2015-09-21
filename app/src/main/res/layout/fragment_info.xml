@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -18,17 +18,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:text="-"
         android:id="@+id/txt_rnc_database"
         android:textSize="15dp"
         android:textColor="@android:color/black"
         android:padding="2dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="By RNC Team"
-        android:id="@+id/textView"
-        android:layout_gravity="bottom" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="By RNC Team"
+            android:id="@+id/textView"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" />
 
-</LinearLayout>
+</RelativeLayout>
