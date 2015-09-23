@@ -1,5 +1,7 @@
 package org.rncteam.rncfreemobile.classes;
 
+import org.json.JSONArray;
+
 /**
  * Created by cedric_f25 on 21/09/2015.
  */
@@ -15,8 +17,13 @@ public class AnfrInfos {
 
     private String hauteur;
     private String implantation;
+    private String modification;
     private String activation;
     private String typeSupport;
+
+    private String proprietaire;
+
+    private JSONArray azimuts;
 
     public String getLieu() {
         return lieu;
@@ -74,6 +81,13 @@ public class AnfrInfos {
         this.implantation = implantation;
     }
 
+    public String getModification() {
+        return modification;
+    }
+    public void setModification(String modification) {
+        this.modification = modification;
+    }
+
     public String getActivation() {
         return activation;
     }
@@ -86,5 +100,19 @@ public class AnfrInfos {
     }
     public void setTypeSupport(String typeSupport) {
         this.typeSupport = typeSupport;
+    }
+
+    public String getProrietaire() {
+        return proprietaire;
+    }
+    public void setProrietaire(String proprietaire) {
+        this.proprietaire = proprietaire;
+    }
+
+    public JSONArray getAzimuts() {
+        return azimuts;
+    }
+    public void setAzimuts(JSONArray azimuts) {
+        this.azimuts = azimuts;
     }
 }

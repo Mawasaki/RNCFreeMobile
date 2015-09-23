@@ -2,12 +2,14 @@ package org.rncteam.rncfreemobile.classes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -67,7 +69,6 @@ public class Maps {
                     new LatLng(lastPosLat, lastPosLon), lastZoom));
 
         mMap.setMyLocationEnabled(true);
-
     }
 
     public void setCameraListener(MapsChangeListeners mapListener) {
@@ -113,10 +114,14 @@ public class Maps {
     }
 
     public void removeMarkers() {
+        Iterator it = markers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            Marker m = (Marker) pair.getKey();
+            m.remove();
+        }
         markers.clear();
-        //if(markers.size() > 0)
-            //for(int i=0;i<markers.size();i++)
-                //markers.get(i).;
+
     }
 
     public void removeMaxMarkers() {

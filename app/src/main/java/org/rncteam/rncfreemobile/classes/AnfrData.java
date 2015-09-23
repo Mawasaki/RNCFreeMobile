@@ -142,12 +142,17 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                         anfrInfos.setAdd2(jData.getJSONObject(i).getString("ADR_LB_ADD2"));
                         anfrInfos.setAdd3(jData.getJSONObject(i).getString("ADR_LB_ADD3"));
                         anfrInfos.setCp(jData.getJSONObject(i).getString("ADR_NM_CP"));
-                        anfrInfos.setCommune(jData.getJSONObject(i).getString("commune"));
+                        anfrInfos.setCommune(jData.getJSONObject(i).getString("commune_nom"));
 
-                        anfrInfos.setHauteur("30m");
-                        anfrInfos.setImplantation("10/10/13");
-                        anfrInfos.setActivation("12/04/14");
-                        anfrInfos.setTypeSupport("Pylone Autostable");
+                        anfrInfos.setHauteur(jData.getJSONObject(i).getString("AER_NB_ALT_BAS"));
+                        anfrInfos.setImplantation(jData.getJSONObject(i).getString("Dte_Implantation"));
+                        anfrInfos.setModification(jData.getJSONObject(i).getString("Dte_modif"));
+                        anfrInfos.setActivation(jData.getJSONObject(i).getString("Dte_En_Service"));
+                        anfrInfos.setTypeSupport(jData.getJSONObject(i).getString("NAT_LB_NOM"));
+
+                        anfrInfos.setProrietaire(jData.getJSONObject(i).getString("TPO_LB"));
+
+                        anfrInfos.setAzimuts(jData.getJSONObject(i).getJSONArray("AZIMUT"));
 
                         maps.setAnfrAntennasMarkers(rnc,
                                 Double.parseDouble(jData.getJSONObject(i).getString("lat")),

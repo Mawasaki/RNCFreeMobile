@@ -133,15 +133,6 @@ public class Gps {
         @Override
         public void onLocationChanged(Location location) {
             setLocation(location);
-
-            maps = rncmobile.getMaps();
-
-            // Met a jour les lignes Moi <-> Antennes
-            if(getNumSatellite() > 2 &&
-                    getLatitude() != 0.0 && getLongitude() != 0.0 &&
-                    maps.getAntLat() != 0.0 && maps.getAntLon() != 0.0) {
-                maps.removeLineMeToAntennas();
-            }
         }
 
         @Override

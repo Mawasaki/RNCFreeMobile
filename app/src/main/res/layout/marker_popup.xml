@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:id="@+id/lyt_popup"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="3dp" >
 
-    android:padding="8dp" >
-
-    <!-- Thumbnail Image -->
     <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="wrap_content"
@@ -14,17 +13,43 @@
         android:layout_alignParentLeft="true"
         android:layout_marginRight="8dp" />
 
-    <!-- Movie Title -->
+    <RelativeLayout
+        android:id="@+id/lyt_ant"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/thumbnail"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+<!--
+    <ImageView
+        android:id="@+id/antenna"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/blines" />
+
+        <ImageView
+            android:id="@+id/antenna2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="55.9"
+
+            android:src="@drawable/blines" />
+-->
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="15dp"
+        android:textSize="14dp"
+        android:text="Title"
         android:textStyle="bold" />
 
-    <!-- Rating -->
     <TextView
         android:id="@+id/txt1"
         android:layout_width="wrap_content"
@@ -32,35 +57,114 @@
         android:layout_below="@id/title"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="13dp" />
+        android:text="Adresse :"
+        android:textSize="12dp" />
 
-    <!-- Genre -->
     <TextView
         android:id="@+id/txt2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt1"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="12dp"/>
+        android:text="Commune :"
+        android:textSize="12dp" />
 
-    <!-- Release Year -->
-    <TextView
-        android:id="@+id/txt3"
+    <LinearLayout
+        android:id="@+id/lyt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt2"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="12dp" />
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txt3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Declaration :"
+            android:textSize="11dp"/>
+
+        <TextView
+            android:id="@+id/txt31"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="Modification :"
+            android:textSize="11dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyt2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lyt1"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txt4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Activation :"
+            android:textSize="11dp" />
+
+        <TextView
+            android:id="@+id/txt41"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="Hauteur :"
+            android:textSize="11dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyt3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lyt2"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txt5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Secteurs :"
+            android:textSize="11dp" />
+
+        <TextView
+            android:id="@+id/txt51"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="Proprietaire :"
+            android:textSize="11dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lyt3"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:text="Type support :"
+        android:textSize="11dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Attribuer"
         android:id="@+id/bt1"
-        android:layout_below="@+id/txt3"
+        android:layout_below="@+id/txt6"
         android:layout_centerHorizontal="true"
         android:textAllCaps="false"
-        android:textSize="12dp" />
+        android:textSize="11dp" />
 
 </RelativeLayout>
