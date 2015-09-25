@@ -37,7 +37,8 @@ public class Telephony {
     private ArrayList<CellLte> lcLte;
     ArrayList<Rnc> lcNeigh;
 
-    protected ArrayList<Rnc> neighbourgsCells;
+    private Rnc loggedRnc;
+    private Rnc loggedKnowRnc;
 
     private Context mContext;
 
@@ -85,6 +86,14 @@ public class Telephony {
 
     public int getDataActivity() {
         return tm.getDataState();
+    }
+
+    public Rnc getLoggedRnc() {
+        return this.loggedRnc;
+    }
+
+    public void setLoggedRnc(Rnc rnc) {
+        this.loggedRnc = rnc;
     }
 
     public void setCellLocation(CellLocation cellLocation) {
@@ -152,6 +161,7 @@ public class Telephony {
             cWcdma.setRncDB(getRncDB(cWcdma.getRnc(), cWcdma.getCid()));
             cWcdma.setText(cWcdma.getRncDB().get_txt());
             cWcdma.insertRncInLogs();
+            setLoggedRnc(cWcdma.getRncDB());
 
             lcWcdma.add(cWcdma);
         }
@@ -174,6 +184,7 @@ public class Telephony {
             cLte.setRncDB(getRncDB(cLte.getRnc(), cLte.getCid()));
             cLte.setText(cLte.getRncDB().get_txt());
             cLte.insertRncInLogs();
+            setLoggedRnc(cLte.getRncDB());
 
             lcLte.add(cLte);
         }

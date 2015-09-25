@@ -1,6 +1,7 @@
 package org.rncteam.rncfreemobile.adapters;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
@@ -20,6 +22,7 @@ import org.json.JSONException;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.AnfrInfos;
 import org.rncteam.rncfreemobile.classes.Maps;
+import org.rncteam.rncfreemobile.classes.Rnc;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.rncmobile;
 
@@ -31,6 +34,8 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
     private View popup=null;
     private LayoutInflater inflater=null;
+
+    private Marker marker;
 
     public MapsPopupAdapter(LayoutInflater inflater) {
         this.inflater=inflater;
@@ -48,11 +53,13 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
             popup=inflater.inflate(R.layout.marker_popup, null);
         }
 
+        this.marker = marker;
+
         Maps maps = rncmobile.getMaps();
         AnfrInfos anfrInfos = maps.getAnfrInfoMarkers(marker);
 
-
         TextView title = (TextView)popup.findViewById(R.id.title);
+        TextView rnc = (TextView)popup.findViewById(R.id.rnc);
         TextView txt1 = (TextView) popup.findViewById(R.id.txt1);
         TextView txt2 = (TextView) popup.findViewById(R.id.txt2);
         TextView txt3 = (TextView) popup.findViewById(R.id.txt3);
@@ -63,10 +70,15 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         TextView txt51 = (TextView) popup.findViewById(R.id.txt51);
         TextView txt6 = (TextView) popup.findViewById(R.id.txt6);
 
+        TextView umts = (TextView) popup.findViewById(R.id.umts);
+        TextView lte = (TextView) popup.findViewById(R.id.lte);
+
         Button bt1 = (Button) popup.findViewById(R.id.bt1);
 
         /* Title */
         title.setText(marker.getTitle());
+
+        rnc.setText(" / RNC : " + ((anfrInfos.getRnc().NOTHING == true) ? "-" : anfrInfos.getRnc().get_rnc()));
 
         txt1.setText(anfrInfos.getLieu() + " " + anfrInfos.getAdd1() + " " + anfrInfos.getAdd2() + " " +
                      anfrInfos.getAdd3());
@@ -84,11 +96,15 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
         txt6.setText("Support : " + anfrInfos.getTypeSupport());
 
+        // Tech
+        umts.setTextColor((anfrInfos.getRnc().get_tech() == "3G") ? Color.parseColor("#000000") : Color.parseColor("#DDDDDD"));
+        lte.setTextColor((anfrInfos.getRnc().get_tech() == "4G") ? Color.parseColor("#000000") : Color.parseColor("#DDDDDD"));
+
         // Antenna Image
         JSONArray secteurs = anfrInfos.getAzimuts();
         RelativeLayout rl = (RelativeLayout) popup.findViewById(R.id.lyt_ant);
 
-        // Remove old antennas
+        // Remove old antennas images
         rl.removeAllViewsInLayout();
 
         for(int i=0;i<secteurs.length();i++) {
@@ -98,13 +114,11 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
                     ImageView ant = new ImageView(rncmobile.getAppContext());
                     ant.setImageResource(R.drawable.blines);
 
-                    //ant.getLayoutParams().height = 10;
                     ant.setPivotX(1);
                     ant.setPivotY(1);
 
-
                     ant.setRotation(Float.parseFloat(secteurs.getJSONObject(i).getString("AER_NB_AZIMUT")) - 180);
-                    Log.d(TAG, anfrInfos.getCommune() + ":" + secteurs.getJSONObject(i).getString("AER_NB_AZIMUT"));
+
                     rl.addView(ant);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -114,12 +128,14 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
         }
 
-
-        //Rnc rnc = rncmobile.getMaps().getRncByMarker(marker);
-
         Telephony tel = rncmobile.getTelephony();
-//        bt1.setText("Attribuer le RNC "+tel.getRegisteredWcdmaCell().getRnc()+ " à cette antenne");
+
+        // Button managment
+        //if(tel.getLoggedRnc().NOTHING)
+
+            //bt1.setText("Attribuer le RNC "+tel.+ " à cette adresse");
 
         return(popup);
     }
+
 }

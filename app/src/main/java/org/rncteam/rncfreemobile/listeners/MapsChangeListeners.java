@@ -22,13 +22,14 @@ public class MapsChangeListeners implements OnCameraChangeListener {
     boolean zoom_info;
 
     public MapsChangeListeners(Maps maps) {
+        super();
         this.maps = maps;
         zoom_info = false;
     }
 
-
     @Override
     public void onCameraChange(CameraPosition position) {
+
         this.maps.setLastPosLat(position.target.latitude);
         this.maps.setLastPosLon(position.target.longitude);
         this.maps.setLastZoom(position.zoom);

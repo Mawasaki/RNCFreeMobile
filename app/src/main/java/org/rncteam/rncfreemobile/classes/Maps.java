@@ -3,6 +3,7 @@ package org.rncteam.rncfreemobile.classes;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -46,7 +47,6 @@ public class Maps {
     private Map<Marker, AnfrInfos> markers;
     private ArrayList<Marker> markersMax;
 
-
     public Maps() {
         lastZoom = 0;
         lastPosLat = 0.0;
@@ -58,6 +58,9 @@ public class Maps {
 
         antLat = 0.0;
         antLon = 0.0;
+
+        this.mMap = null;
+
     }
 
     public void initializeMap() {
@@ -69,14 +72,19 @@ public class Maps {
                     new LatLng(lastPosLat, lastPosLon), lastZoom));
 
         mMap.setMyLocationEnabled(true);
+
+        setCameraListener();
+        setMarkerClickListener();
     }
 
-    public void setCameraListener(MapsChangeListeners mapListener) {
+    public void setCameraListener() {
+        MapsChangeListeners mapListener = new MapsChangeListeners(this);
         mMap.setOnCameraChangeListener(mapListener);
     }
 
-    public void setMarkerClickListener(MapsMarkerClickListeners mapListener) {
-        mMap.setOnMarkerClickListener(mapListener);
+    public void setMarkerClickListener() {
+        MapsMarkerClickListeners mapMarkerListener = new MapsMarkerClickListeners();
+        mMap.setOnMarkerClickListener(mapMarkerListener);
     }
 
     public void setLastPosLat(double latitude) {

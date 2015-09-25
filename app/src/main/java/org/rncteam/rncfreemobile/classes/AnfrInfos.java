@@ -23,6 +23,8 @@ public class AnfrInfos {
 
     private String proprietaire;
 
+    private Rnc rnc;
+
     private JSONArray azimuts;
 
     public String getLieu() {
@@ -114,5 +116,12 @@ public class AnfrInfos {
     }
     public void setAzimuts(JSONArray azimuts) {
         this.azimuts = azimuts;
+    }
+
+    public Rnc getRnc() {
+        return rnc;
+    }
+    public void setRnc(Rnc rnc) {
+        this.rnc = rnc;
     }
 }

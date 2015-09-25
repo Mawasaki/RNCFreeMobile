@@ -37,9 +37,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
     private String url = "http://rfm.dataremix.fr/supports.php";
 
     public AnfrData() {
-        //tel = rncmobile.getTelephony();
-        //tUmts = rncmobile.getTelephonyUmts();
-        //tLte = rncmobile.getTelephonyLte();
+        tel = rncmobile.getTelephony();
         gps = rncmobile.getGps();
         maps = rncmobile.getMaps();
 
@@ -153,6 +151,8 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                         anfrInfos.setProrietaire(jData.getJSONObject(i).getString("TPO_LB"));
 
                         anfrInfos.setAzimuts(jData.getJSONObject(i).getJSONArray("AZIMUT"));
+
+                        anfrInfos.setRnc(tel.getLoggedRnc());
 
                         maps.setAnfrAntennasMarkers(rnc,
                                 Double.parseDouble(jData.getJSONObject(i).getString("lat")),

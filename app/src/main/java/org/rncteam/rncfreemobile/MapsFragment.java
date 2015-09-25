@@ -2,20 +2,31 @@ package org.rncteam.rncfreemobile;
 
 import org.rncteam.rncfreemobile.adapters.MapsPopupAdapter;
 import org.rncteam.rncfreemobile.classes.CellWcdma;
+import org.rncteam.rncfreemobile.classes.DatabaseLogs;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
 import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;
 import org.rncteam.rncfreemobile.classes.Telephony;
+import org.rncteam.rncfreemobile.view.SlidingTabLayout;
 
+import android.app.AlertDialog;
+import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +40,7 @@ import java.util.ArrayList;
  * Created by cedricf_25 on 14/07/2015.
  */
 public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener {
+    private static final String TAG = "MapsFragment";
 
     private GoogleMap mMap;
     private Maps maps;
@@ -47,18 +59,11 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
         // Retrive main classes
         maps = rncmobile.getMaps();
-        mMap = maps.getMap();
+        //mMap = maps.getMap();
 
         tel = rncmobile.getTelephony();
 
         setUpMapIfNeeded();
-
-        // Maps listeners
-        MapsChangeListeners mapListener = new MapsChangeListeners(maps);
-        maps.setCameraListener(mapListener);
-
-        MapsMarkerClickListeners mapMarkerListener = new MapsMarkerClickListeners();
-        maps.setMarkerClickListener(mapMarkerListener);
 
         mMap.setInfoWindowAdapter(new MapsPopupAdapter(getActivity().getLayoutInflater()));
         mMap.setOnInfoWindowClickListener(this);
@@ -71,7 +76,10 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(rncmobile.getAppContext(), marker.getTitle(), Toast.LENGTH_LONG).show();
+        String msg = "Etes-vous sur de vouloir attribuer le RNC " + tel.getLoggedRnc().get_rnc() + " à cette addresse ?";
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(msg).setPositiveButton("Oui", dialogClickListener)
+                .setNegativeButton("Non", dialogClickListener).show();
     }
 
     @Override
@@ -82,6 +90,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
     private void setUpMapIfNeeded() {
         if (mMap == null) {
+            Log.d(TAG, "nMap null");
             mMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
                     .getMap();
             if (mMap != null) {
@@ -98,6 +107,29 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
             else view.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
             handler.postDelayed(this, 500);
+        }
+    };
+
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    // Insert address to Logs
+                    DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+                    dbl.open();
+
+                    // Update RNC : Adresse, CP, Commune, gps
+
+                    dbl.close();
+
+                    ViewPager pager = (ViewPager) getActivity().findViewById(R.id.pager);
+                    pager.setCurrentItem(1);
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+            }
         }
     };
 

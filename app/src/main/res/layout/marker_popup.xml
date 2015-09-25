@@ -13,48 +13,81 @@
         android:layout_alignParentLeft="true"
         android:layout_marginRight="8dp" />
 
+    <LinearLayout
+        android:id="@+id/lyt_tech"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/thumbnail"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/umts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12dp"
+            android:text="3G"
+         android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:textSize="12dp"
+            android:text="4G"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/lyt_ant"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_below="@id/thumbnail"
+        android:layout_below="@id/lyt_tech"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:orientation="horizontal" >
 
-<!--
-    <ImageView
-        android:id="@+id/antenna"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/blines" />
-
-        <ImageView
-            android:id="@+id/antenna2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:rotation="55.9"
-
-            android:src="@drawable/blines" />
--->
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/title"
+    <LinearLayout
+        android:id="@+id/lyt0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:textSize="14dp"
-        android:text="Title"
-        android:textStyle="bold" />
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/thumbnail"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:textSize="14dp"
+            android:text="RNC"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/rnc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/thumbnail"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:textSize="14dp"
+            android:text="Title"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/txt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title"
+        android:layout_below="@id/lyt0"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
         android:text="Adresse :"
