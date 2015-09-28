@@ -2,15 +2,22 @@ package org.rncteam.rncfreemobile.adapters;
 
 import android.content.Context;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.Rnc;
 import org.rncteam.rncfreemobile.classes.RncLogs;
+import org.rncteam.rncfreemobile.rncmobile;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -86,6 +93,41 @@ public class ListLogsMainAdapter extends BaseAdapter {
         holder.txtMainInfo.setText(mainInfo);
         holder.txtDate.setText(String.valueOf(fDate));
         holder.txtTxt.setText(String.valueOf(rncLog.get_txt()));
+
+        // Popup
+        ImageButton btnMenu = (ImageButton) convertView.findViewById(R.id.logs_btn_menu);
+
+        btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popup = new PopupMenu(rncmobile.getAppContext(), view);
+                popup.getMenuInflater().inflate(R.menu.menu_logs_listview, popup.getMenu());
+                popup.show();
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.action_logs_listview_details:
+                                Log.d(TAG, "Listview Details");
+                                return true;
+                            case R.id.action_logs_listview_maps:
+                                Log.d(TAG, "Listview Maps");
+                                return true;
+                            case R.id.action_logs_listview_edit:
+                                Log.d(TAG, "Listview Edit");
+                                return true;
+                            case R.id.action_logs_listview_delete:
+                                Log.d(TAG, "Listview Delete");
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+            }
+        });
+
+
 
         return convertView;
     }

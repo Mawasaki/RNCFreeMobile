@@ -21,6 +21,9 @@ public class AnfrInfos {
     private String activation;
     private String typeSupport;
 
+    private String lat;
+    private String lon;
+
     private String proprietaire;
 
     private Rnc rnc;
@@ -104,10 +107,27 @@ public class AnfrInfos {
         this.typeSupport = typeSupport;
     }
 
-    public String getProrietaire() {
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getProprietaire() {
         return proprietaire;
     }
-    public void setProrietaire(String proprietaire) {
+
+    public void setProprietaire(String proprietaire) {
         this.proprietaire = proprietaire;
     }
 

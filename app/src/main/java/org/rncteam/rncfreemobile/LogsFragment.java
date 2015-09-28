@@ -16,7 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ActionMenuView;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.adapters.ListLogsMainAdapter;
@@ -78,7 +80,8 @@ public class LogsFragment extends Fragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.menu_tabs, menu);
+        //getActivity().getMenuInflater().inflate(R.menu.menu_tabs, menu);
+
     }
 
     @Override
@@ -151,4 +154,5 @@ public class LogsFragment extends Fragment {
             handler.postDelayed(this, 5000);
         }
     };
+
 }

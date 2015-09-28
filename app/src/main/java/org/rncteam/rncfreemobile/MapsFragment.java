@@ -116,10 +116,12 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
                     // Insert address to Logs
+                    Telephony tel = rncmobile.getTelephony();
                     DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
                     dbl.open();
 
                     // Update RNC : Adresse, CP, Commune, gps
+                    dbl.updateLogsNewRnc(tel.getTempNewRnc());
 
                     dbl.close();
 

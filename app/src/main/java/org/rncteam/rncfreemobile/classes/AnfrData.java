@@ -148,11 +148,14 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                         anfrInfos.setActivation(jData.getJSONObject(i).getString("Dte_En_Service"));
                         anfrInfos.setTypeSupport(jData.getJSONObject(i).getString("NAT_LB_NOM"));
 
-                        anfrInfos.setProrietaire(jData.getJSONObject(i).getString("TPO_LB"));
+                        anfrInfos.setLat(jData.getJSONObject(i).getString("lat"));
+                        anfrInfos.setLon(jData.getJSONObject(i).getString("lon"));
+
+                        anfrInfos.setProprietaire(jData.getJSONObject(i).getString("TPO_LB"));
 
                         anfrInfos.setAzimuts(jData.getJSONObject(i).getJSONArray("AZIMUT"));
 
-                        anfrInfos.setRnc(tel.getLoggedRnc());
+                        anfrInfos.setRnc(rnc);
 
                         maps.setAnfrAntennasMarkers(rnc,
                                 Double.parseDouble(jData.getJSONObject(i).getString("lat")),

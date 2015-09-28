@@ -92,7 +92,7 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         txt41.setText(" / Hauteur : " + ((anfrInfos.getHauteur() != "") ? anfrInfos.getHauteur() + "m" : "-"));
 
         txt5.setText("Secteurs : " + anfrInfos.getAzimuts().length());
-        txt51.setText(" / Propriétaire : " + ((anfrInfos.getProrietaire() != "") ? anfrInfos.getProrietaire() : "-"));
+        txt51.setText(" / Propriétaire : " + ((anfrInfos.getProprietaire() != "") ? anfrInfos.getProprietaire() : "-"));
 
         txt6.setText("Support : " + anfrInfos.getTypeSupport());
 
@@ -128,12 +128,27 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
         }
 
+        // Write potential futur RNC
         Telephony tel = rncmobile.getTelephony();
 
-        // Button managment
-        //if(tel.getLoggedRnc().NOTHING)
+        Rnc newRnc = new Rnc();
+        newRnc = tel.getLoggedRnc();
 
-            //bt1.setText("Attribuer le RNC "+tel.+ " à cette adresse");
+        // Text
+        String text = (anfrInfos.getLieu() != "") ? anfrInfos.getLieu() + " " : "";
+        text += (anfrInfos.getAdd1() != "") ? anfrInfos.getAdd1() + " " : "";
+        text += (anfrInfos.getAdd2() != "") ? anfrInfos.getAdd2() + " " : "";
+        text += (anfrInfos.getAdd3() != "") ? anfrInfos.getAdd3() + " " : "";
+        text += (anfrInfos.getCp() != "") ? anfrInfos.getCp() + " " : "";
+        text += (anfrInfos.getCommune() != "") ? anfrInfos.getCommune() + " " : "";
+        text.toUpperCase();
+        newRnc.set_txt(text);
+
+        // Coo
+        newRnc.set_lat(anfrInfos.getLat());
+        newRnc.set_lon(anfrInfos.getLon());
+
+        tel.setTempNewRnc(newRnc);
 
         return(popup);
     }

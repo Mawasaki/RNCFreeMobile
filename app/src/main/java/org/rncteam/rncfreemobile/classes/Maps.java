@@ -105,22 +105,6 @@ public class Maps {
         return markers.get(marker);
     }
 
-    public Rnc getRncByMarker(Marker marker) {
-        if(markers.size() > 0)
-            for(int i=0;i<markers.size();i++)
-                if(markers.get(i).equals(marker)) {
-                    DatabaseRnc rncDB = new DatabaseRnc(rncmobile.getAppContext());
-                    rncDB.open();
-
-                    Rnc rnc = rncDB.findRncByCoo(marker.getPosition().latitude, marker.getPosition().longitude);
-
-                    rncDB.close();
-
-                    return rnc;
-                }
-        return null;
-    }
-
     public void removeMarkers() {
         Iterator it = markers.entrySet().iterator();
         while (it.hasNext()) {
@@ -130,18 +114,6 @@ public class Maps {
         }
         markers.clear();
 
-    }
-
-    public void removeMaxMarkers() {
-        if(markersMax.size() > 0)
-            for(int i=0;i<markersMax.size();i++)
-                markersMax.get(i).remove();
-    }
-
-    public void removeLineMeToAntennas() {
-        if(polyline.size() > 0)
-            for(int i=0;i<polyline.size();i++)
-                polyline.get(i).remove();
     }
 
     public LatLngBounds getProjection() {
@@ -168,22 +140,6 @@ public class Maps {
 
     public GoogleMap getMap() {
         return mMap;
-    }
-
-    public void setAntLat(double antLat) {
-        this.antLat = antLat;
-    }
-
-    public void setAntLon(double antLon) {
-        this.antLon = antLon;
-    }
-
-    public double getAntLat() {
-        return this.antLat;
-    }
-
-    public double getAntLon() {
-        return this.antLon;
     }
 
     public void setAnfrAntennasMarkers(Rnc rnc, double lat, double lng, String title, AnfrInfos anfrInfos, int icon) {

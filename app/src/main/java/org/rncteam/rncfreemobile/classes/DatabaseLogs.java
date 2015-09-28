@@ -45,9 +45,22 @@ public class DatabaseLogs extends Database {
         v.put(COL_LOGS_DATE, rncLog.get_date());
 
         mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = ? AND "
-                + COL_LOGS_CID + " = ?" , new String[]{rncLog.get_rnc(),rncLog.get_cid()});
+                + COL_LOGS_CID + " = ?", new String[]{rncLog.get_rnc(), rncLog.get_cid()});
     }
 
+    public void updateLogsNewRnc(Rnc rnc) {
+        ContentValues v = new ContentValues();
+
+        v.put(COL_LOGS_TXT, rnc.get_txt());
+        v.put(COL_LOGS_LAT, rnc.get_lat());
+        v.put(COL_LOGS_LON, rnc.get_lon());
+
+        // 3G Rnc
+        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = ?" , new String[]{rnc.get_rnc()});
+
+        // 4G Rnc
+        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = 40?" , new String[]{rnc.get_rnc()});
+    }
 
     public void deleteRncLogs() {
         mdb.delete(TABLE_LOGS, null, null);
