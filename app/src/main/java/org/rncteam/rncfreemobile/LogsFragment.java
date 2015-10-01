@@ -15,31 +15,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ActionMenuView;
-import android.widget.AdapterView;
+
 import android.widget.ListView;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.adapters.ListLogsMainAdapter;
-import org.rncteam.rncfreemobile.adapters.ListMonitorMainLteAdapter;
-import org.rncteam.rncfreemobile.adapters.ListMonitorMainUmtsAdapter;
-import org.rncteam.rncfreemobile.adapters.ListMonitorPscAdapter;
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
-import org.rncteam.rncfreemobile.classes.DatabaseRnc;
-import org.rncteam.rncfreemobile.classes.Rnc;
-import org.rncteam.rncfreemobile.classes.RncLogs;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+
 
 /**
  * Created by cedricf_25 on 14/07/2015.
@@ -68,7 +50,9 @@ public class LogsFragment extends Fragment {
 
         // Init listview
         listViewLogsMain = (ListView) v.findViewById(R.id.list_logs);
-        adapterLogs = new ListLogsMainAdapter(rncmobile.getAppContext(), rncmobile.listRncLogs);
+        listViewLogsMain.setDivider(null);
+
+        adapterLogs = new ListLogsMainAdapter(getActivity(), rncmobile.getAppContext(), rncmobile.listRncLogs);
         listViewLogsMain.setAdapter(adapterLogs);
 
         handler = new Handler();
@@ -80,7 +64,6 @@ public class LogsFragment extends Fragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        //getActivity().getMenuInflater().inflate(R.menu.menu_tabs, menu);
 
     }
 
@@ -130,7 +113,7 @@ public class LogsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         getAllRncLogs();
-        adapterLogs = new ListLogsMainAdapter(rncmobile.getAppContext(), rncmobile.listRncLogs);
+        adapterLogs = new ListLogsMainAdapter(getActivity(), rncmobile.getAppContext(), rncmobile.listRncLogs);
         listViewLogsMain.setAdapter(adapterLogs);
     }
 

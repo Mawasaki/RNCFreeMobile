@@ -1,27 +1,33 @@
 package org.rncteam.rncfreemobile.adapters;
 
+import android.app.Activity;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.text.format.DateUtils;
+import android.content.Intent;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.MapFragment;
+
+import org.rncteam.rncfreemobile.LogsDetailsActivity;
+import org.rncteam.rncfreemobile.LogsMapsActivity;
+import org.rncteam.rncfreemobile.MapsFragment;
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.classes.Rnc;
+import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,15 +38,17 @@ public class ListLogsMainAdapter extends BaseAdapter {
 
     private static final String TAG = "ListLogsMainAdapter";
 
-    Context context;
+    private Context context;
+    private Activity activity;
 
     protected List<RncLogs> lCell;
     LayoutInflater inflater;
 
-    public ListLogsMainAdapter(Context context, List<RncLogs> listCell) {
+    public ListLogsMainAdapter(Activity activity, Context context, List<RncLogs> listCell) {
         this.lCell = listCell;
         this.inflater = LayoutInflater.from(context);
         this.context = context;
+        this.activity = activity;
     }
 
     public int getCount() {
@@ -61,6 +69,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+
         if (convertView == null) {
 
             holder = new ViewHolder();
@@ -70,13 +79,14 @@ public class ListLogsMainAdapter extends BaseAdapter {
             holder.txtMainInfo = (TextView) convertView.findViewById(R.id.txt_logs_main_infos);
             holder.txtDate = (TextView) convertView.findViewById(R.id.txt_logs_date);
             holder.txtTxt = (TextView) convertView.findViewById(R.id.txt_logs_text);
+            holder.txtOperator = (TextView) convertView.findViewById(R.id.txt_logs_operator);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        RncLogs rncLog = lCell.get(position);
+        final RncLogs rncLog = lCell.get(position);
 
         String mainInfo = String.valueOf(rncLog.get_tech()) + " "
                 + String.valueOf(rncLog.get_rnc()) + " "
@@ -93,6 +103,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
         holder.txtMainInfo.setText(mainInfo);
         holder.txtDate.setText(String.valueOf(fDate));
         holder.txtTxt.setText(String.valueOf(rncLog.get_txt()));
+        holder.txtOperator.setText(String.valueOf(rncLog.get_mcc()) + " " + String.valueOf(rncLog.get_mnc()));
 
         // Popup
         ImageButton btnMenu = (ImageButton) convertView.findViewById(R.id.logs_btn_menu);
@@ -106,12 +117,25 @@ public class ListLogsMainAdapter extends BaseAdapter {
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
+                        // Retrieve RncInfos object
+                        //rncLog
+
+                        LayoutInflater li = (LayoutInflater) rncmobile.getAppContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         switch (menuItem.getItemId()) {
                             case R.id.action_logs_listview_details:
-                                Log.d(TAG, "Listview Details");
+                                Intent intentLDA = new Intent(li.getContext(), LogsDetailsActivity.class);
+                                intentLDA.putExtra("logsInfosObject", rncLog);
+                                activity.startActivity(intentLDA);
                                 return true;
+
                             case R.id.action_logs_listview_maps:
-                                Log.d(TAG, "Listview Maps");
+                                Intent intentLMA = new Intent(li.getContext(), LogsMapsActivity.class);
+                                intentLMA.putExtra("logsInfosObject", rncLog);
+                                activity.startActivity(intentLMA);
+                                return true;
+
+                            case R.id.action_logs_listview_set_coo:
+                                Log.d(TAG, "Listview Set coo");
                                 return true;
                             case R.id.action_logs_listview_edit:
                                 Log.d(TAG, "Listview Edit");
@@ -136,5 +160,6 @@ public class ListLogsMainAdapter extends BaseAdapter {
         TextView txtMainInfo;
         TextView txtDate;
         TextView txtTxt;
+        TextView txtOperator;
     }
 }

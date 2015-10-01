@@ -6,31 +6,49 @@
     android:layout_height="match_parent"
     android:layout_margin="5dp" >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="RNC Database last update :"
-        android:id="@+id/lbl_rnc_database"
-        android:textSize="15dp"
-        android:textColor="@android:color/black"
-        android:padding="2dp" />
+        android:layout_margin="5dp"
+        android:background="@drawable/layout_bg"
+        android:elevation="1dp" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="-"
-        android:id="@+id/txt_rnc_database"
-        android:textSize="15dp"
-        android:textColor="@android:color/black"
-        android:padding="2dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="By RNC Team"
-            android:id="@+id/textView"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true" />
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RNC Database last update :"
+                android:id="@+id/lbl_rnc_database"
+                android:textSize="14dp"
+                android:textColor="@android:color/black"
+                android:padding="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="-"
+                android:id="@+id/txt_rnc_database"
+                android:textSize="12dp"
+                android:textColor="@android:color/black"
+                android:padding="2dp" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="By RNC Team"
+        android:id="@+id/textView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+
+
 
 </RelativeLayout>

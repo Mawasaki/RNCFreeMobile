@@ -66,7 +66,7 @@ public class CellWcdma {
 
     // MNC
     public int getMnc() {
-        return this.mcc;
+        return this.mnc;
     }
     public void setMnc(int mnc) {
         this.mnc = mnc;

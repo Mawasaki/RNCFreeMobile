@@ -7,6 +7,9 @@
     <item android:id="@+id/action_logs_listview_maps"
         android:title="Show on map" />
 
+    <item android:id="@+id/action_logs_listview_set_coo"
+        android:title="Set coordinates" />
+
     <item android:id="@+id/action_logs_listview_edit"
         android:title="Edit" />
 

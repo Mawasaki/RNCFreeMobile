@@ -52,6 +52,7 @@ public class MonitorFragment extends Fragment {
         // UI
         listViewRncMain = (ListView) v.findViewById(R.id.list_main);
         listViewRncPsc = (ListView) v.findViewById(R.id.list_psc);
+        listViewRncPsc.setDivider(null);
 
         handler = new Handler();
         displayMonitor.run();
