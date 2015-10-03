@@ -42,7 +42,7 @@ public class LogsMapsActivity extends Activity {
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(Double.valueOf(rnclogs.get_lat()), Double.valueOf(rnclogs.get_lon())))
-                .zoom(14)
+                .zoom(15)
                 .bearing(0)
                 .build();
 

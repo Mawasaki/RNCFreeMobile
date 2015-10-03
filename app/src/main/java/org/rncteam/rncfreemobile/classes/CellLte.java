@@ -208,7 +208,7 @@ public class CellLte {
 
             rncLogs.set_tech("4G");
             rncLogs.set_mcc(String.valueOf(getMcc()));
-            rncLogs.set_mnc(String.valueOf(getMcc()));
+            rncLogs.set_mnc(String.valueOf(getMnc()));
             rncLogs.set_cid(String.valueOf(getCid()));
             rncLogs.set_lac(String.valueOf(getTac()));
             rncLogs.set_rnc(String.valueOf(getRnc()));

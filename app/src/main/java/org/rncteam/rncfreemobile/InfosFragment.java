@@ -44,7 +44,7 @@ public class InfosFragment extends Fragment {
 
         taskTimer = new TaskTimer();
 
-        t.scheduleAtFixedRate(taskTimer , 0 , 5000);
+        t.scheduleAtFixedRate(taskTimer , 0 , 10000);
     }
 
     public void onPause() {
@@ -79,6 +79,9 @@ public class InfosFragment extends Fragment {
             if (lInfo.size() > 0) {
                 txtRncUpdate.setText((String) lInfo.get(1));
             }
+
+            if(txtRncUpdate.getText().equals("0")) txtRncUpdate.setText("Please update");
+
             dbi.close();
         }
     };

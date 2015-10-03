@@ -78,18 +78,18 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         /* Title */
         title.setText(marker.getTitle());
 
-        rnc.setText(" / RNC : " + ((anfrInfos.getRnc().NOTHING == true) ? "-" : anfrInfos.getRnc().get_rnc()));
+        rnc.setText(" / RNC : " + ((anfrInfos.getRnc().NOTHING == true) ? "-" : anfrInfos.getRnc().get_real_rnc()));
 
         txt1.setText(anfrInfos.getLieu() + " " + anfrInfos.getAdd1() + " " + anfrInfos.getAdd2() + " " +
                      anfrInfos.getAdd3());
 
         txt2.setText(anfrInfos.getCp() + " " + anfrInfos.getCommune());
 
-        txt3.setText("Implantation : " + anfrInfos.getImplantation());
-        txt31.setText(" / Modification : " + ((anfrInfos.getModification() != "") ? anfrInfos.getModification() : "-"));
+        txt3.setText("Implantation : " + (anfrInfos.getImplantation() != "null" ? anfrInfos.getImplantation() : ""));
+        txt31.setText(" / Modification : " + ((anfrInfos.getModification() != "null") ? anfrInfos.getModification() : "-"));
 
-        txt4.setText("Activation : " + ((anfrInfos.getActivation() != "") ? anfrInfos.getActivation() : "-"));
-        txt41.setText(" / Hauteur : " + ((anfrInfos.getHauteur() != "") ? anfrInfos.getHauteur() + "m" : "-"));
+        txt4.setText("Activation : " + ((anfrInfos.getActivation() != "null") ? anfrInfos.getActivation() : "-"));
+        txt41.setText(" / Hauteur : " + ((anfrInfos.getHauteur() != "null") ? anfrInfos.getHauteur() + "m" : "-"));
 
         txt5.setText("Secteurs : " + anfrInfos.getAzimuts().length());
         txt51.setText(" / Propriétaire : " + ((anfrInfos.getProprietaire() != "") ? anfrInfos.getProprietaire() : "-"));
@@ -133,6 +133,14 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
         Rnc newRnc = new Rnc();
         newRnc = tel.getLoggedRnc();
+
+        // Button
+        if(anfrInfos.getRnc().NOTHING == true)
+            bt1.setText("Attribuer le RNC " + newRnc.get_real_rnc() + " à cette addresse");
+        else {
+            bt1.setText("Antenne déja identifiée");
+        }
+
 
         // Text
         String text = (anfrInfos.getLieu() != "") ? anfrInfos.getLieu() + " " : "";

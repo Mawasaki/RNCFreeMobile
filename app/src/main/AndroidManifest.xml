@@ -37,7 +37,8 @@
             </intent-filter>
         </activity>
         <activity android:label="Edit RNC" android:name=".LogsDetailsActivity"/>
-        <activity android:label="Edit RNC" android:name=".LogsMapsActivity"/>
+        <activity android:label="Show on map" android:name=".LogsMapsActivity"/>*
+        <activity android:label="Set Coordinates" android:name=".LogsSetCooActivity"/>
     </application>
 
 </manifest>

@@ -76,7 +76,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        String msg = "Etes-vous sur de vouloir attribuer le RNC " + tel.getLoggedRnc().get_rnc() + " à cette addresse ?";
+        String msg = "Etes-vous sur de vouloir attribuer le RNC " + tel.getLoggedRnc().get_real_rnc() + " à cette addresse ?";
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(msg).setPositiveButton("Oui", dialogClickListener)
                 .setNegativeButton("Non", dialogClickListener).show();

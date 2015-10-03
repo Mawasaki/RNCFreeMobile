@@ -75,7 +75,7 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         holder.txtCid.setText(String.valueOf(tLte.getFormatedCid()));
         holder.txtTac.setText(String.valueOf(tLte.getTac()));
         holder.txtPci.setText(String.valueOf(tLte.getPci()));
-        holder.txtRssi.setText(String.valueOf(tLte.getLteSignalStrength()) + " dBm");
+        holder.txtRssi.setText(String.valueOf("-" + tLte.getLteSignalStrength()) + " dBm");
         holder.txtRsrp.setText(String.valueOf(tLte.getLteRsrp()) + " dBm");
         holder.txtRsrq.setText(String.valueOf(tLte.getLteRsrq()) + " dB");
         holder.txtSnr.setText(String.valueOf(tLte.getLteRssnr()) + " dB");

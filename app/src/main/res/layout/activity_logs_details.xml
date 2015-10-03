@@ -11,7 +11,7 @@
         android:background="@drawable/layout_bg"
         android:layout_margin="6dp"
         android:clickable="true"
-        android:elevation="5dp" >
+        android:elevation="2dp" >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -136,7 +136,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Text RNC"
-                    android:textSize="18dp"
+                    android:textSize="16dp"
                     android:backgroundTint="@color/ColorPrimary" />
 
             </LinearLayout>
@@ -171,7 +171,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="LAT"
-                    android:textSize="18dp"
+                    android:textSize="16dp"
                     android:layout_weight="1"
                     android:layout_below="@id/txt_detail_text"
                     android:backgroundTint="@color/ColorPrimary"
@@ -183,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="LON"
-                    android:textSize="18dp"
+                    android:textSize="16dp"
                     android:layout_below="@id/txt_detail_text"
                     android:backgroundTint="@color/ColorPrimary" />
 
@@ -219,7 +219,7 @@
         android:background="@drawable/layout_bg"
         android:layout_margin="6dp"
         android:clickable="true"
-        android:elevation="5dp" >
+        android:elevation="2dp" >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -269,7 +269,7 @@
         android:background="@drawable/layout_bg"
         android:layout_margin="6dp"
         android:clickable="true"
-        android:elevation="5dp" >
+        android:elevation="2dp" >
 
         <RelativeLayout
             android:layout_width="match_parent"

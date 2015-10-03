@@ -69,7 +69,10 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
         rncmobile.onTransaction = true;
 
-        Log.d(TAG,"OnPreExecute");
+        Log.d(TAG,"lat_sw=" + Double.toString(sw.latitude) +
+                 " / lon_sw=" + Double.toString(sw.longitude) +
+                 " / lat_ne=" + Double.toString(ne.latitude) +
+                 " / lon_ne=" + Double.toString(ne.longitude));
     }
 
     @Override
@@ -84,7 +87,6 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject jArray) {
-        Log.d(TAG, "PostExecute1");
         rncmobile.getMaps().removeMarkers();
         if(jArray != null) {
             try {
@@ -109,10 +111,10 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                             if (lRnc.size() > 0) {
                                 for (int j = 0; j < lRnc.size(); j++) {
-                                    double rnc_lat1 = Double.valueOf(lRnc.get(j).get_lat()) + 0.01;
-                                    double rnc_lon1 = Double.valueOf(lRnc.get(j).get_lon()) + 0.01;
-                                    double rnc_lat2 = Double.valueOf(lRnc.get(j).get_lat()) - 0.01;
-                                    double rnc_lon2 = Double.valueOf(lRnc.get(j).get_lon()) - 0.01;
+                                    double rnc_lat1 = Double.valueOf(lRnc.get(j).get_lat()) + 0.005;
+                                    double rnc_lon1 = Double.valueOf(lRnc.get(j).get_lon()) + 0.005;
+                                    double rnc_lat2 = Double.valueOf(lRnc.get(j).get_lat()) - 0.005;
+                                    double rnc_lon2 = Double.valueOf(lRnc.get(j).get_lon()) - 0.005;
 
                                     if (rnc_lat1 >= anfr_lat && rnc_lat2 <= anfr_lat
                                             && rnc_lon1 >= anfr_lon && rnc_lon2 <= anfr_lon) {

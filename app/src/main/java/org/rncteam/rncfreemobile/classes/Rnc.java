@@ -125,6 +125,11 @@ public class Rnc {
         else return _txt;
     }
 
+    public String get_real_rnc() {
+        if(_rnc.substring(0,2).equals("40")) return _rnc.substring(2,_rnc.length());
+        else return _rnc;
+    }
+
     public void set_txt(String _txt) {
         this._txt = _txt;
     }

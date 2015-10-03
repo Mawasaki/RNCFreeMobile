@@ -2,12 +2,10 @@ package org.rncteam.rncfreemobile.adapters;
 
 import android.app.Activity;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,13 +16,10 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.MapFragment;
-
 import org.rncteam.rncfreemobile.LogsDetailsActivity;
 import org.rncteam.rncfreemobile.LogsMapsActivity;
-import org.rncteam.rncfreemobile.MapsFragment;
+import org.rncteam.rncfreemobile.LogsSetCooActivity;
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
@@ -108,6 +103,8 @@ public class ListLogsMainAdapter extends BaseAdapter {
         // Popup
         ImageButton btnMenu = (ImageButton) convertView.findViewById(R.id.logs_btn_menu);
 
+        final View f_view = convertView;
+
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,11 +132,40 @@ public class ListLogsMainAdapter extends BaseAdapter {
                                 return true;
 
                             case R.id.action_logs_listview_set_coo:
-                                Log.d(TAG, "Listview Set coo");
+                                Intent intentLSCA = new Intent(li.getContext(), LogsSetCooActivity.class);
+                                intentLSCA.putExtra("logsInfosObject", rncLog);
+                                activity.startActivity(intentLSCA);
                                 return true;
+
                             case R.id.action_logs_listview_edit:
-                                Log.d(TAG, "Listview Edit");
+                                View popSwitchView = li.inflate(R.layout.popup_logs_edit, null);
+
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                        activity);
+                                alertDialogBuilder.setView(popSwitchView);
+
+                                // set dialog message
+                                alertDialogBuilder
+                                        .setCancelable(false)
+                                        .setPositiveButton("OK",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog,int id) {
+                                                        // get user input and set it to result
+                                                        // edit text
+                                                        //result.setText(userInput.getText());
+                                                    }
+                                                })
+                                        .setNegativeButton("Cancel",
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        dialog.cancel();
+                                                    }
+                                                });
+
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.show();
                                 return true;
+
                             case R.id.action_logs_listview_delete:
                                 Log.d(TAG, "Listview Delete");
                                 return true;

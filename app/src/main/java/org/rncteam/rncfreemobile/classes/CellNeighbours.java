@@ -66,6 +66,11 @@ public class CellNeighbours {
                                 nearestRnc = lRncPsc.get(j);
                             }
                         }
+                    } else {
+                        nearestRnc = new Rnc("", "", "",
+                                String.valueOf(lEmpltyNeigh.get(i).get_cid()), "",
+                                String.valueOf(lEmpltyNeigh.get(i).get_lac()),
+                                String.valueOf(lEmpltyNeigh.get(i).get_psc()), "", "", "-");
                     }
 
                 } else {

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 public class MonitorFragment extends Fragment {
     private static final String TAG = "MonitorFragment";
 
+    private FrameLayout fl;
     ListView listViewRncMain;
     ListView listViewRncPsc;
     View v;
@@ -50,6 +52,7 @@ public class MonitorFragment extends Fragment {
         tel = rncmobile.getTelephony();
 
         // UI
+        fl = (FrameLayout) v.findViewById(R.id.lyt_monitor_error);
         listViewRncMain = (ListView) v.findViewById(R.id.list_main);
         listViewRncPsc = (ListView) v.findViewById(R.id.list_psc);
         listViewRncPsc.setDivider(null);
@@ -82,38 +85,50 @@ public class MonitorFragment extends Fragment {
             //if (tel.getCellNetwork().equals("20815")) {
                 listViewRncMain.setVisibility(View.VISIBLE);
                 listViewRncPsc.setVisibility(View.VISIBLE);
+                fl.setVisibility(View.GONE);
 
-                if (tel.getNetworkClass() == 3 && tel.getRegisteredWcdmaCell() != null) {
+                if(tel.getDataActivity() != 0) {
 
-                    arrayCellUmts.add(tel.getRegisteredWcdmaCell());
+                    if (tel.getNetworkClass() == 3 && tel.getRegisteredWcdmaCell() != null) {
 
-                    if (arrayCellUmts.size() > 0) {
-                        ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(rncmobile.getAppContext(), arrayCellUmts);
-                        listViewRncMain.setAdapter(adapter);
-                    } else {
-                        Toast.makeText(rncmobile.getAppContext(), "(MonitorUI) Error: No valid RNC detected", Toast.LENGTH_LONG).show();
+                        arrayCellUmts.add(tel.getRegisteredWcdmaCell());
+
+                        if (arrayCellUmts.size() > 0) {
+                            ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(rncmobile.getAppContext(), arrayCellUmts);
+                            listViewRncMain.setAdapter(adapter);
+                        } else {
+                            Toast.makeText(rncmobile.getAppContext(), "(MonitorUI) Error: No valid RNC detected", Toast.LENGTH_LONG).show();
+                        }
                     }
-                }
-                else if (tel.getNetworkClass() == 4 && tel.getRegisteredLteCell() != null) {
+                    else if (tel.getNetworkClass() == 4 && tel.getRegisteredLteCell() != null) {
 
-                    arrayCellLte.add(tel.getRegisteredLteCell());
+                        arrayCellLte.add(tel.getRegisteredLteCell());
 
-                    if (arrayCellLte.size() > 0) {
-                        ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(rncmobile.getAppContext(), arrayCellLte);
-                        listViewRncMain.setAdapter(adapter);
-                    } else {
-                        Toast.makeText(rncmobile.getAppContext(), "(MonitorUI) Error: No valid RNC detected", Toast.LENGTH_LONG).show();
+                        if (arrayCellLte.size() > 0) {
+                            ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(rncmobile.getAppContext(), arrayCellLte);
+                            listViewRncMain.setAdapter(adapter);
+                        } else {
+                            Toast.makeText(rncmobile.getAppContext(), "(MonitorUI) Error: No valid RNC detected", Toast.LENGTH_LONG).show();
+                        }
                     }
-                }
+                    else {
+                        listViewRncMain.setVisibility(View.GONE);
+                        fl.setVisibility(View.VISIBLE);
+                    }
 
-                // Display PSCs
-                arrayNeighCell = tel.getNeighbourCell();
+                    // Display PSCs
+                    arrayNeighCell = tel.getNeighbourCell();
 
-                if (arrayNeighCell.size() > 0) {
-                    ListMonitorPscAdapter adapterPsc = new ListMonitorPscAdapter(rncmobile.getAppContext(), arrayNeighCell);
-                    listViewRncPsc.setAdapter(adapterPsc);
+                    if (arrayNeighCell != null && arrayNeighCell.size() > 0) {
+                        ListMonitorPscAdapter adapterPsc = new ListMonitorPscAdapter(rncmobile.getAppContext(), arrayNeighCell);
+                        listViewRncPsc.setAdapter(adapterPsc);
+                    }
+                    else listViewRncPsc.setVisibility(View.GONE);
+                } else {
+                    listViewRncMain.setVisibility(View.GONE);
+                    listViewRncPsc.setVisibility(View.GONE);
+                    fl.setVisibility(View.VISIBLE);
                 }
-                else listViewRncPsc.setVisibility(View.GONE);
 
            /* } else {
                 listViewRncMain.setVisibility(View.GONE);
