@@ -47,8 +47,11 @@ public class Telephony {
 
     private Handler handler;
 
+    private String httpResponse;
+
     private int tempTech;
     private boolean signalChange;
+    private boolean cellChange;
 
     private Context mContext;
 
@@ -125,8 +128,8 @@ public class Telephony {
 
         switch (dataState) {
             case TelephonyManager.DATA_CONNECTED:
+            case TelephonyManager.DATA_SUSPENDED:
             case TelephonyManager.DATA_ACTIVITY_DORMANT:
-            case TelephonyManager.DATA_ACTIVITY_NONE:
             case TelephonyManager.DATA_CONNECTING:
                 return 1;
             default:
@@ -171,11 +174,14 @@ public class Telephony {
 
         setLoggedRnc(null);
 
+        getDataActivity();
+
         // Is telephony initilized
         if (getNetworkClass() != 0) {
-            if (getDataActivity() != 0 && gsmCellLocation.getCid() > 0) {
+
+            //if (getDataActivity() != 0 && gsmCellLocation.getCid() > 0) {
                 // Mhhh.. Very ugly, I do this for moment
-                if (tempTech == getNetworkClass()) {
+                //if (tempTech == getNetworkClass()) {
                     if (getNetworkClass() == 2) {
                         // Not implemented
                     }
@@ -197,7 +203,7 @@ public class Telephony {
 
                         cWcdma.setRncDB(getRncDB(cWcdma.getRnc(), cWcdma.getCid()));
                         cWcdma.setText(cWcdma.getRncDB().get_txt());
-                        cWcdma.insertRncInLogs();
+                        if(cellChange) cWcdma.insertRncInLogs();
                         setLoggedRnc(cWcdma.getRncDB());
 
                         lcWcdma.add(cWcdma);
@@ -220,10 +226,20 @@ public class Telephony {
 
                         cLte.setRncDB(getRncDB(cLte.getRnc(), cLte.getCid()));
                         cLte.setText(cLte.getRncDB().get_txt());
-                        cLte.insertRncInLogs();
+                        if(cellChange) cLte.insertRncInLogs();
                         setLoggedRnc(cLte.getRncDB());
 
                         lcLte.add(cLte);
+                    }
+
+                    Maps maps = rncmobile.getMaps();
+
+                    // Recenter map
+                    if(maps != null && maps.getMap() != null && !loggedRnc.NOTHING && cellChange) {
+
+                        maps.setLastZoom(12.0f);
+                        maps.setCenterCamera(Double.valueOf(loggedRnc.get_lat()),
+                                Double.valueOf(loggedRnc.get_lon()));
                     }
 
                     // Last NeighboringCell Infos
@@ -297,8 +313,8 @@ public class Telephony {
                             lcNeigh = cNeigh.getNearestNeighboringInRnc(rncNeigh.getRncDB());
                     }
                     tempTech = getNetworkClass();
-                }
-            }
+                //}
+            //}
         }
     }
 
@@ -366,6 +382,14 @@ public class Telephony {
         tm.listen(tsl, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS | PhoneStateListener.LISTEN_CELL_LOCATION);
     }
 
+    public String getHttpResponse() {
+        return httpResponse;
+    }
+
+    public void setHttpResponse(String httpResponse) {
+        this.httpResponse = httpResponse;
+    }
+
     // Gestion des listeners telephony
     private class TelephonyStateListener extends PhoneStateListener {
 
@@ -383,6 +407,7 @@ public class Telephony {
             setCellLocation(location);
             setGsmCellLocation();
             signalChange = true;
+            cellChange = true;
             //dispatchCellInfo();
 
             tempTech = getNetworkClass();
@@ -394,6 +419,7 @@ public class Telephony {
             if (signalChange)
                 dispatchCellInfo();
             signalChange = false;
+            cellChange = false;
 
             handler.postDelayed(this, 1000);
         }

@@ -37,20 +37,22 @@ public class MapsChangeListeners implements OnCameraChangeListener {
 
         Telephony tel = rncmobile.getTelephony();
 
-        int tt  =tel.getDataActivity();
-        if(position.zoom > 9 && tel != null && tel.getDataActivity() != 0) {
-            if(rncmobile.onTransaction == false && rncmobile.markerClicked == false) {
-                AnfrData anfrData = new AnfrData();
-                anfrData.execute();
-                zoom_info = true;
+        int dataState = tel.getDataActivity();
+        if(dataState != 0) {
+            if (position.zoom > 9 && tel != null) {
+                if (rncmobile.onTransaction == false && rncmobile.markerClicked == false) {
+                    AnfrData anfrData = new AnfrData();
+                    anfrData.execute();
+                    zoom_info = true;
+                } else rncmobile.markerClicked = false;
+            } else {
+                rncmobile.getMaps().removeMarkers();
+                if (zoom_info)
+                    Toast.makeText(rncmobile.getAppContext(), "Zoom trop élévé pour afficher les antennes", Toast.LENGTH_SHORT).show();
+                zoom_info = false;
             }
-            else rncmobile.markerClicked = false;
-        }
-        else {
-            rncmobile.getMaps().removeMarkers();
-            if(zoom_info)
-                Toast.makeText(rncmobile.getAppContext(), "Zoom trop élévé pour afficher les antennes", Toast.LENGTH_SHORT).show();
-            zoom_info = false;
+        } else {
+            Toast.makeText(rncmobile.getAppContext(), "Non connecté", Toast.LENGTH_SHORT).show();
         }
     }
 }

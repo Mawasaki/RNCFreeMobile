@@ -109,8 +109,7 @@ public class MonitorFragment extends Fragment {
                         } else {
                             Toast.makeText(rncmobile.getAppContext(), "(MonitorUI) Error: No valid RNC detected", Toast.LENGTH_LONG).show();
                         }
-                    }
-                    else {
+                    } else {
                         listViewRncMain.setVisibility(View.GONE);
                         fl.setVisibility(View.VISIBLE);
                     }

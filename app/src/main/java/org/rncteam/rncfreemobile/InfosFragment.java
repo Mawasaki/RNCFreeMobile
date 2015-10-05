@@ -53,17 +53,8 @@ public class InfosFragment extends Fragment {
     }
 
     private void setInfoVersion() {
-        try {
-            String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-            String[] v_parts = version.split("-");
-
-            txtInfoVersion1.setText("Version: " + v_parts[1]);
-            txtInfoVersion2.setText("Build: " +
-                    context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
-        } catch (PackageManager.NameNotFoundException e) {
-            txtInfoVersion1.setText("Error:" + e.toString());
-        }
-
+        txtInfoVersion1.setText(rncmobile.appVersion());
+        txtInfoVersion2.setText(rncmobile.appBuild());
     }
 
     private void setInfoRncMobile() {

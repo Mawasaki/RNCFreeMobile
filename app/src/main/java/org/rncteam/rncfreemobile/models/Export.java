@@ -1,5 +1,15 @@
 package org.rncteam.rncfreemobile.models;
 
+import android.util.Log;
+
+import org.rncteam.rncfreemobile.rncmobile;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Created by cedric_f25 on 04/10/2015.
  */
@@ -131,5 +141,51 @@ public class Export {
 
     public void set_app_version(String _app_version) {
         this._app_version = _app_version;
+    }
+
+    public String get_time() {
+        Date date = new Date();
+        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = iso8601Format.parse(get_date());
+        } catch (ParseException e) {
+            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
+        }
+
+        return new SimpleDateFormat("HH:mm:ss").format(date);
+    }
+
+    public Date get_date_obj() {
+        Date date = new Date();
+        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = iso8601Format.parse(get_date());
+        } catch (ParseException e) {
+            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
+        }
+
+        return date;
+    }
+
+    public String get_fr_datetime() {
+        Date date = new Date();
+        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = iso8601Format.parse(get_date());
+        } catch (ParseException e) {
+            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
+        }
+
+        long when = date.getTime();
+        int flags = 0;
+        flags |= android.text.format.DateUtils.FORMAT_SHOW_TIME;
+        flags |= android.text.format.DateUtils.FORMAT_SHOW_DATE;
+        flags |= android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
+        flags |= android.text.format.DateUtils.FORMAT_SHOW_YEAR;
+
+        String finalDateTime = android.text.format.DateUtils.formatDateTime(rncmobile.getAppContext(),
+                when + TimeZone.getDefault().getOffset(when), flags);
+
+        return finalDateTime;
     }
 }

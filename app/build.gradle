@@ -7,8 +7,6 @@ android {
         applicationId "org.rncteam.rncfreemobile"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 2
-        versionName '0.02'
     }
     /* Increment version */
     def versionPropsFile = file('../version.properties')
@@ -40,8 +38,6 @@ android {
         defaultConfig {
             versionCode version_Code
             versionName "RNCFreeMobile-${versionMajor}.${versionMinor}.${versionPatch}-${versionBuild}"
-            minSdkVersion 14
-            targetSdkVersion 19
         }
     } else {
         throw new GradleException("Could not read version.properties!")

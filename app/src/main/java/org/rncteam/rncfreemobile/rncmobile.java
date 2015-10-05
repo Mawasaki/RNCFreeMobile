@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.view.View;
 
@@ -80,5 +81,24 @@ public class rncmobile extends Application {
 
     public static Maps getMaps() {
         return rncmobile.maps;
+    }
+
+    public static String appVersion() {
+        try {
+            String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            String[] v_parts = version.split("-");
+
+            return v_parts[1];
+        } catch (PackageManager.NameNotFoundException e) {
+            return e.toString();
+        }
+    }
+
+    public static String appBuild() {
+        try {
+            return String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            return e.toString();
+        }
     }
 }

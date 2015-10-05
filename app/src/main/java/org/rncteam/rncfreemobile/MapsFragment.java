@@ -85,6 +85,13 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        rncmobile.markerClicked = false;
+        rncmobile.onTransaction = false;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         setUpMapIfNeeded();

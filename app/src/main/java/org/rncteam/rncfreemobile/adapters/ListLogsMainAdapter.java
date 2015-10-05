@@ -32,7 +32,6 @@ import java.util.List;
  * Created by cedricf_25 on 21/07/2015.
  */
 public class ListLogsMainAdapter extends BaseAdapter {
-
     private static final String TAG = "ListLogsMainAdapter";
 
     private Context context;

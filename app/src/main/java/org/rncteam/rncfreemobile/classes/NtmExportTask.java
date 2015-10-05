@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.models.Export;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.io.BufferedReader;
@@ -18,13 +19,17 @@ import java.net.URL;
 import java.io.File;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by cedric_f25 on 04/10/2015.
  */
 public class NtmExportTask extends AsyncTask<Void, Void, String> {
     private static final String TAG = "NtmExportTask";
-    private static final String S_URL = "http://rfm.dataremix.fr/export.php";
+    private static final String S_URL = "http://rncmobile.fr/appimport.php";
+    //private static final String S_URL = "http://rfm.dataremix.fr/export.php";
 
     private final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
 
@@ -33,13 +38,27 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
     // Parameters to pass
     private String nickname;
+    private String expName;
+    private int nbLogs;
+    private int nbUmtsLogs;
+    private int nbLteLogs;
+    private String response;
 
     private ProgressDialog dialog;
 
-    public NtmExportTask(Context contex, String ntmFileName, String nickName) {
+    private int state;
+
+    public NtmExportTask(Context contex, String ntmFileName, String nickName, String expName) {
         this.context = contex;
         this.ntmFileName = ntmFileName;
         this.nickname = nickName;
+        this.expName = expName;
+    }
+
+    public void NtmExportSetData(int nbLogs, int nbUmtsLogs, int nbLteLogs) {
+        this.nbLogs = nbLogs;
+        this.nbUmtsLogs = nbUmtsLogs;
+        this.nbLteLogs = nbLteLogs;
     }
 
     @Override
@@ -93,21 +112,49 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
             // Nickname
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"nickname\"" + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"user_nick\"" + lineEnd);
             dos.writeBytes(lineEnd);
             dos.writeBytes(this.nickname);
             dos.writeBytes(lineEnd);
 
             // Ids
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"ids\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"user_id\""+ lineEnd);
             dos.writeBytes(lineEnd);
             dos.writeBytes(sb.toString());
             dos.writeBytes(lineEnd);
 
+            // AppVersion
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"app_id\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("rncmobile" + rncmobile.appVersion());
+            dos.writeBytes(lineEnd);
+
+            // Phone
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"mobi_id\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(android.os.Build.MODEL);
+            dos.writeBytes(lineEnd);
+
+            // Hidden
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"MAX_FILE_SIZE\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("3000000");
+            dos.writeBytes(lineEnd);
+
+            // Hidden
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"action\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("ajouter");
+            dos.writeBytes(lineEnd);
+
             // File
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + ntmFile.getName() + "\"" + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"fichier\";filename=\"" + ntmFile.getName() + "\"" + lineEnd);
             dos.writeBytes(lineEnd);
 
             bytesAvailable = fileInputStream.available(); // create a buffer of  maximum size
@@ -139,33 +186,67 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 
                 String inputLine = "";
-                String chaine = "";
+                String resp = "";
                 while((inputLine = rd.readLine()) != null) {
-                    chaine += inputLine;
+                    resp += inputLine;
                 }
 
-                Log.d(TAG, "Response : " + chaine);
+                Log.d(TAG, "Response : " + resp);
+
+                tel.setHttpResponse(resp);
+
+                // Write this job into database
+                Export export = new Export();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+
+                export.set_user_id(sb.toString());
+                export.set_user_nick(this.nickname);
+                export.set_user_pwd("");
+                export.set_user_txt("");
+                export.set_user_tel(android.os.Build.MODEL);
+                export.set_name(expName);
+                export.set_date(sdf.format(new Date()));
+                export.set_nb(String.valueOf(nbLogs));
+                export.set_nb_umts(String.valueOf(this.nbUmtsLogs));
+                export.set_nb_lte(String.valueOf(this.nbLteLogs));
+                export.set_state("");
+                export.set_type("NetMonster");
+                export.set_app_version(rncmobile.appVersion());
+
+                DatabaseExport dbe = new DatabaseExport(rncmobile.getAppContext());
+                dbe.open();
+                dbe.addExport(export);
+                dbe.close();
+
+                state = 1;
+
+                //Toast.makeText(rncmobile.getAppContext(), "Export réussi !", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                //Toast.makeText(rncmobile.getAppContext(), "Le serveur à retourné une erreur.", Toast.LENGTH_LONG).toString();
+                state = 0;
             }
             //close the streams //
             fileInputStream.close();
             dos.flush();
             dos.close();
 
-            return "";
+
+
+            return response;
 
         } catch (Exception e) {
             Log.d(TAG, "Error send file: " + e.toString());
-            Toast.makeText(rncmobile.getAppContext(), "Une erreur s'est produite. Vérifier la connexion", Toast.LENGTH_SHORT).show();
+            Toast.makeText(rncmobile.getAppContext(), "Erreur. Vérifier la connexion", Toast.LENGTH_LONG).show();
             return null;
         }
     }
 
     @Override
     protected void onPostExecute(String result) {
-        //Log.d(TAG, "Result: " + result);
-        //dialog.dismiss();
-
-        String deviceName = android.os.Build.MODEL;
+        if(state > 0 ) Toast.makeText(rncmobile.getAppContext(), "Export réussi", Toast.LENGTH_LONG).show();
+        else Toast.makeText(rncmobile.getAppContext(), "Erreur s'est produite", Toast.LENGTH_LONG).show();
     }
 
 }

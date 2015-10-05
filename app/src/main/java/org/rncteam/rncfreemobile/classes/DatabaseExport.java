@@ -26,7 +26,6 @@ public class DatabaseExport extends Database {
     public void addExport(Export exp) {
         ContentValues v = new ContentValues();
 
-        v.put(COL_EXPORT_ID, exp.get_id());
         v.put(COL_EXPORT_USER_ID, exp.get_user_id());
         v.put(COL_EXPORT_USER_NICK, exp.get_user_nick());
         v.put(COL_EXPORT_USER_PWD, exp.get_user_pwd());
@@ -51,7 +50,8 @@ public class DatabaseExport extends Database {
     public List<Export> findAllExport() {
         List<Export> lExport = new ArrayList<Export>();
 
-        String query = "SELECT * FROM " + TABLE_EXPORT;
+        String query = "SELECT * FROM " + TABLE_EXPORT + " "
+                + "ORDER BY " + COL_EXPORT_DATE + " DESC";
 
         Cursor c = mdb.rawQuery(query, null);
         c.moveToFirst();

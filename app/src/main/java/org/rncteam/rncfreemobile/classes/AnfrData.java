@@ -75,17 +75,15 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
     @Override
     protected JSONObject doInBackground(String... args) {
-        Log.d(TAG,"DoInBackground 1");
         JSONParser jParser = new JSONParser();
         JSONObject json = jParser.getJSONFromUrl(url, postParams);
-        Log.d(TAG,"DoInBackground 2");
-
         return json;
     }
 
     @Override
     protected void onPostExecute(JSONObject jArray) {
         String markerTitle;
+        rncmobile.onTransaction = false;
         rncmobile.getMaps().removeMarkers();
         if(jArray != null) {
             try {
@@ -186,7 +184,6 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
         else {
             // Implement error getting cells
         }
-        rncmobile.onTransaction = false;
     }
 
 }

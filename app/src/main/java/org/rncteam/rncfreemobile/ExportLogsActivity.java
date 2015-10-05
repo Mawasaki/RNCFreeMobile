@@ -4,17 +4,24 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.adapters.ListExportHistoryAdapter;
 import org.rncteam.rncfreemobile.classes.DatabaseExport;
 import org.rncteam.rncfreemobile.classes.DatabaseLogs;
 import org.rncteam.rncfreemobile.classes.NtmExportTask;
+import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Export;
 import org.rncteam.rncfreemobile.models.RncLogs;
+import org.w3c.dom.Text;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,9 +43,20 @@ public class ExportLogsActivity extends Activity {
     private List<Export> lExport;
 
     // UI
-    private TextView txtExportCount;
+    private TextView txtExportCountTotal;
+    private TextView txtExportCountUmts;
+    private TextView txtExportCountLte;
+    private TextView txtResponse;
     private EditText inpImportNickname;
+    private EditText inpImportName;
     private Button btnExportLog;
+    private ListView listViewExportLogs;
+
+    Handler handler;
+    Telephony tel;
+    // Count
+    private int nbUmtsLogs;
+    private int nbLteLogs;
 
     private Context context;
 
@@ -50,13 +68,35 @@ public class ExportLogsActivity extends Activity {
 
         final Context context = this.getApplicationContext();
 
-        txtExportCount = (TextView )findViewById(R.id.txt_export_count);
+        txtExportCountTotal = (TextView )findViewById(R.id.txt_export_count);
+        txtExportCountUmts = (TextView )findViewById(R.id.txt_export_count_umts);
+        txtExportCountLte = (TextView )findViewById(R.id.txt_export_count_lte);
+
+        txtResponse = (TextView )findViewById(R.id.txt_export_text_result);
+        txtResponse.setText("");
+        tel = rncmobile.getTelephony();
+        tel.setHttpResponse("");
+
         inpImportNickname = (EditText) findViewById(R.id.inp_import_nickname);
+        inpImportName = (EditText) findViewById(R.id.inp_import_name);
         btnExportLog = (Button) findViewById(R.id.btn_export_logs);
 
+        listViewExportLogs = (ListView) findViewById(R.id.list_export_logs);
+
+        // GetList of logs
         getAllRncLogs();
 
-        txtExportCount.setText(String.valueOf(lRncLogs.size()));
+        // Set count logs
+        countLogsByTech();
+
+        txtExportCountTotal.setText(String.valueOf(lRncLogs.size()));
+        txtExportCountUmts.setText(String.valueOf(nbUmtsLogs));
+        txtExportCountLte.setText(String.valueOf(nbLteLogs));
+
+        // Initialise list export history
+        getAllExports();
+        ListExportHistoryAdapter adapter = new ListExportHistoryAdapter(this,rncmobile.getAppContext(), lExport);
+        listViewExportLogs.setAdapter(adapter);
 
         // Button export management
         btnExportLog.setOnClickListener(new View.OnClickListener() {
@@ -105,12 +145,18 @@ public class ExportLogsActivity extends Activity {
 
                         // Now we send file to HTTP
 
-                        NtmExportTask net = new NtmExportTask(rncmobile.getAppContext(), NtmFileName, inpImportNickname.getText().toString());
+                        NtmExportTask net = new NtmExportTask(rncmobile.getAppContext(), NtmFileName,
+                                inpImportNickname.getText().toString(), inpImportName.getText().toString());
+                        net.NtmExportSetData(lRncLogs.size(), nbUmtsLogs, nbLteLogs);
                         net.execute();
+
+                        handler = new Handler();
+                        displayResponse.run();
+
                     } else {
                         Toast.makeText(rncmobile.getAppContext(), "Saisir un pseudo", Toast.LENGTH_SHORT).show();
                     }
-                } catch(IOException e1){
+                } catch (IOException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
@@ -126,6 +172,15 @@ public class ExportLogsActivity extends Activity {
         dbl.close();
     }
 
+    private void countLogsByTech() {
+        this.nbUmtsLogs = 0;
+        this.nbLteLogs = 0;
+        for(int i=0;i<lRncLogs.size();i++) {
+            if(lRncLogs.get(i).get_tech().equals("3G")) nbUmtsLogs++;
+            if(lRncLogs.get(i).get_tech().equals("4G")) nbLteLogs++;
+        }
+    }
+
     private void getAllExports() {
         DatabaseExport dbe = new DatabaseExport(rncmobile.getAppContext());
 
@@ -133,4 +188,15 @@ public class ExportLogsActivity extends Activity {
         lExport = dbe.findAllExport();
         dbe.close();
     }
+
+    private Runnable displayResponse = new Runnable() {
+        public void run() {
+            if(!tel.getHttpResponse().equals("")) {
+                String html = TextUtils.htmlEncode(tel.getHttpResponse());
+                txtResponse.setText(Html.fromHtml(tel.getHttpResponse()));
+            }
+
+            handler.postDelayed(this, 5000);
+        }
+    };
 }
