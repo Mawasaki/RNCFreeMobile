@@ -7,18 +7,57 @@ android {
         applicationId "org.rncteam.rncfreemobile"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName '0.02'
     }
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
+    /* Increment version */
+    def versionPropsFile = file('../version.properties')
+
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+        def value = 0
+        def runTasks = gradle.startParameter.taskNames
+        if ('assemble' in runTasks || 'assembleRelease' in runTasks || ':app:assembleRelease' in runTasks) {
+            value = 1;
+        }
+
+        def versionMajor = 0
+        def versionMinor = 1
+        def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
+        def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+        def version_Code = versionProps['VERSION_CODE'].toInteger() + 1
+        //def run_task = versionProps['RUN_TASK']
+
+        versionProps['VERSION_PATCH'] = versionPatch.toString()
+        versionProps['VERSION_BUILD'] = versionBuild.toString()
+        versionProps['VERSION_CODE'] = version_Code.toString()
+        //versionProps['RUN_TASK'] = runTasks
+
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        defaultConfig {
+            versionCode version_Code
+            versionName "RNCFreeMobile-${versionMajor}.${versionMinor}.${versionPatch}-${versionBuild}"
+            minSdkVersion 14
+            targetSdkVersion 19
+        }
+    } else {
+        throw new GradleException("Could not read version.properties!")
     }
+    /* End Increment version */
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig getSigningConfig()
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFile = new File(output.outputFile.parent,
+                            output.outputFile.name.replace("app-release", defaultConfig.versionName))
+                }
+            }
         }
     }
     productFlavors {

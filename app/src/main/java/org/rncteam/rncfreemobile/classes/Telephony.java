@@ -126,6 +126,7 @@ public class Telephony {
         switch (dataState) {
             case TelephonyManager.DATA_CONNECTED:
             case TelephonyManager.DATA_ACTIVITY_DORMANT:
+            case TelephonyManager.DATA_ACTIVITY_NONE:
             case TelephonyManager.DATA_CONNECTING:
                 return 1;
             default:

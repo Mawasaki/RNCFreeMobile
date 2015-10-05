@@ -1,17 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5dp" >
 
     <FrameLayout
+        android:id="@+id/lyt_info_version"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="3dp"
         android:background="@drawable/layout_bg"
-        android:elevation="1dp" >
+        android:elevation="2dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RNC FreeMobile Version :"
+                android:id="@+id/lbl_info_version"
+                android:textSize="15dp"
+                android:textColor="@android:color/black"
+                android:padding="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Version: 0.0.1"
+                android:id="@+id/txt_info_version1"
+                android:textSize="12dp"
+                android:textColor="@android:color/black"
+                android:padding="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Build: 1"
+                android:id="@+id/txt_info_version2"
+                android:textSize="12dp"
+                android:textColor="@android:color/black"
+                android:padding="2dp" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:layout_below="@id/lyt_info_version"
+        android:background="@drawable/layout_bg"
+        android:elevation="2dp" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -23,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:text="RNC Database last update :"
                 android:id="@+id/lbl_rnc_database"
-                android:textSize="14dp"
+                android:textSize="15dp"
                 android:textColor="@android:color/black"
                 android:padding="2dp" />
 

@@ -1,30 +1,29 @@
 package org.rncteam.rncfreemobile;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.classes.DatabaseInfo;
-
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by cedricf_25 on 14/07/2015.
  */
 public class InfosFragment extends Fragment {
+    private static final String TAG = "InfosFragment";
 
+    Context context;
+
+    TextView txtInfoVersion1;
+    TextView txtInfoVersion2;
     TextView txtRncUpdate;
-
-    private Timer t;
-    private TaskTimer taskTimer;
 
     private View v;
 
@@ -33,63 +32,51 @@ public class InfosFragment extends Fragment {
         View v =inflater.inflate(R.layout.fragment_info,container,false);
         this.v = v;
 
-        setTimer();
+        context = rncmobile.getAppContext();
+
+        // Version
+        txtInfoVersion1 = (TextView) v.findViewById(R.id.txt_info_version1);
+        txtInfoVersion2 = (TextView) v.findViewById(R.id.txt_info_version2);
+        // Rnc update
+        txtRncUpdate = (TextView) v.findViewById(R.id.txt_rnc_database);
+
+        setInfoRncMobile();
+        setInfoVersion();
 
         return v;
     }
 
-    private void setTimer() {
-        if(t != null) t.cancel();
-        t = new Timer();
-
-        taskTimer = new TaskTimer();
-
-        t.scheduleAtFixedRate(taskTimer , 0 , 10000);
-    }
-
-    public void onPause() {
-        super.onPause();
-        cancelTimer();
-    }
-
-    public void onStop() {
-        super.onStop();
-        cancelTimer();
-    }
-
     public void onResume() {
         super.onResume();
-        setTimer();
+        setInfoRncMobile();
+        setInfoVersion();
     }
 
-    private void cancelTimer() {
-        t.cancel();
+    private void setInfoVersion() {
+        try {
+            String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            String[] v_parts = version.split("-");
+
+            txtInfoVersion1.setText("Version: " + v_parts[1]);
+            txtInfoVersion2.setText("Build: " +
+                    context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            txtInfoVersion1.setText("Error:" + e.toString());
+        }
+
     }
 
-    private Runnable displayInfos = new Runnable() {
-        public void run() {
-            // UI
-            txtRncUpdate = (TextView) v.findViewById(R.id.txt_rnc_database);
-            DatabaseInfo dbi = new DatabaseInfo(rncmobile.getAppContext());
+    private void setInfoRncMobile() {
+        DatabaseInfo dbi = new DatabaseInfo(rncmobile.getAppContext());
+        dbi.open();
 
-            dbi.open();
+        ArrayList lInfo = dbi.getInfo("rncBaseUpdate");
 
-            ArrayList lInfo = dbi.getInfo("rncBaseUpdate");
+        if (lInfo.size() > 0)
+            txtRncUpdate.setText((String) lInfo.get(1));
 
-            if (lInfo.size() > 0) {
-                txtRncUpdate.setText((String) lInfo.get(1));
-            }
+        if(txtRncUpdate.getText().equals("0")) txtRncUpdate.setText("Please update");
 
-            if(txtRncUpdate.getText().equals("0")) txtRncUpdate.setText("Please update");
-
-            dbi.close();
-        }
-    };
-
-    class TaskTimer extends TimerTask {
-        @Override
-        public void run() {
-            getActivity().runOnUiThread(displayInfos);
-        }
+        dbi.close();
     }
 }
