@@ -2,6 +2,8 @@ package org.rncteam.rncfreemobile.classes;
 
 import android.os.Environment;
 
+import org.rncteam.rncfreemobile.models.Rnc;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

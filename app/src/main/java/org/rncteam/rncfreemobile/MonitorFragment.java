@@ -4,8 +4,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.telephony.NeighboringCellInfo;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,7 @@ import org.rncteam.rncfreemobile.adapters.ListMonitorMainUmtsAdapter;
 import org.rncteam.rncfreemobile.adapters.ListMonitorPscAdapter;
 import org.rncteam.rncfreemobile.classes.CellLte;
 import org.rncteam.rncfreemobile.classes.CellWcdma;
-import org.rncteam.rncfreemobile.classes.Rnc;
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.classes.TelephonyNeighbours;
 
@@ -91,7 +89,8 @@ public class MonitorFragment extends Fragment {
 
                     if (tel.getNetworkClass() == 3 && tel.getRegisteredWcdmaCell() != null) {
 
-                        arrayCellUmts.add(tel.getRegisteredWcdmaCell());
+                        CellWcdma CWcdma = tel.getRegisteredWcdmaCell();
+                        arrayCellUmts.add(CWcdma);
 
                         if (arrayCellUmts.size() > 0) {
                             ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(rncmobile.getAppContext(), arrayCellUmts);

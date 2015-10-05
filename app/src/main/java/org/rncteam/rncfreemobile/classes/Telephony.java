@@ -4,6 +4,7 @@ package org.rncteam.rncfreemobile.classes;
  * Created by cedricf_25 on 14/07/2015.
  */
 import android.content.Context;
+import android.os.Handler;
 import android.telephony.CellInfo;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoWcdma;
@@ -13,8 +14,8 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
-import android.util.Log;
 
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.ArrayList;
@@ -44,6 +45,11 @@ public class Telephony {
     private Rnc loggedKnowRnc;
     private Rnc tempNewRnc;
 
+    private Handler handler;
+
+    private int tempTech;
+    private boolean signalChange;
+
     private Context mContext;
 
     public Telephony(Context context) {
@@ -56,12 +62,16 @@ public class Telephony {
         setSignalListener();
 
         signalStrength = null;
+        tempTech = getNetworkClass();
 
         lcWcdma = new ArrayList<CellWcdma>();
         lcLte = new ArrayList<CellLte>();
 
         lNci = tm.getAllCellInfo();
         dispatchCellInfo();
+
+        handler = new Handler();
+        dispatchCI.run();
     }
 
     private String getNetworkOperator() {
@@ -93,7 +103,7 @@ public class Telephony {
     }
 
     public Rnc getTempNewRnc() {
-        return tempNewRnc;
+        return this.tempNewRnc;
     }
 
     public void setTempNewRnc(Rnc tempNewRnc) {
@@ -108,13 +118,14 @@ public class Telephony {
         gsmCellLocation = (GsmCellLocation) this.cellLocation;
     }
 
+    public String getDeviceId() { return tm.getDeviceId(); }
+
     public int getDataActivity() {
         int dataState = tm.getDataState();
 
         switch (dataState) {
             case TelephonyManager.DATA_CONNECTED:
             case TelephonyManager.DATA_ACTIVITY_DORMANT:
-            case TelephonyManager.DATA_ACTIVITY_NONE:
             case TelephonyManager.DATA_CONNECTING:
                 return 1;
             default:
@@ -152,134 +163,141 @@ public class Telephony {
     private void dispatchCellInfo() {
         lcWcdma.clear();
         lcLte.clear();
+        lcNeigh = new ArrayList<>();
 
-        // Dep API
         cWcdma = new CellWcdma();
         cLte = new CellLte();
 
-        if(getDataActivity() != 0) {
-            if (getNetworkClass() == 2) {
-                // Not implemented
-            }
+        setLoggedRnc(null);
 
-            if (getNetworkClass() == 3) {
-                cWcdma.setIsRegistred(true);
-
-                cWcdma.setMcc(this.getMcc());
-                cWcdma.setMnc(this.getMnc());
-                cWcdma.setLac(gsmCellLocation.getLac());
-                cWcdma.setPsc(gsmCellLocation.getPsc());
-                cWcdma.setLcid(gsmCellLocation.getCid());
-
-                if (signalStrength != null) {
-                    cWcdma.setCellSignalStrength(signalStrength.getGsmSignalStrength());
-                } else {
-                    cWcdma.setCellSignalStrength(-1);
-                }
-
-                cWcdma.setRncDB(getRncDB(cWcdma.getRnc(), cWcdma.getCid()));
-                cWcdma.setText(cWcdma.getRncDB().get_txt());
-                cWcdma.insertRncInLogs();
-                setLoggedRnc(cWcdma.getRncDB());
-
-                lcWcdma.add(cWcdma);
-            }
-            if (getNetworkClass() == 4) {
-                cLte.setIsRegistred(true);
-
-                cLte.setMcc(this.getMcc());
-                cLte.setMnc(this.getMnc());
-                cLte.setTac(gsmCellLocation.getLac());
-                cLte.setPci(gsmCellLocation.getPsc());
-                cLte.setLCid(gsmCellLocation.getCid());
-
-                if (signalStrength != null) {
-                    cLte.setCellSignalStrength(signalStrength.getGsmSignalStrength());
-                    cLte.setLteSignals(signalStrength);
-                } else {
-                    cLte.setCellSignalStrength(-1);
-                }
-
-                cLte.setRncDB(getRncDB(cLte.getRnc(), cLte.getCid()));
-                cLte.setText(cLte.getRncDB().get_txt());
-                cLte.insertRncInLogs();
-                setLoggedRnc(cLte.getRncDB());
-
-                lcLte.add(cLte);
-            }
-
-            // Last NeighboringCell Infos
-            cNeigh = new CellNeighbours();
-
-            // PSC Management
-            lNci2 = tm.getAllCellInfo();
-            if(lNci2 != null) { // If device supports new API
-                for (CellInfo cellInfo : lNci2) {
-                    cWcdma = new CellWcdma();
-                    cLte = new CellLte();
-
-                    if (cellInfo != null && cellInfo instanceof CellInfoWcdma) {
-                        CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfo;
-
-                        cWcdma.setIsRegistred(cellInfoWcdma.isRegistered());
-
-                        cWcdma.setMcc(cellInfoWcdma.getCellIdentity().getMcc());
-                        cWcdma.setMnc(cellInfoWcdma.getCellIdentity().getMnc());
-                        cWcdma.setLac(cellInfoWcdma.getCellIdentity().getLac());
-                        cWcdma.setPsc(cellInfoWcdma.getCellIdentity().getPsc());
-                        cWcdma.setLcid(cellInfoWcdma.getCellIdentity().getCid());
-
-                        cWcdma.setCellSignalStrength(cellInfoWcdma.getCellSignalStrength().getDbm());
-
-                        if(!cellInfoWcdma.isRegistered()) {
-                            cNeigh.add(cWcdma.getLac(), cWcdma.getPsc(), cWcdma.getLCid(), cWcdma.getCellSignalStrength());
-                        }
+        // Is telephony initilized
+        if (getNetworkClass() != 0) {
+            if (getDataActivity() != 0 && gsmCellLocation.getCid() > 0) {
+                // Mhhh.. Very ugly, I do this for moment
+                if (tempTech == getNetworkClass()) {
+                    if (getNetworkClass() == 2) {
+                        // Not implemented
                     }
-                    if (cellInfo != null && cellInfo instanceof CellInfoLte) {
-                        CellInfoLte cellInfoLte = (CellInfoLte) cellInfo;
 
-                        cLte.setIsRegistred(cellInfoLte.isRegistered());
+                    if (getNetworkClass() == 3) {
+                        cWcdma.setIsRegistred(true);
 
-                        cLte.setMcc(cellInfoLte.getCellIdentity().getMcc());
-                        cLte.setMnc(cellInfoLte.getCellIdentity().getMnc());
-                        cLte.setTac(cellInfoLte.getCellIdentity().getTac());
-                        cLte.setPci(cellInfoLte.getCellIdentity().getPci());
-                        cLte.setLCid(cellInfoLte.getCellIdentity().getCi());
+                        cWcdma.setMcc(this.getMcc());
+                        cWcdma.setMnc(this.getMnc());
+                        cWcdma.setLac(gsmCellLocation.getLac());
+                        cWcdma.setPsc(gsmCellLocation.getPsc());
+                        cWcdma.setLcid(gsmCellLocation.getCid());
 
-                        cLte.setCellSignalStrength(cellInfoLte.getCellSignalStrength().getDbm());
-
-                        // How the new API is tunneling LTE Neigh ?
-                        if(!cellInfoLte.isRegistered()) {
-                            cNeigh.add(cLte.getNeighCI(), cLte.getPci(), cLte.getNeighCI(), cLte.getLteSignalStrength());
+                        if (signalStrength != null) {
+                            cWcdma.setCellSignalStrength(signalStrength.getGsmSignalStrength());
                         } else {
-                            // Get PCI or other info of new API
-                            CellLte rncNeigh = getRegisteredLteCell();
-                            rncNeigh.setPci(cLte.getPci());
-                            setRegisteredLteCell(rncNeigh);
+                            cWcdma.setCellSignalStrength(-1);
+                        }
+
+                        cWcdma.setRncDB(getRncDB(cWcdma.getRnc(), cWcdma.getCid()));
+                        cWcdma.setText(cWcdma.getRncDB().get_txt());
+                        cWcdma.insertRncInLogs();
+                        setLoggedRnc(cWcdma.getRncDB());
+
+                        lcWcdma.add(cWcdma);
+                    }
+                    if (getNetworkClass() == 4) {
+                        cLte.setIsRegistred(true);
+
+                        cLte.setMcc(this.getMcc());
+                        cLte.setMnc(this.getMnc());
+                        cLte.setTac(gsmCellLocation.getLac());
+                        cLte.setPci(gsmCellLocation.getPsc());
+                        cLte.setLCid(gsmCellLocation.getCid());
+
+                        if (signalStrength != null) {
+                            cLte.setCellSignalStrength(signalStrength.getGsmSignalStrength());
+                            cLte.setLteSignals(signalStrength);
+                        } else {
+                            cLte.setCellSignalStrength(-1);
+                        }
+
+                        cLte.setRncDB(getRncDB(cLte.getRnc(), cLte.getCid()));
+                        cLte.setText(cLte.getRncDB().get_txt());
+                        cLte.insertRncInLogs();
+                        setLoggedRnc(cLte.getRncDB());
+
+                        lcLte.add(cLte);
+                    }
+
+                    // Last NeighboringCell Infos
+                    cNeigh = new CellNeighbours();
+
+                    // PSC Management
+                    lNci2 = tm.getAllCellInfo();
+                    if (lNci2 != null && lNci2.size() > 0) { // If device supports new API
+                        for (CellInfo cellInfo : lNci2) {
+                            cWcdma = new CellWcdma();
+                            cLte = new CellLte();
+
+                            if (cellInfo != null && cellInfo instanceof CellInfoWcdma) {
+                                CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfo;
+
+                                cWcdma.setIsRegistred(cellInfoWcdma.isRegistered());
+
+                                cWcdma.setMcc(cellInfoWcdma.getCellIdentity().getMcc());
+                                cWcdma.setMnc(cellInfoWcdma.getCellIdentity().getMnc());
+                                cWcdma.setLac(cellInfoWcdma.getCellIdentity().getLac());
+                                cWcdma.setPsc(cellInfoWcdma.getCellIdentity().getPsc());
+                                cWcdma.setLcid(cellInfoWcdma.getCellIdentity().getCid());
+
+                                cWcdma.setCellSignalStrength(cellInfoWcdma.getCellSignalStrength().getDbm());
+
+                                if (!cellInfoWcdma.isRegistered()) {
+                                    cNeigh.add(cWcdma.getLac(), cWcdma.getPsc(), cWcdma.getLCid(), cWcdma.getCellSignalStrength());
+                                }
+
+                            }
+                            if (cellInfo != null && cellInfo instanceof CellInfoLte) {
+                                CellInfoLte cellInfoLte = (CellInfoLte) cellInfo;
+
+                                cLte.setIsRegistred(cellInfoLte.isRegistered());
+
+                                cLte.setMcc(cellInfoLte.getCellIdentity().getMcc());
+                                cLte.setMnc(cellInfoLte.getCellIdentity().getMnc());
+                                cLte.setTac(cellInfoLte.getCellIdentity().getTac());
+                                cLte.setPci(cellInfoLte.getCellIdentity().getPci());
+                                cLte.setLCid(cellInfoLte.getCellIdentity().getCi());
+
+                                cLte.setCellSignalStrength(cellInfoLte.getCellSignalStrength().getDbm());
+
+                                // How the new API is tunneling LTE Neigh ?
+                                if (!cellInfoLte.isRegistered()) {
+                                    cNeigh.add(cLte.getNeighCI(), cLte.getPci(), cLte.getNeighCI(), cLte.getLteSignalStrength());
+                                } else {
+                                    // Get PCI or other info of new API
+                                    CellLte rncNeigh = getRegisteredLteCell();
+                                    rncNeigh.setPci(cLte.getPci());
+                                    setRegisteredLteCell(rncNeigh);
+                                }
+                            }
+                        }
+                    } else {
+                        List<NeighboringCellInfo> lNci = tm.getNeighboringCellInfo();
+
+                        for (int i = 0; i < lNci.size(); i++) {
+                            cNeigh.add(lNci.get(i).getLac(), lNci.get(i).getPsc(), lNci.get(i).getCid(), lNci.get(i).getRssi());
                         }
                     }
+
+                    if (getNetworkClass() == 3) {
+                        CellWcdma rncNeigh = getRegisteredWcdmaCell();
+                        if (rncNeigh != null)
+                            lcNeigh = cNeigh.getNearestNeighboringInRnc(rncNeigh.getRncDB());
+                    }
+                    if (getNetworkClass() == 4) {
+                        CellLte rncNeigh = getRegisteredLteCell();
+                        if (rncNeigh != null)
+                            lcNeigh = cNeigh.getNearestNeighboringInRnc(rncNeigh.getRncDB());
+                    }
+                    tempTech = getNetworkClass();
                 }
             }
-            else {
-                List<NeighboringCellInfo> lNci = tm.getNeighboringCellInfo();
-
-                for (int i = 0; i < lNci.size(); i++) {
-                    cNeigh.add(lNci.get(i).getLac(), lNci.get(i).getPsc(), lNci.get(i).getCid(), lNci.get(i).getRssi());
-                }
-            }
-            lcNeigh = new ArrayList<>();
-
-            if (getNetworkClass() == 3) {
-                CellWcdma rncNeigh = getRegisteredWcdmaCell();
-                if (rncNeigh != null)
-                    lcNeigh = cNeigh.getNearestNeighboringInRnc(rncNeigh.getRncDB());
-            }
-            if (getNetworkClass() == 4) {
-                CellLte rncNeigh = getRegisteredLteCell();
-                if (rncNeigh != null)
-                    lcNeigh = cNeigh.getNearestNeighboringInRnc(rncNeigh.getRncDB());
-            }
-
         }
     }
 
@@ -326,6 +344,17 @@ public class Telephony {
         return rncDB;
     }
 
+    // ListLogs
+    public void getAllRncLogs() {
+        if(rncmobile.listRncLogs != null) {
+            DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+
+            dbl.open();
+            dbl.findAllRncLogsMainList();
+            dbl.close();
+        }
+    }
+
     // SIGNALS
     private void setSignalStrength(SignalStrength signalStrength) {
         this.signalStrength = signalStrength;
@@ -343,7 +372,8 @@ public class Telephony {
             super.onSignalStrengthsChanged(signalStrength);
 
             setSignalStrength(signalStrength);
-            dispatchCellInfo();
+            signalChange = true;
+            //dispatchCellInfo();
         }
 
         public void onCellLocationChanged(final CellLocation location) {
@@ -351,7 +381,20 @@ public class Telephony {
 
             setCellLocation(location);
             setGsmCellLocation();
-            //dispatchCellInfo(); Disable for now
+            signalChange = true;
+            //dispatchCellInfo();
+
+            tempTech = getNetworkClass();
         }
     }
+
+    private Runnable dispatchCI = new Runnable() {
+        public void run() {
+            if (signalChange)
+                dispatchCellInfo();
+            signalChange = false;
+
+            handler.postDelayed(this, 1000);
+        }
+    };
 }

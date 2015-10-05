@@ -3,11 +3,9 @@ package org.rncteam.rncfreemobile;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +19,8 @@ import android.widget.ListView;
 import org.rncteam.rncfreemobile.adapters.ListLogsMainAdapter;
 
 import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+
+import java.util.ArrayList;
 
 
 /**
@@ -45,6 +45,8 @@ public class LogsFragment extends Fragment {
         this.v = v;
 
         setHasOptionsMenu(true);
+
+        rncmobile.listRncLogs = new ArrayList<>();
 
         getAllRncLogs();
 
@@ -112,6 +114,7 @@ public class LogsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         getAllRncLogs();
         adapterLogs = new ListLogsMainAdapter(getActivity(), rncmobile.getAppContext(), rncmobile.listRncLogs);
         listViewLogsMain.setAdapter(adapterLogs);
@@ -121,7 +124,7 @@ public class LogsFragment extends Fragment {
         DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
 
         dbl.open();
-        rncmobile.listRncLogs = dbl.findAllRncLogs();
+        dbl.findAllRncLogsMainList();
         dbl.close();
     }
 
@@ -134,7 +137,7 @@ public class LogsFragment extends Fragment {
         public void run() {
             adapterLogs.notifyDataSetChanged();
 
-            handler.postDelayed(this, 5000);
+            handler.postDelayed(this, 10000);
         }
     };
 

@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 
 import org.rncteam.rncfreemobile.classes.AnfrData;
 import org.rncteam.rncfreemobile.classes.Maps;
+import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.io.Console;
@@ -34,7 +35,10 @@ public class MapsChangeListeners implements OnCameraChangeListener {
         this.maps.setLastPosLon(position.target.longitude);
         this.maps.setLastZoom(position.zoom);
 
-        if(position.zoom > 9) {
+        Telephony tel = rncmobile.getTelephony();
+
+        int tt  =tel.getDataActivity();
+        if(position.zoom > 9 && tel != null && tel.getDataActivity() != 0) {
             if(rncmobile.onTransaction == false && rncmobile.markerClicked == false) {
                 AnfrData anfrData = new AnfrData();
                 anfrData.execute();

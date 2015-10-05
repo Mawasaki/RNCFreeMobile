@@ -1,10 +1,12 @@
 package org.rncteam.rncfreemobile.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
@@ -59,6 +61,8 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
             holder.txtRscp = (TextView) convertView.findViewById(R.id.txt_rscp);
             holder.txtData = (TextView) convertView.findViewById(R.id.txt_data);
 
+            holder.fl_background = (FrameLayout) convertView.findViewById(R.id.fl_monitor_umts_general);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -75,6 +79,12 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         holder.txtRscp.setText(String.valueOf(tWcdma.getCellSignalStrengthDbm()) + " dBm");
         holder.txtData.setText(tWcdma.getText());
 
+        // Roaming
+        if(tWcdma.getMnc() != 15)
+            holder.fl_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
+        else
+            holder.fl_background.setBackgroundColor(Color.parseColor("#FFFFFF"));
+
         return convertView;
     }
 
@@ -87,6 +97,8 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         TextView txtPsc;
         TextView txtRscp;
         TextView txtData;
+
+        FrameLayout fl_background;
     }
 
 }

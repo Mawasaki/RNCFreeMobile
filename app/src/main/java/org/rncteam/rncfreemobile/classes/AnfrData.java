@@ -1,10 +1,7 @@
 package org.rncteam.rncfreemobile.classes;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -15,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.ArrayList;
@@ -87,6 +85,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject jArray) {
+        String markerTitle;
         rncmobile.getMaps().removeMarkers();
         if(jArray != null) {
             try {
@@ -100,6 +99,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                         Rnc rnc = new Rnc();
                         rnc.NOTHING = true;
+                        markerTitle = "";
 
                         double anfr_lat = Double.valueOf(jData.getJSONObject(i).getString("lat"));
                         double anfr_lon = Double.valueOf(jData.getJSONObject(i).getString("lon"));
@@ -125,15 +125,24 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                                 }
                             }
 
-                            if (!rnc.NOTHING)
-                                icon = R.drawable.circle_green;
-                            else
+                            Telephony tel = rncmobile.getTelephony();
+
+                            if (rnc != null && tel != null && !rnc.NOTHING) {
+                                if (!rnc.get_real_rnc().equals(tel.getLoggedRnc().get_real_rnc())) {
+                                    icon = R.drawable.circle_green;
+                                    markerTitle = "green";
+                                } else {
+                                    icon = R.drawable.circle_orange;
+                                    markerTitle = "orange";
+                                }
+                            } else {
                                 icon = R.drawable.circle_grey;
-
-                        } else
+                                markerTitle = "grey";
+                            }
+                        } else {
                             icon = R.drawable.circle_red;
-
-                        String markerTitle = "Rnc Free Mobile";
+                            markerTitle = "red";
+                        }
 
                         AnfrInfos anfrInfos = new AnfrInfos();
 

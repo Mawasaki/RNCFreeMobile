@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.io.FileOutputStream;
@@ -16,11 +17,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by @cedricf_25 on 15/07/2015.

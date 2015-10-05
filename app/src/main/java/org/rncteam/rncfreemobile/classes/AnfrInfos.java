@@ -1,6 +1,7 @@
 package org.rncteam.rncfreemobile.classes;
 
 import org.json.JSONArray;
+import org.rncteam.rncfreemobile.models.Rnc;
 
 /**
  * Created by cedric_f25 on 21/09/2015.

@@ -1,10 +1,6 @@
 package org.rncteam.rncfreemobile.classes;
 
-import android.content.Context;
-import android.telephony.CellInfo;
-import android.telephony.NeighboringCellInfo;
-import android.util.Log;
-
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.ArrayList;

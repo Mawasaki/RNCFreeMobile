@@ -5,7 +5,7 @@ package org.rncteam.rncfreemobile;
  */
 import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.Maps;
-import org.rncteam.rncfreemobile.classes.RncLogs;
+import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.classes.Telephony;
 
 import android.app.Activity;
@@ -14,7 +14,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.ListView;
 
 import java.util.List;
 

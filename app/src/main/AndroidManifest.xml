@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -39,6 +40,7 @@
         <activity android:label="Edit RNC" android:name=".LogsDetailsActivity"/>
         <activity android:label="Show on map" android:name=".LogsMapsActivity"/>*
         <activity android:label="Set Coordinates" android:name=".LogsSetCooActivity"/>
+        <activity android:label="Export Logs" android:name=".ExportLogsActivity"/>
     </application>
 
 </manifest>

@@ -1,14 +1,5 @@
 package org.rncteam.rncfreemobile.classes;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.content.Context;
-import android.location.Location;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,7 +7,6 @@ import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -25,10 +15,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
-import org.json.JSONObject;
-import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
 import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
 /**
@@ -65,9 +54,33 @@ public class Maps {
     }
 
     public void initializeMap() {
-        if(lastZoom == 0 && lastPosLat == 0.0 && lastPosLon == 0.0)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(46.71109, 1.7191036), 5.0f));
+        if(lastZoom == 0 && lastPosLat == 0.0 && lastPosLon == 0.0) {
+            Telephony tel = rncmobile.getTelephony();
+
+            if(tel != null) {
+                if(tel.getLoggedRnc() != null && !tel.getLoggedRnc().NOTHING) {
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new LatLng(Double.valueOf(tel.getLoggedRnc().get_lat()), Double.valueOf(tel.getLoggedRnc().get_lon())))
+                            .zoom(12.0f)
+                            .bearing(0)
+                            .build();
+
+                    this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    /* This function animate directly the camera.
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(Double.valueOf(tel.getLoggedRnc().get_lat()),
+                                       Double.valueOf(tel.getLoggedRnc().get_lon())), 14.0f));
+                    */
+                } else {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(46.71109, 1.7191036), 5.0f));
+                }
+            } else {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(46.71109, 1.7191036), 5.0f));
+            }
+        }
+
         else
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(lastPosLat, lastPosLon), lastZoom));

@@ -3,15 +3,13 @@ package org.rncteam.rncfreemobile;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.classes.DatabaseLogs;
-import org.rncteam.rncfreemobile.classes.RncLogs;
-import org.rncteam.rncfreemobile.classes.Telephony;
+import org.rncteam.rncfreemobile.models.RncLogs;
 
 /**
  * Created by cedric_f25 on 29/09/2015.

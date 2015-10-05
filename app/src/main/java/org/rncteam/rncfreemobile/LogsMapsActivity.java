@@ -2,19 +2,16 @@ package org.rncteam.rncfreemobile;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.rncteam.rncfreemobile.classes.Maps;
-import org.rncteam.rncfreemobile.classes.RncLogs;
+import org.rncteam.rncfreemobile.models.RncLogs;
 
 /**
  * Created by cedricf_25 on 01/10/2015.

@@ -6,12 +6,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -20,7 +22,7 @@ import org.rncteam.rncfreemobile.LogsDetailsActivity;
 import org.rncteam.rncfreemobile.LogsMapsActivity;
 import org.rncteam.rncfreemobile.LogsSetCooActivity;
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.classes.RncLogs;
+import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.Date;
@@ -75,6 +77,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
             holder.txtDate = (TextView) convertView.findViewById(R.id.txt_logs_date);
             holder.txtTxt = (TextView) convertView.findViewById(R.id.txt_logs_text);
             holder.txtOperator = (TextView) convertView.findViewById(R.id.txt_logs_operator);
+            holder.fm_background = (FrameLayout) convertView.findViewById(R.id.fm_logs_general);
 
             convertView.setTag(holder);
         } else {
@@ -100,6 +103,11 @@ public class ListLogsMainAdapter extends BaseAdapter {
         holder.txtTxt.setText(String.valueOf(rncLog.get_txt()));
         holder.txtOperator.setText(String.valueOf(rncLog.get_mcc()) + " " + String.valueOf(rncLog.get_mnc()));
 
+        // Roaming operator
+        if(!rncLog.get_mnc().equals("15"))
+            holder.fm_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
+        else
+            holder.fm_background.setBackgroundColor(Color.parseColor("#FFFFFF"));
         // Popup
         ImageButton btnMenu = (ImageButton) convertView.findViewById(R.id.logs_btn_menu);
 
@@ -187,5 +195,6 @@ public class ListLogsMainAdapter extends BaseAdapter {
         TextView txtDate;
         TextView txtTxt;
         TextView txtOperator;
+        FrameLayout fm_background;
     }
 }

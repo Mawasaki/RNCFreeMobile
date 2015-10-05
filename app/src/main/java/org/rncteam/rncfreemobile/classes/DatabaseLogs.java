@@ -3,7 +3,10 @@ package org.rncteam.rncfreemobile.classes;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
+
+import org.rncteam.rncfreemobile.models.Rnc;
+import org.rncteam.rncfreemobile.models.RncLogs;
+import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,10 +70,9 @@ public class DatabaseLogs extends Database {
         v.put(COL_LOGS_LON, rnc.get_lon());
 
         // 3G Rnc
-        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = ?", new String[]{rnc.get_rnc()});
-
+        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = ?", new String[]{rnc.get_real_rnc()});
         // 4G Rnc
-        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = 40?" , new String[]{rnc.get_rnc()});
+        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = ?", new String[]{"40" + rnc.get_real_rnc()});
     }
 
     public void deleteRncLogs() {
@@ -98,6 +100,26 @@ public class DatabaseLogs extends Database {
 
         c.close();
         return lRncLogs;
+    }
+
+    public void findAllRncLogsMainList() {
+        if(rncmobile.listRncLogs != null) {
+            rncmobile.listRncLogs.clear();
+
+            String query = "SELECT * FROM " + TABLE_LOGS
+                    + " ORDER BY " + COL_LOGS_DATE + " DESC";
+
+            Cursor c = mdb.rawQuery(query, null);
+            c.moveToFirst();
+
+            while (!c.isAfterLast()) {
+                RncLogs rncLog = cToRncLogs(c);
+                rncmobile.listRncLogs.add(rncLog);
+                c.moveToNext();
+            }
+
+            c.close();
+        }
     }
 
 

@@ -97,6 +97,40 @@ public class Database  extends SQLiteOpenHelper {
             + COL_LOGS_TXT + " TEXT NOT NULL "
             + ");";
 
+    /* Table Export declaration */
+    protected static final String TABLE_EXPORT = "export";
+
+    protected static final String COL_EXPORT_ID        = "_id";
+    protected static final String COL_EXPORT_USER_ID   = "_user_id";
+    protected static final String COL_EXPORT_USER_NICK = "_user_nick";
+    protected static final String COL_EXPORT_USER_PWD  = "_user_pwd";
+    protected static final String COL_EXPORT_USER_TXT  = "_user_txt";
+    protected static final String COL_EXPORT_USER_TEL  = "_user_tel";
+    protected static final String COL_EXPORT_NAME      = "_name";
+    protected static final String COL_EXPORT_DATE      = "_date";
+    protected static final String COL_EXPORT_NB        = "_nb";
+    protected static final String COL_EXPORT_NB_UMTS   = "_nb_umts";
+    protected static final String COL_EXPORT_NB_LTE    = "_nb_lte";
+    protected static final String COL_EXPORT_STATE     = "_state";
+    protected static final String COL_EXPORT_TYPE      = "_type";
+    protected static final String COL_EXPORT_APP_VS    = "_app_version";
+
+    private static final String SQL_CREATE_TABLE_EXPORT = "CREATE TABLE " + TABLE_EXPORT + "("
+            + COL_EXPORT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COL_EXPORT_USER_ID + " TEXT NOT NULL, "
+            + COL_EXPORT_USER_NICK + " TEXT NOT NULL, "
+            + COL_EXPORT_USER_PWD + " TEXT NOT NULL, "
+            + COL_EXPORT_USER_TXT + " TEXT NOT NULL, "
+            + COL_EXPORT_USER_TEL + " TEXT NOT NULL, "
+            + COL_EXPORT_NAME + " TEXT NOT NULL, "
+            + COL_EXPORT_DATE + " TEXT NOT NULL, "
+            + COL_EXPORT_NB + " TEXT NOT NULL, "
+            + COL_EXPORT_NB_UMTS + " TEXT NOT NULL, "
+            + COL_EXPORT_NB_LTE + " TEXT NOT NULL, "
+            + COL_EXPORT_STATE + " TEXT NOT NULL, "
+            + COL_EXPORT_TYPE + " TEXT NOT NULL, "
+            + COL_EXPORT_APP_VS + " TEXT NOT NULL "
+            + ");";
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -112,6 +146,9 @@ public class Database  extends SQLiteOpenHelper {
 
         Log.d(TAG, "Create database logs...");
         db.execSQL(SQL_CREATE_TABLE_LOGS);
+
+        Log.d(TAG, "Create database user...");
+        db.execSQL(SQL_CREATE_TABLE_EXPORT);
 
         // Insert infos lines
         ContentValues values = new ContentValues();
@@ -129,6 +166,8 @@ public class Database  extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RNCS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INFOS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPORT);
+
         onCreate(db);
     }
 

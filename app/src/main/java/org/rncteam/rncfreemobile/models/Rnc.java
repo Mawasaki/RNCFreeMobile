@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.models;
 
 /**
  * Created by cedric_f25 on 15/07/2015.

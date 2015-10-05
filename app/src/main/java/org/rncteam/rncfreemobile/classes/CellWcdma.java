@@ -1,21 +1,13 @@
 package org.rncteam.rncfreemobile.classes;
 
-import android.content.Context;
 import android.telephony.CellIdentityWcdma;
-import android.telephony.CellLocation;
-import android.telephony.CellSignalStrengthWcdma;
-import android.telephony.NeighboringCellInfo;
-import android.telephony.PhoneStateListener;
-import android.telephony.SignalStrength;
-import android.telephony.gsm.GsmCellLocation;
-import android.util.Log;
 
+import org.rncteam.rncfreemobile.models.Rnc;
+import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -185,6 +177,9 @@ public class CellWcdma {
         } else { //update
             rncLog.set_date(sdf.format(new Date()));
             dbl.updateLogs(rncLog);
+
+            Telephony tel = rncmobile.getTelephony();
+            if(tel != null) tel.getAllRncLogs();
         }
         dbl.close();
     }

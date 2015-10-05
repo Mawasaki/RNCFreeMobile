@@ -2,8 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_down_csv_file"
-        android:title="Télécharger 20815.csv"
+        android:title="Download 20815.csv"
         android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_export_log"
+        android:title="Export LOG"
+        android:orderInCategory="110"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_settings"

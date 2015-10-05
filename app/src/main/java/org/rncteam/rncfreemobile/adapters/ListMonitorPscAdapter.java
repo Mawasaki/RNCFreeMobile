@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.classes.Rnc;
+import org.rncteam.rncfreemobile.models.Rnc;
 
 import java.util.List;
 

@@ -2,13 +2,12 @@ package org.rncteam.rncfreemobile.classes;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteStatement;
-import android.util.Log;
 
-import java.sql.SQLException;
+import org.rncteam.rncfreemobile.models.Rnc;
+
 import java.util.ArrayList;
 import java.util.List;
 

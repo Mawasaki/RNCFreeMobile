@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,7 +16,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.rncteam.rncfreemobile.classes.DatabaseLogs;
 import org.rncteam.rncfreemobile.classes.Maps;
-import org.rncteam.rncfreemobile.classes.RncLogs;
+import org.rncteam.rncfreemobile.models.RncLogs;
 
 /**
  * Created by cedricf_25 on 02/10/2015.

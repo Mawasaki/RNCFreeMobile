@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.models;
 
 import android.util.Log;
 
