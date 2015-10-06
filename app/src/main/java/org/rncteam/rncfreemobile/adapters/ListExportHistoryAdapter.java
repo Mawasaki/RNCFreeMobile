@@ -83,8 +83,8 @@ public class ListExportHistoryAdapter extends BaseAdapter {
                 + ((export.get_name().equals("")) ? "" : export.get_name() + " ") + "by "
                 + export.get_user_nick();
 
-        String nbDetailed = "Number exported : 3G:" + export.get_nb_umts() + " / 4G:"
-                + export.get_nb_lte();
+        String nbDetailed = "Number exported: " + export.get_nb()
+                + " / 3G: " + export.get_nb_umts() + " / 4G: " + export.get_nb_lte();
 
         // Date
         String fDate = "";

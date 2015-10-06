@@ -1,6 +1,7 @@
 package org.rncteam.rncfreemobile;
 
 import org.rncteam.rncfreemobile.classes.CsvRncDownloader;
+import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.classes.ViewPagerAdapter;
 import org.rncteam.rncfreemobile.view.SlidingTabLayout;
@@ -65,6 +66,18 @@ public class MainActivity extends ActionBarActivity {
         // getMenuInflater().inflate(R.menu.menu_tabs, menu);
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public void onPause() {
+        super.onPause();
+    }
+
+    public void onStop() {
+        Gps gps = rncmobile.getGps();
+        if(gps != null) {
+            gps.disableGps();
+        }
+        super.onStop();
     }
 
     @Override

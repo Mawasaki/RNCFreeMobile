@@ -137,7 +137,7 @@ public class LogsFragment extends Fragment {
         public void run() {
             adapterLogs.notifyDataSetChanged();
 
-            handler.postDelayed(this, 10000);
+            handler.postDelayed(this, 5000);
         }
     };
 

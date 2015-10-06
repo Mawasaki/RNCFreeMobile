@@ -96,7 +96,11 @@ public class rncmobile extends Application {
 
     public static String appBuild() {
         try {
-            return String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
+            //return String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
+            String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            String[] v_parts = version.split("-");
+
+            return v_parts[2];
         } catch (PackageManager.NameNotFoundException e) {
             return e.toString();
         }

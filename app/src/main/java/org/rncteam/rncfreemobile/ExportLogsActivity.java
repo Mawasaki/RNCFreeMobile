@@ -129,6 +129,7 @@ public class ExportLogsActivity extends Activity {
                                     lRncLogs.get(i).get_cid() + delimiter +
                                     lRncLogs.get(i).get_lac() + delimiter +
                                     lRncLogs.get(i).get_rnc() + delimiter +
+                                    (lRncLogs.get(i).get_psc().equals("0") ? "-1" : lRncLogs.get(i).get_psc()) + delimiter +
                                     lRncLogs.get(i).get_lat() + delimiter +
                                     lRncLogs.get(i).get_lon() + delimiter +
                                     lRncLogs.get(i).get_txt() + crlf;

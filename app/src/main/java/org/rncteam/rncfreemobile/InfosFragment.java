@@ -11,7 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.classes.DatabaseInfo;
+import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.models.RncLogs;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by cedricf_25 on 14/07/2015.
@@ -21,9 +25,13 @@ public class InfosFragment extends Fragment {
 
     Context context;
 
+    // UI
     TextView txtInfoVersion1;
     TextView txtInfoVersion2;
     TextView txtRncUpdate;
+    TextView txtLogsNbTotal;
+    TextView txtLogsNbUmts;
+    TextView txtLogsNbLte;
 
     private View v;
 
@@ -39,9 +47,14 @@ public class InfosFragment extends Fragment {
         txtInfoVersion2 = (TextView) v.findViewById(R.id.txt_info_version2);
         // Rnc update
         txtRncUpdate = (TextView) v.findViewById(R.id.txt_rnc_database);
+        // Info logs
+        txtLogsNbTotal = (TextView) v.findViewById(R.id.txt_logs_nb_total);
+        txtLogsNbUmts = (TextView) v.findViewById(R.id.txt_logs_nb_umts);
+        txtLogsNbLte = (TextView) v.findViewById(R.id.txt_logs_nb_lte);
 
         setInfoRncMobile();
         setInfoVersion();
+        setInfoLog();
 
         return v;
     }
@@ -53,8 +66,8 @@ public class InfosFragment extends Fragment {
     }
 
     private void setInfoVersion() {
-        txtInfoVersion1.setText(rncmobile.appVersion());
-        txtInfoVersion2.setText(rncmobile.appBuild());
+        txtInfoVersion1.setText("Version: " + rncmobile.appVersion());
+        txtInfoVersion2.setText("Build: " + rncmobile.appBuild());
     }
 
     private void setInfoRncMobile() {
@@ -69,5 +82,26 @@ public class InfosFragment extends Fragment {
         if(txtRncUpdate.getText().equals("0")) txtRncUpdate.setText("Please update");
 
         dbi.close();
+    }
+
+    private void setInfoLog() {
+        DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+        dbl.open();
+
+        List<RncLogs> lRncLogs = dbl.findAllRncLogs();
+
+        int nbUmtsLogs = 0;
+        int nbLteLogs = 0;
+
+        for(int i=0;i<lRncLogs.size();i++) {
+            if(lRncLogs.get(i).get_tech().equals("3G")) nbUmtsLogs++;
+            if(lRncLogs.get(i).get_tech().equals("4G")) nbLteLogs++;
+        }
+
+        txtLogsNbTotal.setText("Total: " + lRncLogs.size());
+        txtLogsNbUmts.setText("Total umts: " + nbUmtsLogs);
+        txtLogsNbLte.setText("Total lte: " + nbLteLogs);
+
+        dbl.close();
     }
 }
