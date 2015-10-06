@@ -117,6 +117,13 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             dos.writeBytes(this.nickname);
             dos.writeBytes(lineEnd);
 
+            // Nickname2
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"user\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(this.nickname);
+            dos.writeBytes(lineEnd);
+
             // Ids
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"user_id\""+ lineEnd);
@@ -128,7 +135,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"app_id\""+ lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("rncmobile" + rncmobile.appVersion());
+            dos.writeBytes("v" + rncmobile.appVersion());
             dos.writeBytes(lineEnd);
 
             // Phone

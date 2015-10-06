@@ -125,7 +125,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                             Telephony tel = rncmobile.getTelephony();
 
-                            if (rnc != null && tel != null && !rnc.NOTHING) {
+                            if (tel != null && rnc != null && tel.getLoggedRnc() != null && !rnc.NOTHING) {
                                 if (!rnc.get_real_rnc().equals(tel.getLoggedRnc().get_real_rnc())) {
                                     icon = R.drawable.circle_green;
                                     markerTitle = "green";

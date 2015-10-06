@@ -84,7 +84,8 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
         txt1.setText(fullAddress);
 
-        txt2.setText(anfrInfos.getCp() + " " + anfrInfos.getCommune());
+        //txt2.setText(anfrInfos.getCp() + " " + anfrInfos.getCommune());
+        txt2.setVisibility(View.GONE);
 
         txt3.setText("Implantation : " + (anfrInfos.getImplantation() != "null" ? anfrInfos.getImplantation() : ""));
         txt31.setText(" / Modification : " + ((anfrInfos.getModification() != "null") ? anfrInfos.getModification() : "-"));

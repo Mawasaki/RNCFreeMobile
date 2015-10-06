@@ -138,7 +138,8 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textSize="14dp"
-                    android:backgroundTint="@color/ColorPrimary" />
+                    android:backgroundTint="@color/ColorPrimary"
+                    android:focusableInTouchMode="true"/>
 
             </LinearLayout>
 
@@ -163,7 +164,8 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textSize="14dp"
-                    android:backgroundTint="@color/ColorPrimary" />
+                    android:backgroundTint="@color/ColorPrimary"
+                    android:focusableInTouchMode="true" />
 
             </LinearLayout>
 

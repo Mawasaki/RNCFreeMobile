@@ -29,6 +29,7 @@ public class MonitorFragment extends Fragment {
     private static final String TAG = "MonitorFragment";
 
     private FrameLayout fl;
+    private FrameLayout fl_2g;
     ListView listViewRncMain;
     ListView listViewRncPsc;
     View v;
@@ -51,6 +52,7 @@ public class MonitorFragment extends Fragment {
 
         // UI
         fl = (FrameLayout) v.findViewById(R.id.lyt_monitor_error);
+        fl_2g = (FrameLayout) v.findViewById(R.id.lyt_monitor_2g);
         listViewRncMain = (ListView) v.findViewById(R.id.list_main);
         listViewRncPsc = (ListView) v.findViewById(R.id.list_psc);
         listViewRncPsc.setDivider(null);
@@ -84,10 +86,13 @@ public class MonitorFragment extends Fragment {
                 listViewRncMain.setVisibility(View.VISIBLE);
                 listViewRncPsc.setVisibility(View.VISIBLE);
                 fl.setVisibility(View.GONE);
+                fl_2g.setVisibility(View.GONE);
 
                 if(tel.getDataActivity() != 0) {
 
-                    if (tel.getNetworkClass() == 3 && tel.getRegisteredWcdmaCell() != null) {
+                    if (tel.getNetworkClass() == 2) {
+                        fl_2g.setVisibility(View.VISIBLE);
+                    } else if (tel.getNetworkClass() == 3 && tel.getRegisteredWcdmaCell() != null) {
 
                         CellWcdma CWcdma = tel.getRegisteredWcdmaCell();
                         arrayCellUmts.add(CWcdma);
@@ -98,8 +103,7 @@ public class MonitorFragment extends Fragment {
                         } else {
                             Toast.makeText(rncmobile.getAppContext(), "(MonitorUI) Error: No valid RNC detected", Toast.LENGTH_LONG).show();
                         }
-                    }
-                    else if (tel.getNetworkClass() == 4 && tel.getRegisteredLteCell() != null) {
+                    } else if (tel.getNetworkClass() == 4 && tel.getRegisteredLteCell() != null) {
 
                         arrayCellLte.add(tel.getRegisteredLteCell());
 

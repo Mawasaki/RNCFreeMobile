@@ -61,6 +61,7 @@ public class ListExportHistoryAdapter extends BaseAdapter {
             convertView = this.inflater.inflate(R.layout.listview_export_history,
                     parent, false);
 
+            // TextView
             holder.txtMainInfo = (TextView) convertView.findViewById(R.id.txt_export_history_infos);
             holder.txtDate = (TextView) convertView.findViewById(R.id.txt_export_history_date);
             holder.txtNbTotal = (TextView) convertView.findViewById(R.id.txt_export_history_text_nb_total);

@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -89,14 +90,20 @@ public class ExportLogsActivity extends Activity {
         // Set count logs
         countLogsByTech();
 
-        txtExportCountTotal.setText(String.valueOf(lRncLogs.size()));
-        txtExportCountUmts.setText(String.valueOf(nbUmtsLogs));
-        txtExportCountLte.setText(String.valueOf(nbLteLogs));
-
         // Initialise list export history
         getAllExports();
         ListExportHistoryAdapter adapter = new ListExportHistoryAdapter(this,rncmobile.getAppContext(), lExport);
         listViewExportLogs.setAdapter(adapter);
+
+        // Set text to UI
+        txtExportCountTotal.setText(String.valueOf(lRncLogs.size()));
+        txtExportCountUmts.setText(String.valueOf(nbUmtsLogs));
+        txtExportCountLte.setText(String.valueOf(nbLteLogs));
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        inpImportNickname.setText(lExport.get(0).get_user_nick());
+        inpImportName.setText(lExport.get(0).get_name());
 
         // Button export management
         btnExportLog.setOnClickListener(new View.OnClickListener() {
