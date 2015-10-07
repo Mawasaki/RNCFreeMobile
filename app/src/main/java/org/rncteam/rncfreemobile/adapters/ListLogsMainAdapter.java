@@ -22,6 +22,7 @@ import org.rncteam.rncfreemobile.LogsDetailsActivity;
 import org.rncteam.rncfreemobile.LogsMapsActivity;
 import org.rncteam.rncfreemobile.LogsSetCooActivity;
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.classes.DatabaseLogs;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
@@ -117,12 +118,12 @@ public class ListLogsMainAdapter extends BaseAdapter {
             public void onClick(View view) {
                 PopupMenu popup = new PopupMenu(rncmobile.getAppContext(), view);
                 popup.getMenuInflater().inflate(R.menu.menu_logs_listview, popup.getMenu());
+                if(rncLog.get_lat().equals("0")) popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(false);
+                else popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(true);
                 popup.show();
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        // Retrieve RncInfos object
-                        //rncLog
 
                         LayoutInflater li = (LayoutInflater) rncmobile.getAppContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         switch (menuItem.getItemId()) {
@@ -174,7 +175,11 @@ public class ListLogsMainAdapter extends BaseAdapter {
                                 return true;
 
                             case R.id.action_logs_listview_delete:
-                                Log.d(TAG, "Listview Delete");
+                                DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+                                dbl.open();
+                                dbl.deleteOneLogs(rncLog);
+                                dbl.findAllRncLogsMainList();
+                                dbl.close();
                                 return true;
                             default:
                                 return false;

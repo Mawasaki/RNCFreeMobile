@@ -11,10 +11,12 @@ import org.rncteam.rncfreemobile.classes.Telephony;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import android.view.View;
+import android.util.Log;
+import android.view.LayoutInflater;
 
 import java.util.List;
 
@@ -29,7 +31,6 @@ public class rncmobile extends Application {
     private static Maps maps;
 
     public static Activity activity;
-    public static View vMaps;
     public static boolean isAppStart;
 
     public static boolean onTransaction;
@@ -65,6 +66,10 @@ public class rncmobile extends Application {
 
         // Transaction with http server
         onTransaction = false;
+
+        // Crash report
+        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
+
     }
 
     public static Context getAppContext() {
@@ -105,4 +110,21 @@ public class rncmobile extends Application {
             return e.toString();
         }
     }
+
+    private Thread.UncaughtExceptionHandler handleAppCrash =
+            new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread thread, Throwable ex) {
+                    Log.e("errorRNC1", ex.toString());
+
+                    LayoutInflater li = (LayoutInflater) rncmobile.getAppContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    Intent intentCA = new Intent(li.getContext(), CrashActivity.class);
+                    intentCA.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
+                    intentCA.putExtra("crashObject", ex.toString());
+                    startActivity(intentCA);
+
+                    System.exit(0); // kill off the crashed app
+                }
+            };
+
 }

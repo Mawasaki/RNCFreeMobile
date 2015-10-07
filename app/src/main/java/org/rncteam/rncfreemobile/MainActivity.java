@@ -1,25 +1,19 @@
 package org.rncteam.rncfreemobile;
 
-import org.rncteam.rncfreemobile.classes.CsvRncDownloader;
+import org.rncteam.rncfreemobile.tasks.CsvRncDownloader;
 import org.rncteam.rncfreemobile.classes.Gps;
-import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.classes.ViewPagerAdapter;
 import org.rncteam.rncfreemobile.view.SlidingTabLayout;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 /**

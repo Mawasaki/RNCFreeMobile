@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,7 +8,12 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.classes.CsvRncReader;
+import org.rncteam.rncfreemobile.classes.DatabaseInfo;
+import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.classes.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.Rnc;
+import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.io.FileOutputStream;
@@ -151,7 +156,7 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     dbr.deleteRnc();
                     dbr.addMassiveRnc(lRnc);
 
-                    dbr.close();
+
 
                     // Mark info
                     DatabaseInfo dbi = new DatabaseInfo(rncmobile.getAppContext());
@@ -162,6 +167,29 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     dbi.updateInfo("rncBaseUpdate", sdf.format(new Date()), "-");
 
                     dbi.close();
+
+                    // Update current logs
+                    DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+                    dbl.open();
+
+                    List<RncLogs> lRncLogs = dbl.findAllRncLogs();
+                    for(int i=0;i<lRncLogs.size();i++) {
+
+                        RncLogs rncLogs = lRncLogs.get(i);
+                        Rnc rnc = dbr.findRncByName(rncLogs.get_rnc(),rncLogs.get_cid());
+
+                        if(!rnc.NOTHING) {
+                            rncLogs.set_lat(rnc.get_lat());
+                            rncLogs.set_lon(rnc.get_lon());
+                            rncLogs.set_txt(rnc.get_txt());
+                            dbl.updateEditedLogs(rncLogs);
+
+                            dbl.findAllRncLogsMainList();
+                        }
+                    }
+
+                    dbr.close();
+                    dbl.close();
 
                     mProgressDialog.dismiss();
                 }

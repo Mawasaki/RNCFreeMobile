@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.models.RncLogs;
 
@@ -26,6 +27,7 @@ public class LogsSetCooActivity extends Activity {
 
     private RncLogs rnclogs;
     private Maps maps;
+    private Gps gps;
 
     private GoogleMap mMap;
     private Marker marker;
@@ -41,15 +43,26 @@ public class LogsSetCooActivity extends Activity {
         this.rnclogs = (RncLogs) getIntent().getSerializableExtra("logsInfosObject");
 
         maps = rncmobile.getMaps();
+        gps = rncmobile.getGps();
+        gps.enableGps();
 
         setUpMapIfNeeded();
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(Double.valueOf(rnclogs.get_lat()), Double.valueOf(rnclogs.get_lon())))
-                .zoom(15)
-                .bearing(0)
-                .build();
+        CameraPosition cameraPosition;
+        if(rnclogs.get_txt().equals("-")) {
+            cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(gps.getLatitude(), gps.getLongitude()))
+                    .zoom(12)
+                    .bearing(0)
+                    .build();
+        } else {
 
+            cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(Double.valueOf(rnclogs.get_lat()), Double.valueOf(rnclogs.get_lon())))
+                    .zoom(12)
+                    .bearing(0)
+                    .build();
+        }
         this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         marker = mMap.addMarker(new MarkerOptions()

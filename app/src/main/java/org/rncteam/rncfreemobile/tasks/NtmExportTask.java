@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.classes.DatabaseExport;
+import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Export;
 import org.rncteam.rncfreemobile.rncmobile;
 
@@ -128,7 +130,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"user_id\""+ lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(sb.toString());
+            dos.writeBytes(sb.toString().substring(0,10));
             dos.writeBytes(lineEnd);
 
             // AppVersion

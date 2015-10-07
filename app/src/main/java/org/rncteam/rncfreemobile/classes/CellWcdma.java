@@ -109,7 +109,7 @@ public class CellWcdma {
     // RNC
     public int getRnc() {
         // Extended RNC
-        if (getStdRnc() >= 256 && getStdRnc() <= 1000) {
+        if (getStdRnc() >= 256 && getStdRnc() <= 1000 && getMnc() == 15) {
             return getExtRnc();
         } else {
             return getStdRnc();

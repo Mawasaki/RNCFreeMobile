@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_UPDATES" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -41,6 +42,7 @@
         <activity android:label="Show on map" android:name=".LogsMapsActivity"/>*
         <activity android:label="Set Coordinates" android:name=".LogsSetCooActivity"/>
         <activity android:label="Export Logs" android:name=".ExportLogsActivity"/>
+        <activity android:label="Export Logs" android:name=".CrashActivity"/>
     </application>
 
 </manifest>

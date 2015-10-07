@@ -92,6 +92,8 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                     JSONArray jData = jArray.getJSONArray("DATA");
 
+                    Log.d(TAG, jData.toString());
+
                     Log.d(TAG,"Nb antennes : " + jData.length());
                     for(int i=0;i<jData.length();i++) {
 
@@ -125,7 +127,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                             Telephony tel = rncmobile.getTelephony();
 
-                            if (tel != null && rnc != null && tel.getLoggedRnc() != null && !rnc.NOTHING) {
+                            if (/*tel != null && rnc != null && tel.getLoggedRnc() != null && */!rnc.NOTHING) {
                                 if (!rnc.get_real_rnc().equals(tel.getLoggedRnc().get_real_rnc())) {
                                     icon = R.drawable.circle_green;
                                     markerTitle = "green";

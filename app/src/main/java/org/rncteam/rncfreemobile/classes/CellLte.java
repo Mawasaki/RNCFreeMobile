@@ -28,10 +28,14 @@ public class CellLte {
     private String txt;
     private int cellSignalStrength;
 
+    private int lteSignalStrength;
+    private int lteAsu;
     private int lteRsrp;
     private int lteRsrq;
     private int lteRssnr;
     private int lteCqi;
+
+    SignalStrength signalStrength;
 
     private Rnc rncDB;
 
@@ -129,8 +133,12 @@ public class CellLte {
     }
 
     // Signal Strength
-    public int getLteSignalStrength() {
+    public int getLteSignalStrengthAsu() {
         return cellSignalStrength;
+    }
+
+    public int getLteSignalStrengthInDbm() {
+        return (17 + getLteRsrp() + getLteRsrq());
     }
 
     public void setCellSignalStrength (int cellSignalStrength) {
@@ -138,6 +146,8 @@ public class CellLte {
     }
 
     public void setLteSignals(SignalStrength signalStrength) {
+        setLteSignalStrength(getLteSignalByType(signalStrength, "getLteSignalStrength"));
+        setLteAsu(getLteSignalByType(signalStrength, "getLteAsuLevel"));
         setLteRsrp(getLteSignalByType(signalStrength, "getLteRsrp"));
         setLteRsrq(getLteSignalByType(signalStrength, "getLteRsrq"));
         setLteRssnr(getLteSignalByType(signalStrength, "getLteRssnr"));
@@ -157,6 +167,22 @@ public class CellLte {
                 e.printStackTrace();
             }
         return -1;
+    }
+
+    public void setLteSignalStrength(int lteSignalStrength) {
+        this.lteSignalStrength = lteSignalStrength;
+    }
+
+    public int getLteSignalStrength() {
+        return this.lteSignalStrength;
+    }
+
+    public void setLteAsu(int lteAsu) {
+        this.lteAsu = lteAsu;
+    }
+
+    public int getLteAsu() {
+        return this.lteAsu;
     }
 
     public void setLteRsrp(int lteRsrp) {
@@ -179,7 +205,7 @@ public class CellLte {
         this.lteRssnr = lteRssnr;
     }
 
-    public int getLteRssnr() { return this.lteRssnr; }
+    public int getLteRssnr() { return this.lteRssnr/10; }
 
     public void setLteCqi(int lteCqi) { this.lteCqi = lteCqi; }
 

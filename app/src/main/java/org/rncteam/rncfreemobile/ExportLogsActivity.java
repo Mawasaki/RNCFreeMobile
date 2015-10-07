@@ -9,6 +9,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -18,11 +19,10 @@ import android.widget.Toast;
 import org.rncteam.rncfreemobile.adapters.ListExportHistoryAdapter;
 import org.rncteam.rncfreemobile.classes.DatabaseExport;
 import org.rncteam.rncfreemobile.classes.DatabaseLogs;
-import org.rncteam.rncfreemobile.classes.NtmExportTask;
+import org.rncteam.rncfreemobile.tasks.NtmExportTask;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Export;
 import org.rncteam.rncfreemobile.models.RncLogs;
-import org.w3c.dom.Text;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -53,6 +53,8 @@ public class ExportLogsActivity extends Activity {
     private Button btnExportLog;
     private ListView listViewExportLogs;
 
+    ListExportHistoryAdapter adapter;
+
     Handler handler;
     Telephony tel;
     // Count
@@ -60,6 +62,7 @@ public class ExportLogsActivity extends Activity {
     private int nbLteLogs;
 
     private Context context;
+    Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class ExportLogsActivity extends Activity {
         setContentView(R.layout.activity_export_logs);
 
         final Context context = this.getApplicationContext();
+        activity = this;
 
         txtExportCountTotal = (TextView )findViewById(R.id.txt_export_count);
         txtExportCountUmts = (TextView )findViewById(R.id.txt_export_count_umts);
@@ -92,7 +96,7 @@ public class ExportLogsActivity extends Activity {
 
         // Initialise list export history
         getAllExports();
-        ListExportHistoryAdapter adapter = new ListExportHistoryAdapter(this,rncmobile.getAppContext(), lExport);
+        adapter = new ListExportHistoryAdapter(this,rncmobile.getAppContext(), lExport);
         listViewExportLogs.setAdapter(adapter);
 
         // Set text to UI
@@ -102,8 +106,10 @@ public class ExportLogsActivity extends Activity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        inpImportNickname.setText(lExport.get(0).get_user_nick());
-        inpImportName.setText(lExport.get(0).get_name());
+        if(lExport.size() > 0) {
+            inpImportNickname.setText(lExport.get(0).get_user_nick());
+            inpImportName.setText(lExport.get(0).get_name());
+        }
 
         // Button export management
         btnExportLog.setOnClickListener(new View.OnClickListener() {
@@ -202,6 +208,13 @@ public class ExportLogsActivity extends Activity {
             if(!tel.getHttpResponse().equals("")) {
                 String html = TextUtils.htmlEncode(tel.getHttpResponse());
                 txtResponse.setText(Html.fromHtml(tel.getHttpResponse()));
+
+                // Update list
+                getAllExports();
+                adapter.notifyDataSetChanged();
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
             }
 
             handler.postDelayed(this, 5000);

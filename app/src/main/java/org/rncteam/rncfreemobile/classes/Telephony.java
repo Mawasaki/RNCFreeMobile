@@ -17,6 +17,7 @@ import android.telephony.gsm.GsmCellLocation;
 
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.tasks.NtmExportTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,8 +175,6 @@ public class Telephony {
 
         setLoggedRnc(null);
 
-        getDataActivity();
-
         // Is telephony initilized
         if (getNetworkClass() != 0) {
 
@@ -242,6 +241,16 @@ public class Telephony {
                                 Double.valueOf(loggedRnc.get_lon()));
                     }
 
+                    // Special feature : Export LOG on rncmobile if RNC not defined
+            /*
+                    if(getLoggedRnc().NOTHING) {
+                        /*
+                        NtmExportTask net = new NtmExportTask(rncmobile.getAppContext(), NtmFileName,
+                                inpImportNickname.getText().toString(), inpImportName.getText().toString());
+                        net.NtmExportSetData(lRncLogs.size(), nbUmtsLogs, nbLteLogs);
+                        net.execute();
+                        */
+                    //}
                     // Last NeighboringCell Infos
                     cNeigh = new CellNeighbours();
 
@@ -416,7 +425,7 @@ public class Telephony {
 
     private Runnable dispatchCI = new Runnable() {
         public void run() {
-            if (signalChange)
+            if (signalChange || cellChange)
                 dispatchCellInfo();
             signalChange = false;
             cellChange = false;
