@@ -59,8 +59,8 @@ public class DatabaseRnc extends Database {
             statement.bindString(6, lRnc.get(i).get_lac());
             statement.bindString(7, lRnc.get(i).get_rnc());
             statement.bindString(8, lRnc.get(i).get_psc());
-            statement.bindString(9, lRnc.get(i).get_lat());
-            statement.bindString(10, lRnc.get(i).get_lon());
+            statement.bindDouble(9, lRnc.get(i).get_lat());
+            statement.bindDouble(10, lRnc.get(i).get_lon());
             statement.bindString(11, lRnc.get(i).get_txt());
 
             statement.execute();
@@ -137,7 +137,7 @@ public class DatabaseRnc extends Database {
         ArrayList<Rnc> lRnc = new ArrayList<Rnc>();
 
         String query = "SELECT * FROM " + TABLE_RNCS + " "
-                + "WHERE " + COL_RNCS_LAT + " between ? AND ?"
+                + "WHERE " + COL_RNCS_LAT + " between ? AND ? "
                 + "AND " + COL_RNCS_LON + " between ? AND ? "
                 + "GROUP BY " + COL_RNCS_RNC;
 
@@ -160,8 +160,8 @@ public class DatabaseRnc extends Database {
 
         return lRnc;
     }
-
-    public Rnc findRncByCoo(Double lat, Double lon) {
+/*
+    public Rnc findRncByCoo(String lat, String lon) {
         Rnc rnc = new Rnc();
 
         String query = "SELECT * FROM " + TABLE_RNCS + " "
@@ -188,7 +188,7 @@ public class DatabaseRnc extends Database {
 
         return rnc;
     }
-
+*/
     public Rnc findRncById(String rncId) {
         String query = "SELECT * FROM " + TABLE_RNCS + " WHERE " + COL_ID + " = " + rncId;
 
@@ -212,8 +212,8 @@ public class DatabaseRnc extends Database {
         rnc.set_lac(c.getString(5));
         rnc.set_rnc(c.getString(6));
         rnc.set_psc(c.getString(7));
-        rnc.set_lat(c.getString(8));
-        rnc.set_lon(c.getString(9));
+        rnc.set_lat(c.getDouble(8));
+        rnc.set_lon(c.getDouble(9));
         rnc.set_txt(c.getString(10));
 
         return rnc;

@@ -63,7 +63,7 @@ public class TelephonyNeighbours extends Telephony {
                     nearestRnc = new Rnc("", "", "",
                             String.valueOf(lNci.get(i).getCid()), "",
                             String.valueOf(lNci.get(i).getLac()),
-                            String.valueOf(lNci.get(i).getPsc()), "", "", "-");
+                            String.valueOf(lNci.get(i).getPsc()), 0.0, 0.0, "-");
                 }
 
                 if (nearestRnc != null) {

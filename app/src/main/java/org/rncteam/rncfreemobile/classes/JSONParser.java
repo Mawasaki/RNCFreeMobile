@@ -65,6 +65,8 @@ public class JSONParser {
                 sb.append(line + "\n");
             }
 
+            Log.d(TAG, sb.toString());
+
             is.close();
             json = sb.toString();
 

@@ -120,7 +120,7 @@ public class rncmobile extends Application {
                     LayoutInflater li = (LayoutInflater) rncmobile.getAppContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     Intent intentCA = new Intent(li.getContext(), CrashActivity.class);
                     intentCA.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
-                    intentCA.putExtra("crashObject", ex.toString());
+                    intentCA.putExtra("crashObject", ex);
                     startActivity(intentCA);
 
                     System.exit(0); // kill off the crashed app

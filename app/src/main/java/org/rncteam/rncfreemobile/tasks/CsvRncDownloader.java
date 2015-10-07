@@ -156,8 +156,6 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     dbr.deleteRnc();
                     dbr.addMassiveRnc(lRnc);
 
-
-
                     // Mark info
                     DatabaseInfo dbi = new DatabaseInfo(rncmobile.getAppContext());
                     dbi.open();

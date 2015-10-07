@@ -1,17 +1,14 @@
 package org.rncteam.rncfreemobile.listeners;
 
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
 
-import org.rncteam.rncfreemobile.classes.AnfrData;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.rncmobile;
-
-import java.io.Console;
+import org.rncteam.rncfreemobile.tasks.AnfrData;
 
 /**
  * Created by cedricf_25 on 14/07/2015.

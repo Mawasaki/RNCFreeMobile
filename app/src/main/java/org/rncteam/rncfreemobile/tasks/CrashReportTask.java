@@ -25,9 +25,9 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
 
     private Activity activity;
     private Context context;
-    private String err;
+    private Throwable err;
 
-    public CrashReportTask(Activity activity, Context contex, String err) {
+    public CrashReportTask(Activity activity, Context contex, Throwable err) {
         this.activity = activity;
         this.context = contex;
         this.err = err;
@@ -56,8 +56,11 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
             OutputStreamWriter request = new OutputStreamWriter(conn.getOutputStream());
 
             String parameters = "phone=" + android.os.Build.MODEL +
-                                "&v_android="+ android.os.Build.VERSION.RELEASE +
-                                "&crash=" + err;
+                                "&v_android=" + android.os.Build.VERSION.RELEASE +
+                                "&class=" + err.getStackTrace().getClass().getName() +
+                                "&crash=" + err.toString();
+                                //" |3 " + err.get;
+
 
             request.write(parameters);
 

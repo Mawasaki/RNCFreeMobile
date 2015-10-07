@@ -26,8 +26,8 @@ public class RncLogs extends Rnc implements Serializable {
     private String _lac;
     private String _rnc;
     private String _psc;
-    private String _lat;
-    private String _lon;
+    private Double _lat;
+    private Double _lon;
     private String _txt;
 
     public RncLogs() {
@@ -171,22 +171,22 @@ public class RncLogs extends Rnc implements Serializable {
     }
 
     @Override
-    public String get_lat() {
+    public Double get_lat() {
         return _lat;
     }
 
     @Override
-    public void set_lat(String _lat) {
+    public void set_lat(Double _lat) {
         this._lat = _lat;
     }
 
     @Override
-    public String get_lon() {
+    public Double get_lon() {
         return _lon;
     }
 
     @Override
-    public void set_lon(String _lon) {
+    public void set_lon(Double _lon) {
         this._lon = _lon;
     }
 

@@ -108,7 +108,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             conn.setRequestProperty("User-Agent", USER_AGENT);
             conn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8") ;
 
-            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            conn.setRequestProperty("Content-Type", "multipart/form-data;charset=utf-8;boundary=" + boundary);
 
             dos = new DataOutputStream(conn.getOutputStream());
 

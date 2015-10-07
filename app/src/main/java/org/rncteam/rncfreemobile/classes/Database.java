@@ -46,8 +46,8 @@ public class Database  extends SQLiteOpenHelper {
             + COL_RNCS_LAC + " TEXT NOT NULL, "
             + COL_RNCS_RNC + " TEXT NOT NULL, "
             + COL_RNCS_PSC + " TEXT NOT NULL, "
-            + COL_RNCS_LAT + " TEXT NOT NULL, "
-            + COL_RNCS_LON + " TEXT NOT NULL, "
+            + COL_RNCS_LAT + " DOUBLE NOT NULL, "
+            + COL_RNCS_LON + " DOUBLE NOT NULL, "
             + COL_RNCS_TXT + " TEXT NOT NULL "
             + ");";
 
@@ -77,8 +77,8 @@ public class Database  extends SQLiteOpenHelper {
     protected static final String COL_LOGS_LAC    = "_lac";
     protected static final String COL_LOGS_RNC    = "_rnc";
     protected static final String COL_LOGS_PSC    = "_psc";
-    protected static final String COL_LOGS_LON    = "_lon";
-    protected static final String COL_LOGS_LAT    = "_lat";
+    protected static final String COL_LOGS_LON     = "_lon";
+    protected static final String COL_LOGS_LAT     = "_lat";
     protected static final String COL_LOGS_DATE    = "_date";
     protected static final String COL_LOGS_TXT    = "_txt";
 
@@ -91,8 +91,8 @@ public class Database  extends SQLiteOpenHelper {
             + COL_LOGS_LAC + " TEXT NOT NULL, "
             + COL_LOGS_RNC + " TEXT NOT NULL, "
             + COL_LOGS_PSC + " TEXT NOT NULL, "
-            + COL_LOGS_LAT + " TEXT NOT NULL, "
-            + COL_LOGS_LON + " TEXT NOT NULL, "
+            + COL_LOGS_LAT + " DOUBLE NOT NULL, "
+            + COL_LOGS_LON + " DOUBLE NOT NULL, "
             + COL_LOGS_DATE + " TEXT NOT NULL, "
             + COL_LOGS_TXT + " TEXT NOT NULL "
             + ");";

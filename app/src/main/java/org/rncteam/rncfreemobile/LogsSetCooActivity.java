@@ -102,8 +102,8 @@ public class LogsSetCooActivity extends Activity {
         RncLogs rncLog = dbl.findRncLogsByRncCid(String.valueOf(rnclogs.get_rnc()), String.valueOf(rnclogs.get_cid()));
         if(rncLog != null) {
             rncLog.set_txt(rnclogs.get_txt());
-            rncLog.set_lat(String.valueOf(newPos.latitude));
-            rncLog.set_lon(String.valueOf(newPos.longitude));
+            rncLog.set_lat(newPos.latitude);
+            rncLog.set_lon(newPos.longitude);
             dbl.updateEditedLogs(rncLog);
         }
 

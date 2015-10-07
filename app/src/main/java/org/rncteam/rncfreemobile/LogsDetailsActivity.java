@@ -63,8 +63,8 @@ public class LogsDetailsActivity extends Activity {
         RncLogs rncLog = dbl.findRncLogsByRncCid(String.valueOf(rnclogs.get_rnc()), String.valueOf(rnclogs.get_cid()));
         if(rncLog != null) {
             rncLog.set_txt(this.txtDetailText.getText().toString());
-            rncLog.set_lat(this.txtDetailLat.getText().toString());
-            rncLog.set_lon(this.txtDetailLon.getText().toString());
+            rncLog.set_lat(Double.valueOf(this.txtDetailLat.getText().toString()));
+            rncLog.set_lon(Double.valueOf(this.txtDetailLon.getText().toString()));
             dbl.updateEditedLogs(rncLog);
         }
 
@@ -95,8 +95,8 @@ public class LogsDetailsActivity extends Activity {
         txtDetailLac.setText(rnclogs.get_lac());
         txtDetailRnc.setText(rnclogs.get_rnc());
         txtDetailText.setText(rnclogs.get_txt());
-        txtDetailLat.setText(rnclogs.get_lat());
-        txtDetailLon.setText(rnclogs.get_lon());
+        txtDetailLat.setText(String.valueOf(rnclogs.get_lat()));
+        txtDetailLon.setText(String.valueOf(rnclogs.get_lon()));
     }
 
     private void deleteThisCell() {

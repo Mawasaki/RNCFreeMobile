@@ -118,7 +118,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
             public void onClick(View view) {
                 PopupMenu popup = new PopupMenu(rncmobile.getAppContext(), view);
                 popup.getMenuInflater().inflate(R.menu.menu_logs_listview, popup.getMenu());
-                if(rncLog.get_lat().equals("0")) popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(false);
+                if(rncLog.get_lat() == 0.0) popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(false);
                 else popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(true);
                 popup.show();
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

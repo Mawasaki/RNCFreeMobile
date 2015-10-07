@@ -211,6 +211,12 @@ public class CellLte {
 
     public int getLteCqi() { return this.lteCqi; }
 
+    public String get_real_rnc() {
+        String rnc = String.valueOf(getRnc());
+        if(rnc.substring(0, 2).equals("40")) return rnc.substring(2,rnc.length());
+        else return rnc;
+    }
+
     public void insertRncInLogs() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
 
@@ -222,6 +228,9 @@ public class CellLte {
         if(rncLog == null) {
             RncLogs rncLogs = new RncLogs();
 
+            // Is RNC already know in Logs ?
+            RncLogs knowRnc = dbl.findRncLogsByRnc(String.valueOf(get_real_rnc()));
+
             rncLogs.set_tech("4G");
             rncLogs.set_mcc(String.valueOf(getMcc()));
             rncLogs.set_mnc(String.valueOf(getMnc()));
@@ -229,10 +238,37 @@ public class CellLte {
             rncLogs.set_lac(String.valueOf(getTac()));
             rncLogs.set_rnc(String.valueOf(getRnc()));
             rncLogs.set_psc(String.valueOf(getPci()));
-            rncLogs.set_lat((rncDB.NOTHING) ? "0" : rncDB.get_lat());
-            rncLogs.set_lon((rncDB.NOTHING) ? "0" : rncDB.get_lon());
             rncLogs.set_date(sdf.format(new Date()));
-            rncLogs.set_txt((rncDB.NOTHING) ? "-" : rncDB.get_txt());
+
+            if(knowRnc != null) {
+                rncLogs.set_lat(knowRnc.get_lat());
+                rncLogs.set_lon(knowRnc.get_lon());
+                rncLogs.set_txt(knowRnc.get_txt());
+
+                // Set in rnc -> monitor
+                Rnc rnc = new Rnc();
+
+                rnc.set_tech("4G");
+                rnc.set_mcc(String.valueOf(getMcc()));
+                rnc.set_mnc(String.valueOf(getMnc()));
+                rnc.set_cid(String.valueOf(getCid()));
+                rnc.set_lac(String.valueOf(getTac()));
+                rnc.set_rnc(String.valueOf(getRnc()));
+                rnc.set_psc(String.valueOf(getPci()));
+                rnc.set_lat(knowRnc.get_lat());
+                rnc.set_lon(knowRnc.get_lon());
+                rnc.set_txt(knowRnc.get_txt());
+                rnc.NOTHING = false;
+
+                DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+                dbr.open();
+                dbr.addRnc(rnc);
+                dbr.close();
+            } else {
+                rncLogs.set_lat((rncDB.NOTHING) ? 0 : rncDB.get_lat());
+                rncLogs.set_lon((rncDB.NOTHING) ? 0 : rncDB.get_lon());
+                rncLogs.set_txt((rncDB.NOTHING) ? "-" : rncDB.get_txt());
+            }
 
             dbl.addLog(rncLogs);
 

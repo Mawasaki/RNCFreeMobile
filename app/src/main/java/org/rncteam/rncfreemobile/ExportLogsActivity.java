@@ -26,8 +26,10 @@ import org.rncteam.rncfreemobile.models.RncLogs;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -132,7 +134,9 @@ public class ExportLogsActivity extends Activity {
                         if (!ntmFile.exists())
                             ntmFile.createNewFile();
 
-                        BufferedWriter writer = new BufferedWriter(new FileWriter(ntmFile, true));
+                        BufferedWriter writer = new BufferedWriter
+                                (new OutputStreamWriter(new FileOutputStream(ntmFile),"iso-8859-1"));
+                                //(new FileWriter(ntmFile, true));
 
                         // Write lines
                         for (int i = 0; i < lRncLogs.size(); i++) {

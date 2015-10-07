@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.tasks;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -12,6 +12,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.classes.AnfrInfos;
+import org.rncteam.rncfreemobile.classes.DatabaseRnc;
+import org.rncteam.rncfreemobile.classes.Gps;
+import org.rncteam.rncfreemobile.classes.JSONParser;
+import org.rncteam.rncfreemobile.classes.Maps;
+import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
@@ -85,6 +91,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
         String markerTitle;
         rncmobile.onTransaction = false;
         rncmobile.getMaps().removeMarkers();
+
         if(jArray != null) {
             try {
                 // Gettings errors
@@ -92,7 +99,6 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                     JSONArray jData = jArray.getJSONArray("DATA");
 
-                    Log.d(TAG, jData.toString());
 
                     Log.d(TAG,"Nb antennes : " + jData.length());
                     for(int i=0;i<jData.length();i++) {
@@ -126,8 +132,8 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                             }
 
                             Telephony tel = rncmobile.getTelephony();
-
-                            if (/*tel != null && rnc != null && tel.getLoggedRnc() != null && */!rnc.NOTHING) {
+                            //rnc = null; // Start bug
+                            if (tel != null && rnc != null && tel.getLoggedRnc() != null && !rnc.NOTHING) {
                                 if (!rnc.get_real_rnc().equals(tel.getLoggedRnc().get_real_rnc())) {
                                     icon = R.drawable.circle_green;
                                     markerTitle = "green";

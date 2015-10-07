@@ -75,10 +75,10 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
         rnc.setText("RNC : " + ((anfrInfos.getRnc().NOTHING == true) ? "-" : anfrInfos.getRnc().get_real_rnc()));
 
-        String fullAddress =(!anfrInfos.getLieu().equals("")) ? anfrInfos.getLieu() + " " : "";
-        fullAddress += (!anfrInfos.getAdd1().equals("")) ? anfrInfos.getAdd1() + " " : "";
+        String fullAddress = (!anfrInfos.getAdd1().equals("")) ? anfrInfos.getAdd1() + " " : "";
         fullAddress += (!anfrInfos.getAdd2().equals("")) ? anfrInfos.getAdd2() + " " : "";
         fullAddress += (!anfrInfos.getAdd3().equals("")) ? anfrInfos.getAdd3() + " " : "";
+        fullAddress += (!anfrInfos.getLieu().equals("")) ? "(" + anfrInfos.getLieu() + ") " : "";
         fullAddress += (!anfrInfos.getCp().equals("")) ? anfrInfos.getCp() + " " : "";
         fullAddress += (!anfrInfos.getCommune().equals("")) ? anfrInfos.getCommune() + " " : "";
 
@@ -138,8 +138,8 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
             if (anfrInfos.getRnc().NOTHING == true) {
                 bt1.setText("Attribuer le RNC " + newRnc.get_real_rnc() + " à cette addresse");
 
-                newRnc.set_lat(anfrInfos.getLat());
-                newRnc.set_lon(anfrInfos.getLon());
+                newRnc.set_lat(Double.valueOf(anfrInfos.getLat()));
+                newRnc.set_lon(Double.valueOf(anfrInfos.getLon()));
                 newRnc.set_txt(fullAddress.toUpperCase());
                 newRnc.NOTHING = false;
 

@@ -66,14 +66,14 @@ public class CellNeighbours {
                         nearestRnc = new Rnc("", "", "",
                                 String.valueOf(lEmpltyNeigh.get(i).get_cid()), "",
                                 String.valueOf(lEmpltyNeigh.get(i).get_lac()),
-                                String.valueOf(lEmpltyNeigh.get(i).get_psc()), "", "", "-");
+                                String.valueOf(lEmpltyNeigh.get(i).get_psc()), 0.0, 0.0, "-");
                     }
 
                 } else {
                     nearestRnc = new Rnc("", "", "",
                             String.valueOf(lEmpltyNeigh.get(i).get_cid()), "",
                             String.valueOf(lEmpltyNeigh.get(i).get_lac()),
-                            String.valueOf(lEmpltyNeigh.get(i).get_psc()), "", "", "-");
+                            String.valueOf(lEmpltyNeigh.get(i).get_psc()), 0.0, 0.0, "-");
                 }
 
                 if (nearestRnc != null) {

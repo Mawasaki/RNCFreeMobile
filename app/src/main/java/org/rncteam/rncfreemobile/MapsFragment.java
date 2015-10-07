@@ -3,10 +3,12 @@ package org.rncteam.rncfreemobile;
 import org.rncteam.rncfreemobile.adapters.MapsPopupAdapter;
 import org.rncteam.rncfreemobile.classes.CellWcdma;
 import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.classes.DatabaseRnc;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
 import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;
 import org.rncteam.rncfreemobile.classes.Telephony;
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.view.SlidingTabLayout;
 
 import android.app.AlertDialog;
@@ -133,6 +135,15 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
                     dbl.updateLogsNewRnc(tel.getTempNewRnc());
 
                     dbl.close();
+
+                    // Set in rnc -> monitor
+                    Rnc rnc = tel.getTempNewRnc();
+
+                    DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+                    dbr.open();
+                    rnc.NOTHING = false;
+                    dbr.addRnc(rnc);
+                    dbr.close();
 
                     ViewPager pager = (ViewPager) getActivity().findViewById(R.id.pager);
                     pager.setCurrentItem(1);

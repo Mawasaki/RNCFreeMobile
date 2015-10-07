@@ -19,7 +19,7 @@ public class CrashActivity extends Activity {
     TextView txtVersionAndroid;
     Button btn_crash;
 
-    String txtCrash;
+    Throwable crash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class CrashActivity extends Activity {
         txtVersionAndroid = (TextView)findViewById(R.id.txt_crash_info2);
         btn_crash = (Button)findViewById(R.id.btn_crash);
 
-        txtCrash = (String) getIntent().getSerializableExtra("crashObject");
+        crash = (Throwable) getIntent().getSerializableExtra("crashObject");
 
         txtPhone.setText("Phone: " + android.os.Build.MODEL);
         txtVersionAndroid.setText("Android Version: " + android.os.Build.VERSION.RELEASE);
@@ -43,7 +43,7 @@ public class CrashActivity extends Activity {
         btn_crash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CrashReportTask crt = new CrashReportTask(f_activity ,rncmobile.getAppContext(), txtCrash);
+                CrashReportTask crt = new CrashReportTask(f_activity ,rncmobile.getAppContext(), crash);
                 crt.execute();
             }
         });

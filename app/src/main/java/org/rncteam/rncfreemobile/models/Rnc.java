@@ -16,8 +16,8 @@ public class Rnc {
     protected String _rnc;
     protected String _lac;
     protected String _psc;
-    protected String _lon;
-    protected String _lat;
+    protected Double _lon;
+    protected Double _lat;
     protected String _txt;
     private int _rssi;
 
@@ -27,7 +27,7 @@ public class Rnc {
         NOTHING = false;
     }
 
-    public Rnc(String _tech, String _mcc, String _mnc, String _cid, String _rnc, String _lac, String _psc, String _lat, String _lon, String _txt) {
+    public Rnc(String _tech, String _mcc, String _mnc, String _cid, String _rnc, String _lac, String _psc, Double _lat, Double _lon, String _txt) {
         this._tech = _tech;
         this._mcc = _mcc;
         this._mnc = _mnc;
@@ -104,19 +104,19 @@ public class Rnc {
         this._psc = _psc;
     }
 
-    public String get_lon() {
+    public Double get_lon() {
         return _lon;
     }
 
-    public void set_lon(String _lon) {
+    public void set_lon(Double _lon) {
         this._lon = _lon;
     }
 
-    public String get_lat() {
+    public Double get_lat() {
         return _lat;
     }
 
-    public void set_lat(String _lat) {
+    public void set_lat(Double _lat) {
         this._lat = _lat;
     }
 

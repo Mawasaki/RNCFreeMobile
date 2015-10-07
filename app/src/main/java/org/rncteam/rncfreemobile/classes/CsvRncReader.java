@@ -56,8 +56,8 @@ public class CsvRncReader {
         rnc.set_lac(l[4]);
         rnc.set_rnc(l[5]);
         rnc.set_psc(l[6]);
-        rnc.set_lat(l[7]);
-        rnc.set_lon(l[8]);
+        rnc.set_lat(Double.valueOf(l[7]));
+        rnc.set_lon(Double.valueOf(l[8]));
         rnc.set_txt(l[9]);
 
         return rnc;

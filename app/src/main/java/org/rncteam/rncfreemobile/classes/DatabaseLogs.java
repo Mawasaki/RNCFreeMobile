@@ -122,6 +122,23 @@ public class DatabaseLogs extends Database {
         }
     }
 
+    public RncLogs findRncLogsByRnc(String rnc) {
+        String rncLte = "40" + rnc;
+
+        String query = "SELECT * FROM " + TABLE_LOGS + " "
+                + "WHERE " + COL_LOGS_RNC + " = ? "
+                + "OR " + COL_LOGS_RNC + "=  ?;";
+
+        Cursor c = mdb.rawQuery(query, new String[]{rnc,rncLte});
+        if(c.getCount() > 0) {
+            c.moveToFirst();
+
+            RncLogs rncLog = cToRncLogs(c);
+            c.close();
+            return rncLog;
+        }
+        return null;
+    }
 
     public RncLogs findRncLogsByRncCid(String rnc, String cid) {
         String query = "SELECT * FROM " + TABLE_LOGS + " "
@@ -150,8 +167,8 @@ public class DatabaseLogs extends Database {
         rncLog.set_lac(c.getString(5));
         rncLog.set_rnc(c.getString(6));
         rncLog.set_psc(c.getString(7));
-        rncLog.set_lat(c.getString(8));
-        rncLog.set_lon(c.getString(9));
+        rncLog.set_lat(Double.valueOf(c.getString(8)));
+        rncLog.set_lon(Double.valueOf(c.getString(9)));
         rncLog.set_date(c.getString(10));
         rncLog.set_txt(c.getString(11));
 

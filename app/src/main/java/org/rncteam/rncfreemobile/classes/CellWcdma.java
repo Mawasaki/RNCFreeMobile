@@ -158,6 +158,9 @@ public class CellWcdma {
         if(rncLog == null) {
             RncLogs rncLogs = new RncLogs();
 
+            // Is RNC already know in Logs ?
+            RncLogs knowRnc = dbl.findRncLogsByRnc(String.valueOf(getRnc()));
+
             rncLogs.set_tech("3G");
             rncLogs.set_mcc(String.valueOf(getMcc()));
             rncLogs.set_mnc(String.valueOf(getMnc()));
@@ -165,10 +168,37 @@ public class CellWcdma {
             rncLogs.set_lac(String.valueOf(getLac()));
             rncLogs.set_rnc(String.valueOf(getRnc()));
             rncLogs.set_psc(String.valueOf(getPsc()));
-            rncLogs.set_lat((rncDB.NOTHING) ? "0" : rncDB.get_lat());
-            rncLogs.set_lon((rncDB.NOTHING) ? "0" : rncDB.get_lon());
             rncLogs.set_date(sdf.format(new Date()));
-            rncLogs.set_txt((rncDB.NOTHING) ? "-" : rncDB.get_txt());
+
+            if(knowRnc != null) {
+                rncLogs.set_lat(knowRnc.get_lat());
+                rncLogs.set_lon(knowRnc.get_lon());
+                rncLogs.set_txt(knowRnc.get_txt());
+
+                // Set in rnc -> monitor
+                Rnc rnc = new Rnc();
+
+                rnc.set_tech("3G");
+                rnc.set_mcc(String.valueOf(getMcc()));
+                rnc.set_mnc(String.valueOf(getMnc()));
+                rnc.set_cid(String.valueOf(getCid()));
+                rnc.set_lac(String.valueOf(getLac()));
+                rnc.set_rnc(String.valueOf(getRnc()));
+                rnc.set_psc(String.valueOf(getPsc()));
+                rnc.set_lat(knowRnc.get_lat());
+                rnc.set_lon(knowRnc.get_lon());
+                rnc.set_txt(knowRnc.get_txt());
+                rnc.NOTHING = false;
+
+                DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+                dbr.open();
+                dbr.addRnc(rnc);
+                dbr.close();
+            } else {
+                rncLogs.set_lat((rncDB.NOTHING) ? 0 : rncDB.get_lat());
+                rncLogs.set_lon((rncDB.NOTHING) ? 0 : rncDB.get_lon());
+                rncLogs.set_txt((rncDB.NOTHING) ? "-" : rncDB.get_txt());
+            }
 
             dbl.addLog(rncLogs);
 
