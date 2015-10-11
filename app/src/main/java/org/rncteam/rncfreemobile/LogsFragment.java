@@ -18,7 +18,7 @@ import android.widget.ListView;
 
 import org.rncteam.rncfreemobile.adapters.ListLogsMainAdapter;
 
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
 
 import java.util.ArrayList;
 
@@ -114,10 +114,7 @@ public class LogsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         getAllRncLogs();
-        adapterLogs = new ListLogsMainAdapter(getActivity(), rncmobile.getAppContext(), rncmobile.listRncLogs);
-        listViewLogsMain.setAdapter(adapterLogs);
     }
 
     public void getAllRncLogs() {
@@ -135,9 +132,12 @@ public class LogsFragment extends Fragment {
 
     private Runnable displayLogs = new Runnable() {
         public void run() {
+            if(rncmobile.notifyListLogsHasChanged) {
+                getAllRncLogs();
+            }
             adapterLogs.notifyDataSetChanged();
-
-            handler.postDelayed(this, 5000);
+            rncmobile.notifyListLogsHasChanged = false;
+            handler.postDelayed(this, 3000);
         }
     };
 

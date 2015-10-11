@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.classes.CellLte;
+import org.rncteam.rncfreemobile.models.Rnc;
 
 import java.util.List;
 
@@ -22,10 +22,10 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
 
     Context context;
 
-    protected List<CellLte> lCell;
+    protected List<Rnc> lCell;
     LayoutInflater inflater;
 
-    public ListMonitorMainLteAdapter(Context context, List<CellLte> listCell) {
+    public ListMonitorMainLteAdapter(Context context, List<Rnc> listCell) {
         this.lCell = listCell;
         this.inflater = LayoutInflater.from(context);
         this.context = context;
@@ -35,7 +35,7 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         return lCell.size();
     }
 
-    public CellLte getItem(int position) {
+    public Rnc getItem(int position) {
         return lCell.get(position);
     }
 
@@ -67,20 +67,18 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        CellLte tLte = lCell.get(position);
+        Rnc rnc = lCell.get(position);
 
-
-        holder.txtOpe.setText(String.valueOf(tLte.getNetworkName()));
-        holder.txtCi.setText(String.valueOf(tLte.getLCid()));
-        holder.txtCid.setText(String.valueOf(tLte.getFormatedCid()));
-        holder.txtTac.setText(String.valueOf(tLte.getTac()));
-        holder.txtPci.setText(String.valueOf(tLte.getPci()));
-        holder.txtRssi.setText(String.valueOf(tLte.getLteSignalStrengthInDbm()) + " dBm");
-        holder.txtRsrp.setText(String.valueOf(tLte.getLteRsrp()) + " dBm");
-        holder.txtRsrq.setText(String.valueOf(tLte.getLteRsrq()) + " dB");
-        holder.txtSnr.setText(String.valueOf(tLte.getLteRssnr()) + " dB");
-        holder.txtData.setText(tLte.getText());
-
+        holder.txtOpe.setText(String.valueOf(rnc.getNetworkName()));
+        holder.txtCi.setText(String.valueOf(rnc.get_lcid()));
+        holder.txtCid.setText(String.valueOf(rnc.getRnc() + ":" +rnc.getCid()));
+        holder.txtTac.setText(String.valueOf(rnc.get_lac()));
+        holder.txtPci.setText(String.valueOf(rnc.get_psc()));
+        holder.txtRssi.setText(String.valueOf(rnc.getLteRssi()) + " dBm");
+        holder.txtRsrp.setText(String.valueOf(rnc.getLteRsrp()) + " dBm");
+        holder.txtRsrq.setText(String.valueOf(rnc.getLteRsrq()) + " dB");
+        holder.txtSnr.setText(String.valueOf(rnc.getLteRssnr()) + " dB");
+        holder.txtData.setText(rnc.get_txt());
 
         return convertView;
     }

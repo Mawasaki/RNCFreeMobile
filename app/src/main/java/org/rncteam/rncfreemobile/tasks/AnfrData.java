@@ -13,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.AnfrInfos;
-import org.rncteam.rncfreemobile.classes.DatabaseRnc;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.JSONParser;
 import org.rncteam.rncfreemobile.classes.Maps;
@@ -99,12 +99,11 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                     JSONArray jData = jArray.getJSONArray("DATA");
 
-
                     Log.d(TAG,"Nb antennes : " + jData.length());
                     for(int i=0;i<jData.length();i++) {
 
                         Rnc rnc = new Rnc();
-                        rnc.NOTHING = true;
+                        rnc.NOT_IDENTIFIED = true;
                         markerTitle = "";
 
                         double anfr_lat = Double.valueOf(jData.getJSONObject(i).getString("lat"));
@@ -125,7 +124,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                                     if (rnc_lat1 >= anfr_lat && rnc_lat2 <= anfr_lat
                                             && rnc_lon1 >= anfr_lon && rnc_lon2 <= anfr_lon) {
                                         rnc = lRnc.get(j);
-                                        rnc.NOTHING = false;
+                                        rnc.NOT_IDENTIFIED = false;
                                         break;
                                     }
                                 }
@@ -133,7 +132,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                             Telephony tel = rncmobile.getTelephony();
                             //rnc = null; // Start bug
-                            if (tel != null && rnc != null && tel.getLoggedRnc() != null && !rnc.NOTHING) {
+                            if (tel != null && rnc != null && tel.getLoggedRnc() != null && !rnc.NOT_IDENTIFIED) {
                                 if (!rnc.get_real_rnc().equals(tel.getLoggedRnc().get_real_rnc())) {
                                     icon = R.drawable.circle_green;
                                     markerTitle = "green";

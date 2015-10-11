@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.classes.CellWcdma;
+import org.rncteam.rncfreemobile.models.Rnc;
 
 import java.util.List;
 
@@ -23,10 +23,10 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
 
     Context context;
 
-    protected List<CellWcdma> lCell;
+    protected List<Rnc> lCell;
     LayoutInflater inflater;
 
-    public ListMonitorMainUmtsAdapter(Context context, List<CellWcdma> listCell) {
+    public ListMonitorMainUmtsAdapter(Context context, List<Rnc> listCell) {
         this.lCell = listCell;
         this.inflater = LayoutInflater.from(context);
         this.context = context;
@@ -36,7 +36,7 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         return lCell.size();
     }
 
-    public CellWcdma getItem(int position) {
+    public Rnc getItem(int position) {
         return lCell.get(position);
     }
 
@@ -68,19 +68,19 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        CellWcdma tWcdma = lCell.get(position);
+        Rnc rnc = lCell.get(position);
 
-        holder.txtOpe.setText(tWcdma.getNetworkName());
-        holder.txtCi.setText(String.valueOf(tWcdma.getLCid()));
-        holder.txtCid.setText(String.valueOf(tWcdma.getCid()));
-        holder.txtLac.setText(String.valueOf(tWcdma.getLac()));
-        holder.txtRnc.setText(String.valueOf(tWcdma.getRnc()));
-        holder.txtPsc.setText(String.valueOf(tWcdma.getPsc()));
-        holder.txtRscp.setText(String.valueOf(tWcdma.getCellSignalStrengthDbm()) + " dBm");
-        holder.txtData.setText(tWcdma.getText());
+        holder.txtOpe.setText(rnc.getNetworkName());
+        holder.txtCi.setText(String.valueOf(rnc.get_lcid()));
+        holder.txtCid.setText(String.valueOf(rnc.getCid()));
+        holder.txtLac.setText(String.valueOf(rnc.get_lac()));
+        holder.txtRnc.setText(String.valueOf(rnc.getRnc()));
+        holder.txtPsc.setText(String.valueOf(rnc.get_psc()));
+        holder.txtRscp.setText(String.valueOf((2 * rnc.getUmtsRscp()) - 113) +" dBm");
+        holder.txtData.setText(rnc.get_txt());
 
         // Roaming
-        if(tWcdma.getMnc() != 15)
+        if(rnc.get_mnc() != 15)
             holder.fl_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
         else
             holder.fl_background.setBackgroundColor(Color.parseColor("#FFFFFF"));

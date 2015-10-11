@@ -1,11 +1,10 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
 import org.rncteam.rncfreemobile.models.Export;
-import org.rncteam.rncfreemobile.models.RncLogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +46,8 @@ public class DatabaseExport extends Database {
         mdb.delete(TABLE_EXPORT, null, null);
     }
 
-    public List<Export> findAllExport() {
-        List<Export> lExport = new ArrayList<Export>();
+    public ArrayList<Export> findAllExport(ArrayList<Export> lExport) {
+        lExport.clear();
 
         String query = "SELECT * FROM " + TABLE_EXPORT + " "
                 + "ORDER BY " + COL_EXPORT_DATE + " DESC";

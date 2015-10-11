@@ -1,5 +1,7 @@
 package org.rncteam.rncfreemobile.classes;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,41 +56,34 @@ public class Maps {
     }
 
     public void initializeMap() {
-        if(lastZoom == 0 && lastPosLat == 0.0 && lastPosLon == 0.0) {
-            Telephony tel = rncmobile.getTelephony();
+        Telephony tel = rncmobile.getTelephony();
 
-            if(tel != null) {
-                if(tel.getLoggedRnc() != null && !tel.getLoggedRnc().NOTHING) {
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(new LatLng(Double.valueOf(tel.getLoggedRnc().get_lat()), Double.valueOf(tel.getLoggedRnc().get_lon())))
-                            .zoom(12.0f)
-                            .bearing(0)
-                            .build();
+        if(tel != null) {
+            if(tel.getLoggedRnc() != null && !tel.getLoggedRnc().NOT_IDENTIFIED) {
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(Double.valueOf(tel.getLoggedRnc().get_lat()), Double.valueOf(tel.getLoggedRnc().get_lon())))
+                        .zoom(12.0f)
+                        .bearing(0)
+                        .build();
 
-                    this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                    /* This function animate directly the camera.
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                            new LatLng(Double.valueOf(tel.getLoggedRnc().get_lat()),
-                                       Double.valueOf(tel.getLoggedRnc().get_lon())), 14.0f));
-                    */
-                } else {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                            new LatLng(46.71109, 1.7191036), 5.0f));
-                }
+                this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(46.71109, 1.7191036), 5.0f));
             }
+        } else {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(46.71109, 1.7191036), 5.0f));
         }
 
-        else
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(lastPosLat, lastPosLon), lastZoom));
-
-        mMap.setMyLocationEnabled(true);
+        setMapMyLocationEnabled(true);
 
         setCameraListener();
         setMarkerClickListener();
+    }
+
+    public void setMapMyLocationEnabled(boolean enabled) {
+        mMap.setMyLocationEnabled(enabled);
     }
 
     public void setCameraListener() {

@@ -14,10 +14,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.Maps;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
+
+import java.util.ArrayList;
 
 /**
  * Created by cedricf_25 on 02/10/2015.
@@ -47,9 +51,10 @@ public class LogsSetCooActivity extends Activity {
         gps.enableGps();
 
         setUpMapIfNeeded();
+        mMap.setMyLocationEnabled(true);
 
         CameraPosition cameraPosition;
-        if(rnclogs.get_txt().equals("-")) {
+        if(rnclogs.get_lat() == -1.0 || rnclogs.get_lon() == -1.0) {
             cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(gps.getLatitude(), gps.getLongitude()))
                     .zoom(12)
@@ -97,17 +102,26 @@ public class LogsSetCooActivity extends Activity {
         LatLng newPos = marker.getPosition();
 
         DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
         dbl.open();
+        dbr.open();
 
-        RncLogs rncLog = dbl.findRncLogsByRncCid(String.valueOf(rnclogs.get_rnc()), String.valueOf(rnclogs.get_cid()));
-        if(rncLog != null) {
-            rncLog.set_txt(rnclogs.get_txt());
+        ArrayList<RncLogs> lRnc = dbl.findRncLogsByRnc(String.valueOf(rnclogs.get_rnc()));
+        for(int i=0;i<lRnc.size();i++) {
+            RncLogs rncLog = lRnc.get(i);
             rncLog.set_lat(newPos.latitude);
             rncLog.set_lon(newPos.longitude);
             dbl.updateEditedLogs(rncLog);
+
+            // Update already rncs
+            Rnc rnc =  dbr.findRncByNameCid(String.valueOf(rncLog.get_rnc()), String.valueOf(rncLog.get_cid()));
+            rnc.set_lat(newPos.latitude);
+            rnc.set_lon(newPos.longitude);
+            dbr.updateRnc(rnc);
         }
 
         dbl.close();
+        dbr.close();
         this.finish();
     }
 }

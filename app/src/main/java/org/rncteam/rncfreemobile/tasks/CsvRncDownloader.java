@@ -9,9 +9,9 @@ import android.os.PowerManager;
 import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.classes.CsvRncReader;
-import org.rncteam.rncfreemobile.classes.DatabaseInfo;
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
-import org.rncteam.rncfreemobile.classes.DatabaseRnc;
+import org.rncteam.rncfreemobile.database.DatabaseInfo;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
@@ -153,7 +153,7 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
                     dbr.open();
 
-                    dbr.deleteRnc();
+                    dbr.deleteAllRnc();
                     dbr.addMassiveRnc(lRnc);
 
                     // Mark info
@@ -174,9 +174,9 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     for(int i=0;i<lRncLogs.size();i++) {
 
                         RncLogs rncLogs = lRncLogs.get(i);
-                        Rnc rnc = dbr.findRncByName(rncLogs.get_rnc(),rncLogs.get_cid());
+                        Rnc rnc = dbr.findRncByNameCid(rncLogs.get_rnc(),rncLogs.get_cid());
 
-                        if(!rnc.NOTHING) {
+                        if(!rnc.NOT_IDENTIFIED) {
                             rncLogs.set_lat(rnc.get_lat());
                             rncLogs.set_lon(rnc.get_lon());
                             rncLogs.set_txt(rnc.get_txt());

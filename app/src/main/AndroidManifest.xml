@@ -43,6 +43,7 @@
         <activity android:label="Set Coordinates" android:name=".LogsSetCooActivity"/>
         <activity android:label="Export Logs" android:name=".ExportLogsActivity"/>
         <activity android:label="Export Logs" android:name=".CrashActivity"/>
+        <activity android:label="Export Logs" android:name=".DataActivity"/>
     </application>
 
 </manifest>

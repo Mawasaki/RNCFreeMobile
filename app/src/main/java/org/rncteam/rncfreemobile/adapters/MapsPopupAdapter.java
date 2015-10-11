@@ -61,6 +61,8 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         TextView txt31 = (TextView) popup.findViewById(R.id.txt31);
         TextView txt4 = (TextView) popup.findViewById(R.id.txt4);
         TextView txt41 = (TextView) popup.findViewById(R.id.txt41);
+        TextView txt410 = (TextView) popup.findViewById(R.id.txt410);
+        TextView txt411 = (TextView) popup.findViewById(R.id.txt411);
         TextView txt5 = (TextView) popup.findViewById(R.id.txt5);
         TextView txt51 = (TextView) popup.findViewById(R.id.txt51);
         TextView txt6 = (TextView) popup.findViewById(R.id.txt6);
@@ -73,7 +75,7 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         /* Title */
         title.setText("");
 
-        rnc.setText("RNC : " + ((anfrInfos.getRnc().NOTHING == true) ? "-" : anfrInfos.getRnc().get_real_rnc()));
+        rnc.setText("RNC : " + ((anfrInfos.getRnc().NOT_IDENTIFIED == true) ? "-" : anfrInfos.getRnc().get_real_rnc()));
 
         String fullAddress = (!anfrInfos.getAdd1().equals("")) ? anfrInfos.getAdd1() + " " : "";
         fullAddress += (!anfrInfos.getAdd2().equals("")) ? anfrInfos.getAdd2() + " " : "";
@@ -93,7 +95,6 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         txt4.setText("Activation : " + ((anfrInfos.getActivation() != "null") ? anfrInfos.getActivation() : "-"));
         txt41.setText(" / Hauteur : " + ((anfrInfos.getHauteur() != "null") ? anfrInfos.getHauteur() + "m" : "-"));
 
-        txt5.setText("Secteurs : " + anfrInfos.getAzimuts().length());
         txt51.setText(" / Propriétaire : " + ((anfrInfos.getProprietaire() != "") ? anfrInfos.getProprietaire() : "-"));
 
         txt6.setText("Support : " + anfrInfos.getTypeSupport());
@@ -109,24 +110,56 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         // Remove old antennas images
         rl.removeAllViewsInLayout();
 
+        int countAnt = 0;
+        int countBlr = 0;
+        int countFH = 0;
+
         for(int i=0;i<secteurs.length();i++) {
 
             if(secteurs != null) {
                 try {
+                    // Azimut
                     ImageView ant = new ImageView(rncmobile.getAppContext());
                     ant.setImageResource(R.drawable.blines);
 
-                    ant.setPivotX(1);
-                    ant.setPivotY(1);
+                    // FH
+                    ImageView fh = new ImageView(rncmobile.getAppContext());
+                    fh.setImageResource(R.drawable.blines_b);
 
-                    ant.setRotation(Float.parseFloat(secteurs.getJSONObject(i).getString("AER_NB_AZIMUT")) - 180);
+                    // BLR
+                    ImageView blr = new ImageView(rncmobile.getAppContext());
+                    blr.setImageResource(R.drawable.blines_v);
 
-                    rl.addView(ant);
+                    ant.setPivotX(0); fh.setPivotX(1); blr.setPivotX(1);
+                    ant.setPivotY(1); fh.setPivotY(1); blr.setPivotY(1);
+
+                    double d_azimut = (Double.parseDouble(secteurs.getJSONObject(i).getString("AER_NB_AZIMUT")));
+                    float azimut = ((float) d_azimut - 180);
+
+                    if(secteurs.getJSONObject(i).getString("EMR_LB_SYSTEME").equals("FH")) {
+                        fh.setRotation(azimut);
+                        rl.addView(fh);
+                        countFH++;
+                    }
+                    else if(secteurs.getJSONObject(i).getString("EMR_LB_SYSTEME").equals("BLR 3 GHZ")) {
+                        blr.setRotation(azimut);
+                        rl.addView(blr);
+                        countBlr++;
+                    }
+                    else {
+                        ant.setRotation(azimut);
+                        rl.addView(ant);
+                        countAnt++;
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }
+
+        txt5.setText("Secteurs : " + countAnt);
+        txt410.setText("BLR : " + countBlr);
+        txt411.setText("FH : " + countFH);
 
         // Write potential futur RNC
         Telephony tel = rncmobile.getTelephony();
@@ -135,15 +168,14 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
         // Button
         if(newRnc != null) {
-            if (anfrInfos.getRnc().NOTHING == true) {
+            if (anfrInfos.getRnc().NOT_IDENTIFIED == true) {
                 bt1.setText("Attribuer le RNC " + newRnc.get_real_rnc() + " à cette addresse");
 
                 newRnc.set_lat(Double.valueOf(anfrInfos.getLat()));
                 newRnc.set_lon(Double.valueOf(anfrInfos.getLon()));
                 newRnc.set_txt(fullAddress.toUpperCase());
-                newRnc.NOTHING = false;
 
-                tel.setTempNewRnc(newRnc);
+                tel.setMarkedRnc(newRnc);
             } else {
                 bt1.setText("Antenne déja identifiée");
             }

@@ -1,5 +1,6 @@
 package org.rncteam.rncfreemobile.listeners;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;

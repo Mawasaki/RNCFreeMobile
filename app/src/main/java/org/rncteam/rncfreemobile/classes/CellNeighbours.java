@@ -1,5 +1,11 @@
 package org.rncteam.rncfreemobile.classes;
 
+import android.telephony.CellInfo;
+import android.telephony.CellInfoLte;
+import android.telephony.CellInfoWcdma;
+import android.telephony.NeighboringCellInfo;
+
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
@@ -12,41 +18,106 @@ import java.util.List;
 public class CellNeighbours {
     private static final String TAG = "CellNeighbours";
 
-    private ArrayList<Rnc> lEmpltyNeigh;
+    private Telephony tel;
+    private ArrayList<Rnc> lRnc;
 
     public CellNeighbours() {
-        lEmpltyNeigh = new ArrayList<>();
+        tel = rncmobile.getTelephony();
+        lRnc = new ArrayList<>();
     }
 
-    public void add(int lac, int psc, int lcid, int signalStrength) {
-        Rnc rnc = new Rnc();
-        rnc.set_lac(String.valueOf(lac));
-        rnc.set_psc(String.valueOf(psc));
-        rnc.set_cid(String.valueOf(lcid));
-        rnc.set_rssi(signalStrength);
-        lEmpltyNeigh.add(rnc);
+    public void startManager() {
+        if(tel != null) {
+            lRnc = new ArrayList<>();
+
+            List<CellInfo> lAci = tel.getTelephonyManager().getAllCellInfo();
+            if (lAci != null && lAci.size() > 0) { // If device supports new API
+                for (CellInfo cellInfo : lAci) {
+                    Rnc rnc = new Rnc();
+
+                    // Some base init infos
+                    rnc.NOT_IDENTIFIED = true;
+                    rnc.set_txt("-");
+
+                    if (cellInfo != null && cellInfo instanceof CellInfoWcdma) {
+                        CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfo;
+
+                        rnc.setIsRegistered(cellInfoWcdma.isRegistered());
+
+                        rnc.set_mcc(cellInfoWcdma.getCellIdentity().getMcc());
+                        rnc.set_mnc(cellInfoWcdma.getCellIdentity().getMnc());
+                        rnc.set_lac(cellInfoWcdma.getCellIdentity().getLac());
+                        rnc.set_psc(cellInfoWcdma.getCellIdentity().getPsc());
+                        rnc.set_lcid(cellInfoWcdma.getCellIdentity().getCid());
+
+                        rnc.setLteRssi(cellInfoWcdma.getCellSignalStrength().getDbm());
+
+                        if (!cellInfoWcdma.isRegistered()) {
+                            lRnc.add(rnc);
+                        }
+
+                    }
+                    if (cellInfo != null && cellInfo instanceof CellInfoLte) {
+                        CellInfoLte cellInfoLte = (CellInfoLte) cellInfo;
+
+                        rnc.setIsRegistered(cellInfoLte.isRegistered());
+
+                        rnc.set_mcc(cellInfoLte.getCellIdentity().getMcc());
+                        rnc.set_mcc(cellInfoLte.getCellIdentity().getMnc());
+                        rnc.set_lac(cellInfoLte.getCellIdentity().getTac());
+                        rnc.set_psc(cellInfoLte.getCellIdentity().getPci());
+                        rnc.set_lcid(cellInfoLte.getCellIdentity().getCi());
+
+                        rnc.setLteRssi(cellInfoLte.getCellSignalStrength().getDbm());
+
+                        // How the new API is tunneling LTE Neigh ?
+                        if (!cellInfoLte.isRegistered()) {
+                            lRnc.add(rnc);
+                        }
+                    }
+                }
+            } else {
+                List<NeighboringCellInfo> lNci = tel.getTelephonyManager().getNeighboringCellInfo();
+
+                for (int i = 0; i < lNci.size(); i++) {
+                    Rnc rnc = new Rnc();
+
+                    // Some base init infos
+                    rnc.NOT_IDENTIFIED = true;
+                    rnc.set_txt("-");
+
+                    // Infos from API
+                    rnc.set_lac(lNci.get(i).getLac());
+                    rnc.set_psc(lNci.get(i).getPsc());
+                    rnc.set_lcid(lNci.get(i).getCid());
+                    rnc.setLteRssi(lNci.get(i).getRssi());
+
+                    lRnc.add(rnc);
+                }
+            }
+        }
     }
 
     // Implement the neigbourgh cell list in RNC Object? ... mhhhh :/
     public ArrayList<Rnc> getNearestNeighboringInRnc(Rnc rnc) {
-        ArrayList<Rnc> lRnc = new ArrayList<Rnc>();
 
         DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
         dbr.open();
 
         Rnc overlapRnc = new Rnc();
 
-        if(lEmpltyNeigh != null && lEmpltyNeigh.size() > 0) {
-            for (int i = 0; i < lEmpltyNeigh.size(); i++) {
-                Rnc nearestRnc = null;
+        if(lRnc.size() > 0) {
+            for (int i = 0; i < lRnc.size(); i++) {
+                Rnc nearestRnc = lRnc.get(i);
 
-                if(Integer.valueOf(lEmpltyNeigh.get(i).get_psc()) > 0) {
-                    List<Rnc> lRncPsc = dbr.findRncByPsc(String.valueOf(lEmpltyNeigh.get(i).get_psc()));
+                if(lRnc.get(i).get_psc() > 0) {
+                    // List of all PSC
+                    List<Rnc> lRncPsc = dbr.findRncByPsc(String.valueOf(lRnc.get(i).get_psc()));
                     double nearestPoint = -1;
                     double tempPoint;
 
                     // If Psc > 0 && Know RNC && Find Pscs in database
-                    if (!rnc.NOTHING && lRncPsc.size() > 0) {
+                    if (!rnc.NOT_IDENTIFIED && lRncPsc.size() > 0) {
 
                         for (int j = 0; j < lRncPsc.size(); j++) {
                             tempPoint = distance(Double.valueOf(lRncPsc.get(j).get_lat()),
@@ -54,31 +125,17 @@ public class CellNeighbours {
                                     Double.valueOf(rnc.get_lat()),
                                     Double.valueOf(rnc.get_lon()));
 
-                            //Log.d(TAG, "Trace3: " + lRncPsc.get(j).get_rnc());
-
                             if ((nearestPoint < 0 || tempPoint < nearestPoint) && !lRncPsc.get(j).equals(overlapRnc)) {
-
                                 nearestPoint = tempPoint;
                                 nearestRnc = lRncPsc.get(j);
                             }
                         }
-                    } else {
-                        nearestRnc = new Rnc("", "", "",
-                                String.valueOf(lEmpltyNeigh.get(i).get_cid()), "",
-                                String.valueOf(lEmpltyNeigh.get(i).get_lac()),
-                                String.valueOf(lEmpltyNeigh.get(i).get_psc()), 0.0, 0.0, "-");
                     }
-
-                } else {
-                    nearestRnc = new Rnc("", "", "",
-                            String.valueOf(lEmpltyNeigh.get(i).get_cid()), "",
-                            String.valueOf(lEmpltyNeigh.get(i).get_lac()),
-                            String.valueOf(lEmpltyNeigh.get(i).get_psc()), 0.0, 0.0, "-");
                 }
 
                 if (nearestRnc != null) {
-                    nearestRnc.set_rssi(lEmpltyNeigh.get(i).get_rssi());
-                    lRnc.add(i, nearestRnc);
+                    nearestRnc.setLteRssi(lRnc.get(i).getLteRssi());
+                    lRnc.set(i, nearestRnc);
                     overlapRnc = nearestRnc;
                 }
             }

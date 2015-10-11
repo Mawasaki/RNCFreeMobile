@@ -1,18 +1,13 @@
 package org.rncteam.rncfreemobile;
 
 import org.rncteam.rncfreemobile.adapters.MapsPopupAdapter;
-import org.rncteam.rncfreemobile.classes.CellWcdma;
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
-import org.rncteam.rncfreemobile.classes.DatabaseRnc;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.classes.Maps;
-import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
-import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.view.SlidingTabLayout;
 
 import android.app.AlertDialog;
-import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -20,23 +15,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by cedricf_25 on 14/07/2015.
@@ -51,9 +41,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
     private Handler handler;
 
-    // UI Objects
-    private TextView t_info_1;
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =inflater.inflate(R.layout.fragment_maps,container,false);
@@ -61,7 +48,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
         // Retrive main classes
         maps = rncmobile.getMaps();
-        //mMap = maps.getMap();
 
         tel = rncmobile.getTelephony();
 
@@ -97,6 +83,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     public void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+        maps.initializeMap();
     }
 
     private void setUpMapIfNeeded() {
@@ -107,6 +94,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
             if (mMap != null) {
                 maps.setMap(mMap);
                 maps.initializeMap();
+                Log.d(TAG, "Initialize map");
             }
         }
         rncmobile.onTransaction = false;
@@ -128,21 +116,25 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
                 case DialogInterface.BUTTON_POSITIVE:
                     // Insert address to Logs
                     Telephony tel = rncmobile.getTelephony();
+
+                    // Update RNC Logs : Adresse, CP, Commune, gps
                     DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
                     dbl.open();
-
-                    // Update RNC : Adresse, CP, Commune, gps
-                    dbl.updateLogsNewRnc(tel.getTempNewRnc());
-
+                    dbl.updateLogsNewRnc(tel.getMarkedRnc());
                     dbl.close();
 
-                    // Set in rnc -> monitor
-                    Rnc rnc = tel.getTempNewRnc();
-
+                    // Update RNC table
                     DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
                     dbr.open();
-                    rnc.NOTHING = false;
-                    dbr.addRnc(rnc);
+
+                    List<Rnc> lRnc = dbr.findRncByName(String.valueOf(tel.getMarkedRnc().get_real_rnc()));
+                    for(int i=0;i<lRnc.size();i++) {
+                        Rnc rnc = lRnc.get(i);
+                        rnc.set_txt(tel.getMarkedRnc().get_txt());
+                        rnc.set_lat(Double.valueOf(tel.getMarkedRnc().get_lat()));
+                        rnc.set_lon(Double.valueOf(tel.getMarkedRnc().get_lon()));
+                        dbr.updateRnc(rnc);
+                    }
                     dbr.close();
 
                     ViewPager pager = (ViewPager) getActivity().findViewById(R.id.pager);

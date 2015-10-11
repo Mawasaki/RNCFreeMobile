@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -122,7 +122,8 @@ public class DatabaseLogs extends Database {
         }
     }
 
-    public RncLogs findRncLogsByRnc(String rnc) {
+    public ArrayList<RncLogs> findRncLogsByRnc(String rnc) {
+        ArrayList<RncLogs> lRnc = new ArrayList<>();
         String rncLte = "40" + rnc;
 
         String query = "SELECT * FROM " + TABLE_LOGS + " "
@@ -133,11 +134,13 @@ public class DatabaseLogs extends Database {
         if(c.getCount() > 0) {
             c.moveToFirst();
 
-            RncLogs rncLog = cToRncLogs(c);
-            c.close();
-            return rncLog;
+            while (!c.isAfterLast()) {
+                lRnc.add(cToRncLogs(c));
+                c.moveToNext();
+            }
         }
-        return null;
+        c.close();
+        return lRnc;
     }
 
     public RncLogs findRncLogsByRncCid(String rnc, String cid) {

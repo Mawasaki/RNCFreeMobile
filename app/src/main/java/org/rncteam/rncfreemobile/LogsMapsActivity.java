@@ -6,10 +6,12 @@ import android.os.Bundle;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.models.RncLogs;
 
@@ -21,6 +23,7 @@ public class LogsMapsActivity extends Activity {
 
     private RncLogs rnclogs;
     private Maps maps;
+    private Gps gps;
 
     private GoogleMap mMap;
 
@@ -34,20 +37,34 @@ public class LogsMapsActivity extends Activity {
         this.rnclogs = (RncLogs) getIntent().getSerializableExtra("logsInfosObject");
 
         maps = rncmobile.getMaps();
+        gps = rncmobile.getGps();
+        gps.enableGps();
 
         setUpMapIfNeeded();
+        mMap.setMyLocationEnabled(true);
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(Double.valueOf(rnclogs.get_lat()), Double.valueOf(rnclogs.get_lon())))
-                .zoom(15)
-                .bearing(0)
-                .build();
+        CameraPosition cameraPosition;
+        if(rnclogs.get_txt().equals("-")) {
+            cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(gps.getLatitude(), gps.getLongitude()))
+                    .zoom(12)
+                    .bearing(0)
+                    .build();
+        } else {
+
+            cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(Double.valueOf(rnclogs.get_lat()), Double.valueOf(rnclogs.get_lon())))
+                    .zoom(12)
+                    .bearing(0)
+                    .build();
+        }
 
         this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(Double.valueOf(rnclogs.get_lat()), Double.valueOf(rnclogs.get_lon())))
-                .title("RNC : " + rnclogs.get_rnc()));
+                .title("RNC : " + rnclogs.get_rnc())
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.circle_green)));
     }
 
     private void setUpMapIfNeeded() {

@@ -1,5 +1,6 @@
 package org.rncteam.rncfreemobile.models;
 
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import org.rncteam.rncfreemobile.rncmobile;
@@ -14,7 +15,7 @@ import java.util.TimeZone;
 /**
  * Created by cedricf_25 on 21/07/2015.
  */
-public class RncLogs extends Rnc implements Serializable {
+public class RncLogs implements Serializable {
     private static final String TAG = "RNCLOGS";
 
     private int _id;
@@ -31,7 +32,8 @@ public class RncLogs extends Rnc implements Serializable {
     private String _txt;
 
     public RncLogs() {
-        super();
+        _lat = -1.0;
+        _lon = -1.0;
     }
 
     public String get_fr_datetime() {
@@ -68,6 +70,19 @@ public class RncLogs extends Rnc implements Serializable {
         return new SimpleDateFormat("HH:mm:ss").format(date);
     }
 
+    public String get_formated_date_abbrev() {
+        Date d = get_date_obj();
+
+        try {
+            long prev = d.getTime();
+            long now = System.currentTimeMillis();
+            return String.valueOf(DateUtils.getRelativeTimeSpanString(prev, now, 0L, DateUtils.FORMAT_ABBREV_ALL));
+        } catch (Exception e) {
+
+        }
+        return "";
+    }
+
     public Date get_date_obj() {
         Date date = new Date();
         DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -80,14 +95,11 @@ public class RncLogs extends Rnc implements Serializable {
         return date;
     }
 
-
     // Getter & setter
-    @Override
     public int get_id() {
         return _id;
     }
 
-    @Override
     public void set_id(int _id) {
         this._id = _id;
     }
@@ -100,102 +112,82 @@ public class RncLogs extends Rnc implements Serializable {
         this._date = _date;
     }
 
-    @Override
     public String get_tech() {
         return _tech;
     }
 
-    @Override
     public void set_tech(String _tech) {
         this._tech = _tech;
     }
 
-    @Override
     public String get_mcc() {
         return _mcc;
     }
 
-    @Override
     public void set_mcc(String _mcc) {
         this._mcc = _mcc;
     }
 
-    @Override
     public String get_mnc() {
         return _mnc;
     }
 
-    @Override
     public void set_mnc(String _mnc) {
         this._mnc = _mnc;
     }
 
-    @Override
     public String get_cid() {
         return _cid;
     }
 
-    @Override
     public void set_cid(String _cid) {
         this._cid = _cid;
     }
 
-    @Override
     public String get_lac() {
         return _lac;
     }
 
-    @Override
     public void set_lac(String _lac) {
         this._lac = _lac;
     }
 
-    @Override
     public String get_rnc() {
         return _rnc;
     }
 
-    @Override
     public void set_rnc(String _rnc) {
         this._rnc = _rnc;
     }
 
-    @Override
     public String get_psc() {
         return _psc;
     }
 
-    @Override
     public void set_psc(String _psc) {
         this._psc = _psc;
     }
 
-    @Override
     public Double get_lat() {
         return _lat;
     }
 
-    @Override
     public void set_lat(Double _lat) {
         this._lat = _lat;
     }
 
-    @Override
     public Double get_lon() {
         return _lon;
     }
 
-    @Override
     public void set_lon(Double _lon) {
         this._lon = _lon;
     }
 
-    @Override
     public String get_txt() {
         return _txt;
     }
 
-    @Override
     public void set_txt(String _txt) {
         this._txt = _txt;
     }

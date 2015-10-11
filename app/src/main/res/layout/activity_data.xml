@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_bg"
+        android:layout_margin="6dp"
+        android:clickable="true"
+        android:elevation="2dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:id="@+id/lyt_data_download"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_data_download_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Download"
+                    android:textColor="#555555"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:id="@+id/txt_data_download_info"
+                    android:layout_width="match_parent"
+                    android:textColor="#111111"
+                    android:layout_height="wrap_content"
+                    android:text="Donwload 20815.csv" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_bg"
+        android:layout_margin="6dp"
+        android:clickable="true"
+        android:elevation="2dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:id="@+id/lyt_data_import"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:clickable="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_data_import_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Import"
+                    android:textColor="#555555"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:id="@+id/txt_data_import_info"
+                    android:layout_width="match_parent"
+                    android:textColor="#111111"
+                    android:layout_height="wrap_content"
+                    android:text="Import form file / Not implemented yet" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_bg"
+        android:layout_margin="6dp"
+        android:clickable="true"
+        android:elevation="2dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:id="@+id/lyt_data_export"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_data_export_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Export"
+                    android:textColor="#555555"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:id="@+id/txt_data_export_info"
+                    android:layout_width="match_parent"
+                    android:textColor="#111111"
+                    android:layout_height="wrap_content"
+                    android:text="Export cells to rncmobile.fr" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_bg"
+        android:layout_margin="6dp"
+        android:clickable="true"
+        android:elevation="2dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:id="@+id/lyt_data_rnc_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_data_rnc_delete_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Erase"
+                    android:textColor="#555555"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:id="@+id/txt_data_rnc_delete_info"
+                    android:layout_width="match_parent"
+                    android:textColor="#111111"
+                    android:layout_height="wrap_content"
+                    android:text="Clean up database of RNC (no logs)" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

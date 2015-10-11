@@ -1,12 +1,18 @@
 package org.rncteam.rncfreemobile.tasks;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.rncteam.rncfreemobile.classes.DatabaseExport;
+import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.database.DatabaseExport;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Export;
 import org.rncteam.rncfreemobile.rncmobile;
@@ -35,7 +41,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
     private final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
 
-    private Context context;
+    private Activity activity;
     private String ntmFileName;
 
     // Parameters to pass
@@ -46,15 +52,21 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
     private int nbLteLogs;
     private String response;
 
+    TextView txtResponse;
+    String httpResponse;
+
     private ProgressDialog dialog;
 
     private int state;
 
-    public NtmExportTask(Context contex, String ntmFileName, String nickName, String expName) {
-        this.context = contex;
+    public NtmExportTask(Activity activity, String ntmFileName, String nickName, String expName) {
+        this.activity = activity;
         this.ntmFileName = ntmFileName;
         this.nickname = nickName;
         this.expName = expName;
+
+        txtResponse = (TextView)activity.findViewById(R.id.txt_export_text_result);
+        txtResponse.setText("Sending your RNCs...");
     }
 
     public void NtmExportSetData(int nbLogs, int nbUmtsLogs, int nbLteLogs) {
@@ -191,6 +203,8 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
             Log.i("uploadFile", "HTTP Response is : " + serverResponseMessage + ": " + serverResponseCode);
             if(serverResponseCode == 200){
+
+
                 InputStream is = conn.getInputStream();
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 
@@ -202,7 +216,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
                 Log.d(TAG, "Response : " + resp);
 
-                tel.setHttpResponse(resp);
+                httpResponse = resp;
 
                 // Write this job into database
                 Export export = new Export();
@@ -241,8 +255,6 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             dos.flush();
             dos.close();
 
-
-
             return response;
 
         } catch (Exception e) {
@@ -256,6 +268,8 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String result) {
         if(state > 0 ) Toast.makeText(rncmobile.getAppContext(), "Export réussi", Toast.LENGTH_LONG).show();
         else Toast.makeText(rncmobile.getAppContext(), "Erreur s'est produite", Toast.LENGTH_LONG).show();
+
+        txtResponse.setText(Html.fromHtml(httpResponse));
     }
 
 }

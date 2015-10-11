@@ -50,12 +50,12 @@ public class CsvRncReader {
         Rnc rnc = new Rnc();
 
         rnc.set_tech(l[0]);
-        rnc.set_mcc(l[1]);
-        rnc.set_mnc(l[2]);
-        rnc.set_cid(l[3]);
-        rnc.set_lac(l[4]);
-        rnc.set_rnc(l[5]);
-        rnc.set_psc(l[6]);
+        rnc.set_mcc(Integer.valueOf(l[1]));
+        rnc.set_mnc(Integer.valueOf(l[2]));
+        rnc.set_cid(Integer.valueOf(l[3]));
+        rnc.set_lac(Integer.valueOf(l[4]));
+        rnc.set_rnc(Integer.valueOf(l[5]));
+        rnc.set_psc(Integer.valueOf(l[6]));
         rnc.set_lat(Double.valueOf(l[7]));
         rnc.set_lon(Double.valueOf(l[8]));
         rnc.set_txt(l[9]);

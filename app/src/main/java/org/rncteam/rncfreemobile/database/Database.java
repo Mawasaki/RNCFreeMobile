@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.database;
 
 import android.content.ContentValues;
 import android.content.Context;

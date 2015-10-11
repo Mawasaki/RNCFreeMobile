@@ -85,18 +85,6 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_down_csv_file) {
-            CsvRncDownloader d = new CsvRncDownloader(this);
-            d.execute("");
-        }
-
-        if (id == R.id.action_export_log) {
-            LayoutInflater li = (LayoutInflater) rncmobile.getAppContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            Intent intentELA = new Intent(li.getContext(), ExportLogsActivity.class);
-            startActivity(intentELA);
-        }
-
         if (id == R.id.action_settings) {
             Toast.makeText(rncmobile.getAppContext(), "Not implemented yet", Toast.LENGTH_SHORT).show();
             return true;

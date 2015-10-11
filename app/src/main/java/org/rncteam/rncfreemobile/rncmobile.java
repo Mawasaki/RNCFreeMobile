@@ -26,17 +26,16 @@ public class rncmobile extends Application {
 
     // Class Objects
     private static Telephony tel;
-
     private static Gps gps;
     private static Maps maps;
 
-    public static Activity activity;
     public static boolean isAppStart;
 
     public static boolean onTransaction;
     public static boolean markerClicked;
 
     public static List<RncLogs> listRncLogs;
+    public static boolean notifyListLogsHasChanged;
 
     public static SharedPreferences preferences;
 
@@ -87,6 +86,8 @@ public class rncmobile extends Application {
     public static Maps getMaps() {
         return rncmobile.maps;
     }
+
+
 
     public static String appVersion() {
         try {

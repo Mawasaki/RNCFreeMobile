@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,8 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.adapters.ListExportHistoryAdapter;
-import org.rncteam.rncfreemobile.classes.DatabaseExport;
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseExport;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.tasks.NtmExportTask;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Export;
@@ -27,12 +28,15 @@ import org.rncteam.rncfreemobile.models.RncLogs;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by cedric_f25 on 04/10/2015.
@@ -40,10 +44,8 @@ import java.util.List;
 public class ExportLogsActivity extends Activity {
     private static final String TAG = "ExportLogsActivity";
 
-    private static final String URL = "http://rfm.dataremix.fr/export.php";
-
     private List<RncLogs> lRncLogs;
-    private List<Export> lExport;
+    private ArrayList<Export> lExport;
 
     // UI
     private TextView txtExportCountTotal;
@@ -81,8 +83,6 @@ public class ExportLogsActivity extends Activity {
 
         txtResponse = (TextView )findViewById(R.id.txt_export_text_result);
         txtResponse.setText("");
-        tel = rncmobile.getTelephony();
-        tel.setHttpResponse("");
 
         inpImportNickname = (EditText) findViewById(R.id.inp_import_nickname);
         inpImportName = (EditText) findViewById(R.id.inp_import_name);
@@ -97,6 +97,7 @@ public class ExportLogsActivity extends Activity {
         countLogsByTech();
 
         // Initialise list export history
+        lExport = new ArrayList<>();
         getAllExports();
         adapter = new ListExportHistoryAdapter(this,rncmobile.getAppContext(), lExport);
         listViewExportLogs.setAdapter(adapter);
@@ -112,6 +113,9 @@ public class ExportLogsActivity extends Activity {
             inpImportNickname.setText(lExport.get(0).get_user_nick());
             inpImportName.setText(lExport.get(0).get_name());
         }
+
+        handler = new Handler();
+        displayResponse.run();
 
         // Button export management
         btnExportLog.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +167,7 @@ public class ExportLogsActivity extends Activity {
 
                         // Now we send file to HTTP
 
-                        NtmExportTask net = new NtmExportTask(rncmobile.getAppContext(), NtmFileName,
+                        NtmExportTask net = new NtmExportTask(ExportLogsActivity.this, NtmFileName,
                                 inpImportNickname.getText().toString(), inpImportName.getText().toString());
                         net.NtmExportSetData(lRncLogs.size(), nbUmtsLogs, nbLteLogs);
                         net.execute();
@@ -203,23 +207,18 @@ public class ExportLogsActivity extends Activity {
         DatabaseExport dbe = new DatabaseExport(rncmobile.getAppContext());
 
         dbe.open();
-        lExport = dbe.findAllExport();
+        lExport = dbe.findAllExport(lExport);
         dbe.close();
     }
 
     private Runnable displayResponse = new Runnable() {
         public void run() {
-            if(!tel.getHttpResponse().equals("")) {
-                String html = TextUtils.htmlEncode(tel.getHttpResponse());
-                txtResponse.setText(Html.fromHtml(tel.getHttpResponse()));
+            // Update list
+            getAllExports();
+            adapter.notifyDataSetChanged();
 
-                // Update list
-                getAllExports();
-                adapter.notifyDataSetChanged();
-
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-            }
+            //InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            //imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 
             handler.postDelayed(this, 5000);
         }

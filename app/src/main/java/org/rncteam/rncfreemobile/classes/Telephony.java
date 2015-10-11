@@ -5,127 +5,254 @@ package org.rncteam.rncfreemobile.classes;
  */
 import android.content.Context;
 import android.os.Handler;
-import android.telephony.CellInfo;
-import android.telephony.CellInfoLte;
-import android.telephony.CellInfoWcdma;
 import android.telephony.CellLocation;
-import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.Rnc;
+import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
-import org.rncteam.rncfreemobile.tasks.NtmExportTask;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
+import java.util.Locale;
 
 public class Telephony {
     private static final String TAG = "Telephony";
 
-    protected TelephonyManager tm;
-    protected CellLocation cellLocation;
-    protected GsmCellLocation gsmCellLocation;
+    // Constants
+    private final String UNIDENTIFIED_CELL_TEXT = "-";
+    private final static String TECH_UTMS_TXT = "3G";
+    private final static String TECH_LTE_TXT = "4G";
 
-    private TelephonyStateListener tsl;
-    private SignalStrength signalStrength;
+    // Telephony attibutes
+    private final TelephonyManager telephonyManager;
+    private CellLocation cellLocation;
+    private GsmCellLocation gsmCellLocation;
+    private SignalStrength signalStrength = null;
 
-    private List<CellInfo> lNci;
-    private List<CellInfo> lNci2;
-    private CellWcdma cWcdma;
-    private CellLte cLte;
-    private CellNeighbours cNeigh;
-
-    private ArrayList<CellWcdma> lcWcdma;
-    private ArrayList<CellLte> lcLte;
-    ArrayList<Rnc> lcNeigh;
-
+    // Specials
+    private final Handler handler;
+    private boolean signalChange = false;
+    private boolean cellChange = false;
     private Rnc loggedRnc;
-    private Rnc loggedKnowRnc;
-    private Rnc tempNewRnc;
+    private Rnc markedRnc;
 
-    private Handler handler;
-
-    private String httpResponse;
-
-    private int tempTech;
-    private boolean signalChange;
-    private boolean cellChange;
-
-    private Context mContext;
+    private ArrayList<Rnc> lNeigh;
 
     public Telephony(Context context) {
-        mContext = context;
-        tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        // Initialize Telephony attributes
+        telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        cellLocation = telephonyManager.getCellLocation();
+        gsmCellLocation = (GsmCellLocation) telephonyManager.getCellLocation();
 
-        cellLocation = tm.getCellLocation();
+        // Initialize Listeners
+        TelephonyStateListener tsl = new TelephonyStateListener();
+        telephonyManager.listen(tsl, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS | PhoneStateListener.LISTEN_CELL_LOCATION);
 
-        gsmCellLocation = (GsmCellLocation) tm.getCellLocation();
-        setSignalListener();
+        // Initialize vars
+        lNeigh = new ArrayList<>();
 
-        signalStrength = null;
-        tempTech = getNetworkClass();
-
-        lcWcdma = new ArrayList<CellWcdma>();
-        lcLte = new ArrayList<CellLte>();
-
-        lNci = tm.getAllCellInfo();
-        dispatchCellInfo();
-
+        // Initialize timer
         handler = new Handler();
+
+        signalChange = true;
+        cellChange = true;
+
         dispatchCI.run();
     }
 
-    private String getNetworkOperator() {
-        return tm.getNetworkOperator();
+    private void dispatchCellInfo() {
+        // Start new cell identification
+        Rnc rnc = new Rnc();
+
+        rnc.setIsRegistered(true);
+        rnc.set_tech(getNetworkClassTxt());
+        rnc.set_mcc(getMcc());
+        rnc.set_mnc(getMnc());
+        rnc.set_lac(gsmCellLocation.getLac());
+        rnc.set_rnc(rnc.getRnc());
+        rnc.set_psc(gsmCellLocation.getPsc());
+        rnc.set_lcid(gsmCellLocation.getCid());
+        rnc.set_cid(rnc.getCid());
+        rnc.setSignalStrength((signalStrength != null) ? signalStrength : null);
+        rnc.setNetworkName(getNetworkName());
+
+        // Init different Cell calculation (signals, rnc, ...)
+        rnc.calc();
+
+        // Start RNC Identification
+        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+        dbr.open();
+        Rnc rncDB = dbr.findRncByNameCid(String.valueOf(rnc.getRnc()), String.valueOf(rnc.getCid()));
+
+        // RNC is not identified, insert in RNC database
+        if(rncDB.NOT_IDENTIFIED) rnc.NOT_IDENTIFIED = true;
+        if (rncDB.NOT_IN_DB) {
+            rnc.NOT_IDENTIFIED = true;
+            rnc.set_txt(UNIDENTIFIED_CELL_TEXT);
+            dbr.addRnc(rnc);
+        } else {
+            // Update infos of current Object rnc
+            rnc.set_lon(rncDB.get_lon());
+            rnc.set_lat(rncDB.get_lat());
+            rnc.set_txt(rncDB.get_txt());
+        }
+        dbr.close();
+
+        // Pas this rnc to UI
+        setLoggedRnc(rnc);
+
+        if(cellChange) {
+            // Is this RNC in log ?
+            DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+            dbl.open();
+            RncLogs rncLog = dbl.findRncLogsByRncCid(String.valueOf(rnc.getRnc()), String.valueOf(rnc.getCid()));
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+
+            if (rncLog != null) {
+                // Update log
+                rncLog.set_date(sdf.format(new Date()));
+                dbl.updateLogs(rncLog);
+            } else {
+                // Insert in log
+                if(rnc.get_lac() != 0 && rnc.get_mnc() == 15) {
+                    rncLog = new RncLogs();
+                    rncLog.set_tech(getNetworkClassTxt());
+                    rncLog.set_mcc(String.valueOf(rnc.get_mcc()));
+                    rncLog.set_mnc(String.valueOf(rnc.get_mnc()));
+                    rncLog.set_cid(String.valueOf(rnc.getCid()));
+                    rncLog.set_lac(String.valueOf(rnc.get_lac()));
+                    rncLog.set_rnc(String.valueOf(rnc.getRnc()));
+                    rncLog.set_psc(String.valueOf(rnc.get_psc()));
+                    rncLog.set_lat(rnc.get_lat());
+                    rncLog.set_lon(rnc.get_lon());
+                    rncLog.set_txt(String.valueOf(rnc.get_txt()));
+                    rncLog.set_date(sdf.format(new Date()));
+
+                    // Insert in database a main list
+                    dbl.addLog(rncLog);
+                }
+            }
+            dbl.close();
+            rncmobile.notifyListLogsHasChanged = true;
+        }
+
+        // Start PSC/PCI management if cell is know
+        lNeigh.clear();
+        CellNeighbours cellNeighbours = new CellNeighbours();
+        cellNeighbours.startManager();
+        lNeigh = cellNeighbours.getNearestNeighboringInRnc(rnc);
+
+        Maps maps = rncmobile.getMaps();
+
+        if(maps != null && maps.getMap() != null && !loggedRnc.NOT_IDENTIFIED && cellChange) {
+            maps.setLastZoom(12.0f);
+            maps.setCenterCamera(loggedRnc.get_lat(),
+                    loggedRnc.get_lon());
+        }
     }
 
-    public int getMcc() {
-        if (!getNetworkOperator().isEmpty())
-            return Integer.parseInt(getNetworkOperator().substring(0, 3));
-        return 0;
+
+        /* TODO : Special feature : Export LOG on rncmobile if RNC not defined
+        if(getLoggedRnc().NOTHING) {
+            NtmExportTask net = new NtmExportTask(rncmobile.getAppContext(), NtmFileName,
+                    inpImportNickname.getText().toString(), inpImportName.getText().toString());
+            net.NtmExportSetData(lRncLogs.size(), nbUmtsLogs, nbLteLogs);
+            net.execute();
+        }
+        */
+
+
+    Runnable dispatchCI = new Runnable() {
+        public void run() {
+            if (signalChange || cellChange)
+                dispatchCellInfo();
+            signalChange = false;
+            cellChange = false;
+
+            handler.postDelayed(this, 1000);
+        }
+    };
+
+    // Manage listeners telephony
+    private class TelephonyStateListener extends PhoneStateListener {
+
+        public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+            super.onSignalStrengthsChanged(signalStrength);
+
+            setSignalStrength(signalStrength);
+            signalChange = true;
+        }
+
+        public void onCellLocationChanged(final CellLocation location) {
+            super.onCellLocationChanged(location);
+
+            setCellLocation(location);
+            setGsmCellLocation();
+            cellChange = true;
+        }
     }
 
-    public int getMnc() {
-        if (!getNetworkOperator().isEmpty())
-            return Integer.parseInt(getNetworkOperator().substring(3));
-        return 0;
-    }
-
-    public String getNetworkName() {
-        return tm.getNetworkOperatorName();
-    }
-
+    // Getters & Setters
     public Rnc getLoggedRnc() {
-        return this.loggedRnc;
+        return loggedRnc;
     }
 
-    public void setLoggedRnc(Rnc rnc) {
-        this.loggedRnc = rnc;
+    public void setLoggedRnc(Rnc loggedRnc) {
+        this.loggedRnc = loggedRnc;
     }
 
-    public Rnc getTempNewRnc() {
-        return this.tempNewRnc;
+    public Rnc getMarkedRnc() {
+        return markedRnc;
     }
 
-    public void setTempNewRnc(Rnc tempNewRnc) {
-        this.tempNewRnc = tempNewRnc;
+    public void setMarkedRnc(Rnc markedRnc) {
+        this.markedRnc = markedRnc;
     }
 
-    public void setCellLocation(CellLocation cellLocation) {
+    public ArrayList<Rnc> getlNeigh() {
+        return lNeigh;
+    }
+
+    public void setlNeigh(ArrayList<Rnc> lNeigh) {
+        this.lNeigh = lNeigh;
+    }
+
+    // SIGNALS
+    private void setSignalStrength(SignalStrength signalStrength) {
+        this.signalStrength = signalStrength;
+    }
+
+    // Cell location
+    private void setCellLocation(CellLocation cellLocation) {
         this.cellLocation = cellLocation;
     }
 
-    public void setGsmCellLocation() {
+    private void setGsmCellLocation() {
         gsmCellLocation = (GsmCellLocation) this.cellLocation;
     }
 
-    public String getDeviceId() { return tm.getDeviceId(); }
+    // Telephony manager
+    public TelephonyManager getTelephonyManager() {
+        return this.telephonyManager;
+    }
+
+    //
+    // Getters from telephony
+    //
+    private String getNetworkOperator() {
+        return telephonyManager.getNetworkOperator();
+    }
 
     public int getDataActivity() {
-        int dataState = tm.getDataState();
+        int dataState = telephonyManager.getDataState();
 
         switch (dataState) {
             case TelephonyManager.DATA_CONNECTED:
@@ -139,7 +266,7 @@ public class Telephony {
     }
 
     public int getNetworkClass() {
-        int networkType = tm.getNetworkType();
+        int networkType = telephonyManager.getNetworkType();
 
         switch (networkType) {
             case TelephonyManager.NETWORK_TYPE_GPRS:
@@ -165,272 +292,35 @@ public class Telephony {
         }
     }
 
-    private void dispatchCellInfo() {
-        lcWcdma.clear();
-        lcLte.clear();
-        lcNeigh = new ArrayList<>();
-
-        cWcdma = new CellWcdma();
-        cLte = new CellLte();
-
-        setLoggedRnc(null);
-
-        // Is telephony initilized
-        if (getNetworkClass() != 0) {
-
-            //if (getDataActivity() != 0 && gsmCellLocation.getCid() > 0) {
-                // Mhhh.. Very ugly, I do this for moment
-                //if (tempTech == getNetworkClass()) {
-                    if (getNetworkClass() == 2) {
-                        // Not implemented
-                    }
-
-                    if (getNetworkClass() == 3) {
-                        cWcdma.setIsRegistred(true);
-
-                        cWcdma.setMcc(this.getMcc());
-                        cWcdma.setMnc(this.getMnc());
-                        cWcdma.setLac(gsmCellLocation.getLac());
-                        cWcdma.setPsc(gsmCellLocation.getPsc());
-                        cWcdma.setLcid(gsmCellLocation.getCid());
-
-                        if (signalStrength != null) {
-                            cWcdma.setCellSignalStrength(signalStrength.getGsmSignalStrength());
-                        } else {
-                            cWcdma.setCellSignalStrength(-1);
-                        }
-
-                        cWcdma.setRncDB(getRncDB(cWcdma.getRnc(), cWcdma.getCid()));
-                        cWcdma.setText(cWcdma.getRncDB().get_txt());
-                        if(cellChange) cWcdma.insertRncInLogs();
-                        setLoggedRnc(cWcdma.getRncDB());
-
-                        lcWcdma.add(cWcdma);
-                    }
-                    if (getNetworkClass() == 4) {
-                        cLte.setIsRegistred(true);
-
-                        cLte.setMcc(this.getMcc());
-                        cLte.setMnc(this.getMnc());
-                        cLte.setTac(gsmCellLocation.getLac());
-                        cLte.setPci(gsmCellLocation.getPsc());
-                        cLte.setLCid(gsmCellLocation.getCid());
-
-                        if (signalStrength != null) {
-                            cLte.setCellSignalStrength(signalStrength.getGsmSignalStrength());
-                            cLte.setLteSignals(signalStrength);
-                        } else {
-                            cLte.setCellSignalStrength(-1);
-                        }
-
-                        cLte.setRncDB(getRncDB(cLte.getRnc(), cLte.getCid()));
-                        cLte.setText(cLte.getRncDB().get_txt());
-                        if(cellChange) cLte.insertRncInLogs();
-                        setLoggedRnc(cLte.getRncDB());
-
-                        lcLte.add(cLte);
-                    }
-
-                    Maps maps = rncmobile.getMaps();
-
-                    // Recenter map
-                    if(maps != null && maps.getMap() != null && !loggedRnc.NOTHING && cellChange) {
-
-                        maps.setLastZoom(12.0f);
-                        maps.setCenterCamera(Double.valueOf(loggedRnc.get_lat()),
-                                Double.valueOf(loggedRnc.get_lon()));
-                    }
-
-                    // Special feature : Export LOG on rncmobile if RNC not defined
-            /*
-                    if(getLoggedRnc().NOTHING) {
-                        /*
-                        NtmExportTask net = new NtmExportTask(rncmobile.getAppContext(), NtmFileName,
-                                inpImportNickname.getText().toString(), inpImportName.getText().toString());
-                        net.NtmExportSetData(lRncLogs.size(), nbUmtsLogs, nbLteLogs);
-                        net.execute();
-                        */
-                    //}
-                    // Last NeighboringCell Infos
-                    cNeigh = new CellNeighbours();
-
-                    // PSC Management
-                    lNci2 = tm.getAllCellInfo();
-                    if (lNci2 != null && lNci2.size() > 0) { // If device supports new API
-                        for (CellInfo cellInfo : lNci2) {
-                            cWcdma = new CellWcdma();
-                            cLte = new CellLte();
-
-                            if (cellInfo != null && cellInfo instanceof CellInfoWcdma) {
-                                CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfo;
-
-                                cWcdma.setIsRegistred(cellInfoWcdma.isRegistered());
-
-                                cWcdma.setMcc(cellInfoWcdma.getCellIdentity().getMcc());
-                                cWcdma.setMnc(cellInfoWcdma.getCellIdentity().getMnc());
-                                cWcdma.setLac(cellInfoWcdma.getCellIdentity().getLac());
-                                cWcdma.setPsc(cellInfoWcdma.getCellIdentity().getPsc());
-                                cWcdma.setLcid(cellInfoWcdma.getCellIdentity().getCid());
-
-                                cWcdma.setCellSignalStrength(cellInfoWcdma.getCellSignalStrength().getDbm());
-
-                                if (!cellInfoWcdma.isRegistered()) {
-                                    cNeigh.add(cWcdma.getLac(), cWcdma.getPsc(), cWcdma.getLCid(), cWcdma.getCellSignalStrength());
-                                }
-
-                            }
-                            if (cellInfo != null && cellInfo instanceof CellInfoLte) {
-                                CellInfoLte cellInfoLte = (CellInfoLte) cellInfo;
-
-                                cLte.setIsRegistred(cellInfoLte.isRegistered());
-
-                                cLte.setMcc(cellInfoLte.getCellIdentity().getMcc());
-                                cLte.setMnc(cellInfoLte.getCellIdentity().getMnc());
-                                cLte.setTac(cellInfoLte.getCellIdentity().getTac());
-                                cLte.setPci(cellInfoLte.getCellIdentity().getPci());
-                                cLte.setLCid(cellInfoLte.getCellIdentity().getCi());
-
-                                cLte.setCellSignalStrength(cellInfoLte.getCellSignalStrength().getDbm());
-
-                                // How the new API is tunneling LTE Neigh ?
-                                if (!cellInfoLte.isRegistered()) {
-                                    cNeigh.add(cLte.getNeighCI(), cLte.getPci(), cLte.getNeighCI(), cLte.getLteSignalStrength());
-                                } else {
-                                    // Get PCI or other info of new API
-                                    CellLte rncNeigh = getRegisteredLteCell();
-                                    rncNeigh.setPci(cLte.getPci());
-                                    setRegisteredLteCell(rncNeigh);
-                                }
-                            }
-                        }
-                    } else {
-                        List<NeighboringCellInfo> lNci = tm.getNeighboringCellInfo();
-
-                        for (int i = 0; i < lNci.size(); i++) {
-                            cNeigh.add(lNci.get(i).getLac(), lNci.get(i).getPsc(), lNci.get(i).getCid(), lNci.get(i).getRssi());
-                        }
-                    }
-
-                    if (getNetworkClass() == 3) {
-                        CellWcdma rncNeigh = getRegisteredWcdmaCell();
-                        if (rncNeigh != null)
-                            lcNeigh = cNeigh.getNearestNeighboringInRnc(rncNeigh.getRncDB());
-                    }
-                    if (getNetworkClass() == 4) {
-                        CellLte rncNeigh = getRegisteredLteCell();
-                        if (rncNeigh != null)
-                            lcNeigh = cNeigh.getNearestNeighboringInRnc(rncNeigh.getRncDB());
-                    }
-                    tempTech = getNetworkClass();
-                //}
-            //}
-        }
+    public String getNetworkClassTxt() {
+        if (getNetworkClass() == 3) return TECH_UTMS_TXT;
+        else if (getNetworkClass() == 4) return TECH_LTE_TXT;
+        else return TECH_UTMS_TXT;
     }
 
-    public CellWcdma getRegisteredWcdmaCell() {
-        for(int i=0;i<lcWcdma.size();i++) {
-            if(lcWcdma.get(i).getIsRegistred())
-                return lcWcdma.get(i);
-        }
-        return null;
+    private int getMcc() {
+        if (!getNetworkOperator().isEmpty())
+            return Integer.parseInt(getNetworkOperator().substring(0, 3));
+        return 0;
     }
 
-    public CellLte getRegisteredLteCell() {
-        for(int i=0;i<lcLte.size();i++) {
-            if(lcLte.get(i).getIsRegistred())
-                return lcLte.get(i);
-        }
-        return null;
-    }
-    public void setRegisteredLteCell(CellLte rncNeigh) {
-        for(int i=0;i<lcLte.size();i++) {
-            if(lcLte.get(i).getIsRegistred())
-                lcLte.set(i,rncNeigh);
-        }
+    private int getMnc() {
+        if (!getNetworkOperator().isEmpty())
+            return Integer.parseInt(getNetworkOperator().substring(3));
+        return 0;
     }
 
-    public ArrayList<Rnc> getNeighbourCell() {
-        return lcNeigh;
+    public String getNetworkName() {
+        return telephonyManager.getNetworkOperatorName();
     }
 
-    // RNC TEXT
-    private Rnc getRncDB(int rnc, int cid) {
-        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
-        dbr.open();
+    public String getDeviceId() { return telephonyManager.getDeviceId(); }
 
-        Rnc rncDB = dbr.findRncByName(String.valueOf(rnc), String.valueOf(cid));
-
-        dbr.close();
-
-        if(rncDB.NOTHING) {
-            rncDB.set_rnc(String.valueOf(rnc));
-            rncDB.set_cid(String.valueOf(cid));
-        }
-
-        return rncDB;
+    public boolean isCellChange() {
+        return cellChange;
     }
 
-    // ListLogs
-    public void getAllRncLogs() {
-        if(rncmobile.listRncLogs != null) {
-            DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-
-            dbl.open();
-            dbl.findAllRncLogsMainList();
-            dbl.close();
-        }
+    public void setCellChange(boolean cellChange) {
+        this.cellChange = cellChange;
     }
-
-    // SIGNALS
-    private void setSignalStrength(SignalStrength signalStrength) {
-        this.signalStrength = signalStrength;
-    }
-
-    public void setSignalListener() {
-        tsl = new TelephonyStateListener();
-        tm.listen(tsl, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS | PhoneStateListener.LISTEN_CELL_LOCATION);
-    }
-
-    public String getHttpResponse() {
-        return httpResponse;
-    }
-
-    public void setHttpResponse(String httpResponse) {
-        this.httpResponse = httpResponse;
-    }
-
-    // Gestion des listeners telephony
-    private class TelephonyStateListener extends PhoneStateListener {
-
-        public void onSignalStrengthsChanged(SignalStrength signalStrength) {
-            super.onSignalStrengthsChanged(signalStrength);
-
-            setSignalStrength(signalStrength);
-            signalChange = true;
-            //dispatchCellInfo();
-        }
-
-        public void onCellLocationChanged(final CellLocation location) {
-            super.onCellLocationChanged(location);
-
-            setCellLocation(location);
-            setGsmCellLocation();
-            signalChange = true;
-            cellChange = true;
-            //dispatchCellInfo();
-
-            tempTech = getNetworkClass();
-        }
-    }
-
-    private Runnable dispatchCI = new Runnable() {
-        public void run() {
-            if (signalChange || cellChange)
-                dispatchCellInfo();
-            signalChange = false;
-            cellChange = false;
-
-            handler.postDelayed(this, 1000);
-        }
-    };
 }

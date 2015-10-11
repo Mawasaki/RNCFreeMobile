@@ -1,16 +1,10 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by cedricf_25 on 17/07/2015.

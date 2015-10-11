@@ -45,12 +45,13 @@
     <RelativeLayout
         android:id="@+id/lyt_ant"
         android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_height="60dp"
         android:layout_below="@id/lyt_tech"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:orientation="horizontal" >
+
 
     </RelativeLayout>
 
@@ -156,10 +157,37 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/lyt3"
+        android:id="@+id/lyt21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/lyt2"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/txt410"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:text="BLR :"
+            android:textSize="11dp" />
+
+        <TextView
+            android:id="@+id/txt411"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="FH :"
+            android:textSize="11dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyt3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lyt21"
         android:layout_toRightOf="@+id/thumbnail"
         android:orientation="horizontal" >
 

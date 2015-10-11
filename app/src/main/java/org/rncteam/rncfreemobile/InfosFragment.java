@@ -1,7 +1,6 @@
 package org.rncteam.rncfreemobile;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.rncteam.rncfreemobile.classes.DatabaseInfo;
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseInfo;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class InfosFragment extends Fragment {
     TextView txtInfoVersion1;
     TextView txtInfoVersion2;
     TextView txtRncUpdate;
+    TextView txtRncUpdate2;
     TextView txtLogsNbTotal;
     TextView txtLogsNbUmts;
     TextView txtLogsNbLte;
@@ -47,6 +49,7 @@ public class InfosFragment extends Fragment {
         txtInfoVersion2 = (TextView) v.findViewById(R.id.txt_info_version2);
         // Rnc update
         txtRncUpdate = (TextView) v.findViewById(R.id.txt_rnc_database);
+        txtRncUpdate2 = (TextView) v.findViewById(R.id.txt_rnc_database2);
         // Info logs
         txtLogsNbTotal = (TextView) v.findViewById(R.id.txt_logs_nb_total);
         txtLogsNbUmts = (TextView) v.findViewById(R.id.txt_logs_nb_umts);
@@ -61,6 +64,7 @@ public class InfosFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
+
         setInfoRncMobile();
         setInfoVersion();
     }
@@ -75,13 +79,19 @@ public class InfosFragment extends Fragment {
         dbi.open();
 
         ArrayList lInfo = dbi.getInfo("rncBaseUpdate");
+        dbi.close();
 
         if (lInfo.size() > 0)
             txtRncUpdate.setText((String) lInfo.get(1));
 
         if(txtRncUpdate.getText().equals("0")) txtRncUpdate.setText("Please update");
 
-        dbi.close();
+        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+        dbr.open();
+        Integer nb_rnc = dbr.countAllRnc();
+        dbr.close();
+
+        txtRncUpdate2.setText("Nb of RNCs = " + String.valueOf(nb_rnc));
     }
 
     private void setInfoLog() {

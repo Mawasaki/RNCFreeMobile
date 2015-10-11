@@ -8,7 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.Database;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
 
 /**
@@ -56,7 +59,6 @@ public class LogsDetailsActivity extends Activity {
     protected void onPause() {
         super.onPause();
         // Write new text and new coordinates
-
         DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
         dbl.open();
 
@@ -67,8 +69,22 @@ public class LogsDetailsActivity extends Activity {
             rncLog.set_lon(Double.valueOf(this.txtDetailLon.getText().toString()));
             dbl.updateEditedLogs(rncLog);
         }
+        rncmobile.notifyListLogsHasChanged = true;
 
         dbl.close();
+
+        // Update RNC database
+        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+        dbr.open();
+
+        Rnc rnc =  dbr.findRncByNameCid(String.valueOf(rnclogs.get_rnc()), String.valueOf(rnclogs.get_cid()));
+
+        rnc.set_txt(this.txtDetailText.getText().toString());
+        rnc.set_lat(Double.valueOf(this.txtDetailLat.getText().toString()));
+        rnc.set_lon(Double.valueOf(this.txtDetailLon.getText().toString()));
+        dbr.updateRnc(rnc);
+
+        dbr.close();
     }
 
     @Override

@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.util.Log;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +22,11 @@ import org.rncteam.rncfreemobile.LogsDetailsActivity;
 import org.rncteam.rncfreemobile.LogsMapsActivity;
 import org.rncteam.rncfreemobile.LogsSetCooActivity;
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.classes.DatabaseLogs;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -93,15 +94,17 @@ public class ListLogsMainAdapter extends BaseAdapter {
                 + String.valueOf(rncLog.get_psc()) + " ";
 
         // Date
-        String fDate = "";
+        String lDate = ""; String fDate = "";
         Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000L);
-        if(rncLog.get_date_obj().after(date)) fDate = rncLog.get_time();
-        else fDate = rncLog.get_fr_datetime();
+        if(rncLog.get_date_obj().after(date)) lDate = rncLog.get_time();
+        else lDate = rncLog.get_fr_datetime();
+
+        fDate = rncLog.get_formated_date_abbrev();
 
         holder.txtMainInfo.setText(mainInfo);
         holder.txtDate.setText(String.valueOf(fDate));
         holder.txtTxt.setText(String.valueOf(rncLog.get_txt()));
-        holder.txtOperator.setText(String.valueOf(rncLog.get_mcc()) + " " + String.valueOf(rncLog.get_mnc()));
+        holder.txtOperator.setText(lDate);
 
         // Roaming operator
         if(!rncLog.get_mnc().equals("15"))
@@ -118,7 +121,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
             public void onClick(View view) {
                 PopupMenu popup = new PopupMenu(rncmobile.getAppContext(), view);
                 popup.getMenuInflater().inflate(R.menu.menu_logs_listview, popup.getMenu());
-                if(rncLog.get_lat() == 0.0) popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(false);
+                if(rncLog.get_lat() == -1.0) popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(false);
                 else popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(true);
                 popup.show();
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -178,7 +181,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
                                 DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
                                 dbl.open();
                                 dbl.deleteOneLogs(rncLog);
-                                dbl.findAllRncLogsMainList();
+                                rncmobile.notifyListLogsHasChanged = true;
                                 dbl.close();
                                 return true;
                             default:
