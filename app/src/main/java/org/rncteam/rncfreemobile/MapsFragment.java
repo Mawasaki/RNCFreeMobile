@@ -1,12 +1,14 @@
 package org.rncteam.rncfreemobile;
 
 import org.rncteam.rncfreemobile.adapters.MapsPopupAdapter;
+import org.rncteam.rncfreemobile.classes.Utils;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Rnc;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Handler;
@@ -48,7 +50,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
         // Retrive main classes
         maps = rncmobile.getMaps();
-
         tel = rncmobile.getTelephony();
 
         setUpMapIfNeeded();
@@ -77,26 +78,29 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         super.onPause();
         rncmobile.markerClicked = false;
         rncmobile.onTransaction = false;
+
+        handler.removeCallbacksAndMessages(displayLoading);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-        maps.initializeMap();
+
+        displayLoading.run();
     }
 
     private void setUpMapIfNeeded() {
         if (mMap == null) {
-            Log.d(TAG, "nMap null");
             mMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
                     .getMap();
             if (mMap != null) {
-                maps.setMap(mMap);
-                maps.initializeMap();
-                Log.d(TAG, "Initialize map");
+
             }
         }
+        maps.setMap(mMap);
+        maps.initializeMap(getActivity());
+        rncmobile.setMaps(maps);
         rncmobile.onTransaction = false;
     }
 
@@ -105,7 +109,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
             if(rncmobile.onTransaction == true) view.findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
             else view.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
-            handler.postDelayed(this, 500);
+            handler.postDelayed(this, 1000);
         }
     };
 
@@ -114,7 +118,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         public void onClick(DialogInterface dialog, int which) {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
-                    // Insert address to Logs
                     Telephony tel = rncmobile.getTelephony();
 
                     // Update RNC Logs : Adresse, CP, Commune, gps
@@ -131,8 +134,8 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
                     for(int i=0;i<lRnc.size();i++) {
                         Rnc rnc = lRnc.get(i);
                         rnc.set_txt(tel.getMarkedRnc().get_txt());
-                        rnc.set_lat(Double.valueOf(tel.getMarkedRnc().get_lat()));
-                        rnc.set_lon(Double.valueOf(tel.getMarkedRnc().get_lon()));
+                        rnc.set_lat(tel.getMarkedRnc().get_lat());
+                        rnc.set_lon(tel.getMarkedRnc().get_lon());
                         dbr.updateRnc(rnc);
                     }
                     dbr.close();

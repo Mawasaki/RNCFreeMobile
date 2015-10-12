@@ -20,6 +20,7 @@ import org.rncteam.rncfreemobile.rncmobile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Telephony {
@@ -103,7 +104,6 @@ public class Telephony {
             rnc.set_lat(rncDB.get_lat());
             rnc.set_txt(rncDB.get_txt());
         }
-        dbr.close();
 
         // Pas this rnc to UI
         setLoggedRnc(rnc);
@@ -122,7 +122,8 @@ public class Telephony {
                 dbl.updateLogs(rncLog);
             } else {
                 // Insert in log
-                if(rnc.get_lac() != 0 && rnc.get_mnc() == 15) {
+                if(rnc.get_cid() > 0 && rnc.get_lac() != 0/* && rnc.get_mnc() == 15*/) {
+
                     rncLog = new RncLogs();
                     rncLog.set_tech(getNetworkClassTxt());
                     rncLog.set_mcc(String.valueOf(rnc.get_mcc()));
@@ -130,17 +131,33 @@ public class Telephony {
                     rncLog.set_cid(String.valueOf(rnc.getCid()));
                     rncLog.set_lac(String.valueOf(rnc.get_lac()));
                     rncLog.set_rnc(String.valueOf(rnc.getRnc()));
-                    rncLog.set_psc(String.valueOf(rnc.get_psc()));
                     rncLog.set_lat(rnc.get_lat());
                     rncLog.set_lon(rnc.get_lon());
                     rncLog.set_txt(String.valueOf(rnc.get_txt()));
+                    rncLog.set_psc(String.valueOf(rnc.get_psc()));
                     rncLog.set_date(sdf.format(new Date()));
+
+                    // Check if a RNC is already identified
+                    ArrayList<RncLogs> lLogsRnc = dbl.findRncLogsByRnc(String.valueOf(rnc.getRnc()));
+
+                    if(lLogsRnc.size() > 0) {
+                        rncLog.set_lat(lLogsRnc.get(0).get_lat());
+                        rncLog.set_lon(lLogsRnc.get(0).get_lon());
+                        rncLog.set_txt(lLogsRnc.get(0).get_txt());
+
+                        // Update RNC already RNC
+                        rnc.set_txt(lLogsRnc.get(0).get_txt());
+                        rnc.set_lat(lLogsRnc.get(0).get_lat());
+                        rnc.set_lon(lLogsRnc.get(0).get_lon());
+                        dbr.updateRnc(rnc);
+                    }
 
                     // Insert in database a main list
                     dbl.addLog(rncLog);
                 }
             }
             dbl.close();
+            dbr.close();
             rncmobile.notifyListLogsHasChanged = true;
         }
 

@@ -1,5 +1,8 @@
 package org.rncteam.rncfreemobile.classes;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -9,6 +12,7 @@ import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -18,6 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
+import org.rncteam.rncfreemobile.listeners.MapsLocationListeners;
 import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
@@ -40,6 +45,8 @@ public class Maps {
     private Map<Marker, AnfrInfos> markers;
     private ArrayList<Marker> markersMax;
 
+    private FragmentActivity fa;
+
     public Maps() {
         lastZoom = 0;
         lastPosLat = 0.0;
@@ -55,30 +62,36 @@ public class Maps {
         this.mMap = null;
     }
 
-    public void initializeMap() {
-        Telephony tel = rncmobile.getTelephony();
+    public void initializeMap(Activity activity) {
+        if (lastZoom == 0 && lastPosLat == 0.0 && lastPosLon == 0.0) {
+            Telephony tel = rncmobile.getTelephony();
 
-        if(tel != null) {
-            if(tel.getLoggedRnc() != null && !tel.getLoggedRnc().NOT_IDENTIFIED) {
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(Double.valueOf(tel.getLoggedRnc().get_lat()), Double.valueOf(tel.getLoggedRnc().get_lon())))
-                        .zoom(12.0f)
-                        .bearing(0)
-                        .build();
+            if (tel != null) {
+                if (tel.getLoggedRnc() != null && !tel.getLoggedRnc().NOT_IDENTIFIED) {
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new LatLng(tel.getLoggedRnc().get_lat(), tel.getLoggedRnc().get_lon()))
+                            .zoom(12.0f)
+                            .bearing(0)
+                            .build();
 
-                this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                } else {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(46.71109, 1.7191036), 5.0f));
+                }
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(46.71109, 1.7191036), 5.0f));
             }
-        } else {
+
+        } else
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(46.71109, 1.7191036), 5.0f));
-        }
+                    new LatLng(lastPosLat, lastPosLon), lastZoom));
 
         setMapMyLocationEnabled(true);
 
         setCameraListener();
+        setLocationListener(activity);
         setMarkerClickListener();
     }
 
@@ -89,6 +102,11 @@ public class Maps {
     public void setCameraListener() {
         MapsChangeListeners mapListener = new MapsChangeListeners(this);
         mMap.setOnCameraChangeListener(mapListener);
+    }
+
+    public void setLocationListener(Activity activity) {
+        MapsLocationListeners mapListener = new MapsLocationListeners(activity);
+        mMap.setOnMyLocationChangeListener(mapListener);
     }
 
     public void setMarkerClickListener() {

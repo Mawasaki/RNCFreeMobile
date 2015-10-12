@@ -24,6 +24,8 @@ public class MapsMarkerClickListeners implements GoogleMap.OnMarkerClickListener
 
         marker.showInfoWindow();
 
+
+
         return true;
     }
 }

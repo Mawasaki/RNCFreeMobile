@@ -48,20 +48,27 @@ public class LogsSetCooActivity extends Activity {
 
         maps = rncmobile.getMaps();
         gps = rncmobile.getGps();
-        gps.enableGps();
+        //gps.enableGps();
 
         setUpMapIfNeeded();
         mMap.setMyLocationEnabled(true);
 
         CameraPosition cameraPosition;
         if(rnclogs.get_lat() == -1.0 || rnclogs.get_lon() == -1.0) {
-            cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(gps.getLatitude(), gps.getLongitude()))
-                    .zoom(12)
-                    .bearing(0)
-                    .build();
+            if(gps.getNumSatellite() > 3) {
+                cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(gps.getLatitude(), gps.getLongitude()))
+                        .zoom(12)
+                        .bearing(0)
+                        .build();
+            } else {
+                cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(46.71109,  1.7191036))
+                        .zoom(5.0f)
+                        .bearing(0)
+                        .build();
+            }
         } else {
-
             cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(Double.valueOf(rnclogs.get_lat()), Double.valueOf(rnclogs.get_lon())))
                     .zoom(12)

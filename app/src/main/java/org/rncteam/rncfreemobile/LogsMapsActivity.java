@@ -2,6 +2,7 @@ package org.rncteam.rncfreemobile;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,22 +37,28 @@ public class LogsMapsActivity extends Activity {
 
         this.rnclogs = (RncLogs) getIntent().getSerializableExtra("logsInfosObject");
 
-        maps = rncmobile.getMaps();
+        maps = new Maps();
         gps = rncmobile.getGps();
-        gps.enableGps();
 
         setUpMapIfNeeded();
         mMap.setMyLocationEnabled(true);
 
         CameraPosition cameraPosition;
-        if(rnclogs.get_txt().equals("-")) {
-            cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(gps.getLatitude(), gps.getLongitude()))
-                    .zoom(12)
-                    .bearing(0)
-                    .build();
+        if(rnclogs.get_lat() != -1.0 && rnclogs.get_lon() != -1.0) {
+            if(gps.getNumSatellite() > 3) {
+                cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(gps.getLatitude(), gps.getLongitude()))
+                        .zoom(12)
+                        .bearing(0)
+                        .build();
+            } else {
+                cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(46.71109,  1.7191036))
+                        .zoom(5.0f)
+                        .bearing(0)
+                        .build();
+            }
         } else {
-
             cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(Double.valueOf(rnclogs.get_lat()), Double.valueOf(rnclogs.get_lon())))
                     .zoom(12)
@@ -71,5 +78,24 @@ public class LogsMapsActivity extends Activity {
         if (mMap == null) {
             mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map2)).getMap();
         }
+        maps.setMap(mMap);
+        maps.initializeMap(this);
+        rncmobile.setMaps(maps);
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setUpMapIfNeeded();
+    }
+
 }

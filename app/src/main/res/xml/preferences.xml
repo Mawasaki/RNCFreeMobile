@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="RNC Free Mobile Preference"
+        android:key="pref_key_storage_settings">
+
+        <CheckBoxPreference
+            android:title="Ecran toujours allumé"
+            android:key="screen"
+            android:summary="Garde l'ecran allumé lors de vos chasses">
+        </CheckBoxPreference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

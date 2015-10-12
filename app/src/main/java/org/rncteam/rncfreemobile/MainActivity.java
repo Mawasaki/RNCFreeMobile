@@ -7,10 +7,13 @@ import org.rncteam.rncfreemobile.view.SlidingTabLayout;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +56,10 @@ public class MainActivity extends ActionBarActivity {
 
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
+
+        SharedPreferences sp = rncmobile.getPreferences();
+        if(sp.getBoolean("screen", true)) Log.d(TAG, "Always on");
+        else  Log.d(TAG, "Always off");
     }
 
     @Override
@@ -86,7 +93,8 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Toast.makeText(rncmobile.getAppContext(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+            Intent intentPA = new Intent(rncmobile.getAppContext(), SettingsActivity.class);
+            startActivity(intentPA);
             return true;
         }
 

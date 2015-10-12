@@ -77,7 +77,7 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         holder.txtRssi.setText(String.valueOf(rnc.getLteRssi()) + " dBm");
         holder.txtRsrp.setText(String.valueOf(rnc.getLteRsrp()) + " dBm");
         holder.txtRsrq.setText(String.valueOf(rnc.getLteRsrq()) + " dB");
-        holder.txtSnr.setText(String.valueOf(rnc.getLteRssnr()) + " dB");
+        holder.txtSnr.setText(String.valueOf((rnc.getLteRssnr()/10) + " dB"));
         holder.txtData.setText(rnc.get_txt());
 
         return convertView;

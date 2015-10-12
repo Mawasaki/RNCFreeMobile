@@ -37,6 +37,8 @@ public class Gps {
         l = null;
 
         setGpsStatus(true);
+
+        enableGps();
     }
 
     public LocationManager getLocationManager() {

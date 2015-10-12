@@ -67,8 +67,10 @@ public class rncmobile extends Application {
         onTransaction = false;
 
         // Crash report
-        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
+        //Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
 
+        preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
     }
 
     public static Context getAppContext() {
@@ -87,7 +89,13 @@ public class rncmobile extends Application {
         return rncmobile.maps;
     }
 
+    public static void setMaps(Maps maps) {
+        rncmobile.maps = maps;
+    }
 
+    public static SharedPreferences getPreferences() {
+        return preferences;
+    }
 
     public static String appVersion() {
         try {
