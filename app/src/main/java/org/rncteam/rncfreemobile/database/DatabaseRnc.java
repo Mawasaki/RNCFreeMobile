@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteStatement;
 
 import org.rncteam.rncfreemobile.models.Rnc;
+import org.rncteam.rncfreemobile.models.RncLogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,12 +76,17 @@ public class DatabaseRnc extends Database {
         mdb.delete(TABLE_RNCS, null, null);
     }
 
-    /*
+
     public void deleteOneRnc(Rnc rnc) {
-        mdb.delete(TABLE_RNCS, COL_RNCS_RNC + " = ? AND "
-                + COL_RNCS_CID + " = ?", new String[]{String.valueOf(rnc.get_rnc()), String.valueOf(rnc.get_cid())});
+        String rncLte = "40" + rnc.get_real_rnc();
+        // UMTS
+        mdb.delete(TABLE_RNCS, COL_RNCS_RNC + " = ?",
+                new String[]{String.valueOf(rnc.get_real_rnc())});
+
+        mdb.delete(TABLE_RNCS, COL_RNCS_RNC + " = ?",
+                new String[]{String.valueOf(rncLte)});
     }
-    */
+
 
     public void updateRnc(Rnc rnc) {
         ContentValues v = new ContentValues();
@@ -92,6 +98,31 @@ public class DatabaseRnc extends Database {
         mdb.update(TABLE_RNCS, v, COL_RNCS_RNC + " = ? AND "
                         + COL_RNCS_CID + " = ?",
                 new String[]{String.valueOf(rnc.get_rnc()), String.valueOf(rnc.get_cid())});
+    }
+
+    public void updateOneRnc(String oldRnc, RncLogs newRnc) {
+
+        // Retrieve all old RNC
+        open();
+        List<Rnc> oldRncs = findRncByName(oldRnc);
+
+        for(int i=0;i<oldRncs.size();i++) {
+            String newRncTxt = "";
+            if(oldRncs.get(i).get_tech().equals("3G")) newRncTxt = newRnc.get_rnc();
+            else newRncTxt = "40" + newRnc.get_rnc();
+
+            ContentValues v = new ContentValues();
+            v.put(COL_RNCS_LAT, newRnc.get_lat());
+            v.put(COL_RNCS_LON, newRnc.get_lon());
+            v.put(COL_RNCS_TXT, newRnc.get_txt());
+            v.put(COL_RNCS_RNC, newRnc.get_rnc());
+
+            String rncLte = "40" + oldRncs.get(i).get_real_rnc();
+
+            mdb.update(TABLE_RNCS, v, COL_RNCS_RNC + " = ? OR "
+                            + COL_RNCS_RNC + " = ?",
+                    new String[]{String.valueOf(oldRncs.get(i).get_real_rnc()), rncLte});
+        }
     }
 
     public List<Rnc> findAllRnc() {

@@ -72,11 +72,6 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
         postParams.add(new BasicNameValuePair("lon_ne", Double.toString(ne.longitude)));
 
         rncmobile.onTransaction = true;
-
-        Log.d(TAG,"lat_sw=" + Double.toString(sw.latitude) +
-                 " / lon_sw=" + Double.toString(sw.longitude) +
-                 " / lat_ne=" + Double.toString(ne.latitude) +
-                 " / lon_ne=" + Double.toString(ne.longitude));
     }
 
     @Override
@@ -139,6 +134,9 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                                 } else {
                                     icon = R.drawable.circle_orange;
                                     markerTitle = "orange";
+                                    AnfrInfos ai = new AnfrInfos();
+                                    ai.setHauteur(jData.getJSONObject(i).getString("AER_NB_ALT_BAS"));
+                                    tel.setAnfrInfos(ai);
                                 }
                             } else {
                                 icon = R.drawable.circle_grey;

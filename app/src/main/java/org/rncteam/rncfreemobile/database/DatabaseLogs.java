@@ -51,6 +51,21 @@ public class DatabaseLogs extends Database {
                 + COL_LOGS_CID + " = ?", new String[]{rncLog.get_rnc(), rncLog.get_cid()});
     }
 
+    public void updateOneRncLogs(RncLogs rncLog) {
+        ContentValues v = new ContentValues();
+
+        v.put(COL_LOGS_DATE, rncLog.get_date());
+
+        // Update UMTS
+        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = ?",
+                new String[]{rncLog.get_rnc()});
+
+        // Update LTE
+        String rnc = "40" + rncLog.get_rnc();
+        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC + " = ?",
+                new String[]{rnc});
+    }
+
     public void updateEditedLogs(RncLogs rncLog) {
         ContentValues v = new ContentValues();
 
@@ -128,7 +143,7 @@ public class DatabaseLogs extends Database {
 
         String query = "SELECT * FROM " + TABLE_LOGS + " "
                 + "WHERE " + COL_LOGS_RNC + " = ? "
-                + "OR " + COL_LOGS_RNC + "=  ?;";
+                + "OR " + COL_LOGS_RNC + " = ?;";
 
         Cursor c = mdb.rawQuery(query, new String[]{rnc,rncLte});
         if(c.getCount() > 0) {

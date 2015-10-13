@@ -10,6 +10,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
 
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
@@ -43,6 +44,7 @@ public class Telephony {
     private boolean cellChange = false;
     private Rnc loggedRnc;
     private Rnc markedRnc;
+    private AnfrInfos anfrInfos;
 
     private ArrayList<Rnc> lNeigh;
 
@@ -87,79 +89,172 @@ public class Telephony {
         // Init different Cell calculation (signals, rnc, ...)
         rnc.calc();
 
-        // Start RNC Identification
-        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
-        dbr.open();
-        Rnc rncDB = dbr.findRncByNameCid(String.valueOf(rnc.getRnc()), String.valueOf(rnc.getCid()));
+        // CAS 1 : Nouveau RNC, Nouveau LOG
+        // Insertion dans la base de rnc
+        // Insertion dans la base de log
 
-        // RNC is not identified, insert in RNC database
-        if(rncDB.NOT_IDENTIFIED) rnc.NOT_IDENTIFIED = true;
-        if (rncDB.NOT_IN_DB) {
-            rnc.NOT_IDENTIFIED = true;
-            rnc.set_txt(UNIDENTIFIED_CELL_TEXT);
-            dbr.addRnc(rnc);
-        } else {
-            // Update infos of current Object rnc
-            rnc.set_lon(rncDB.get_lon());
+        if(getMnc() == 15 && rnc.get_cid() > 0
+                && (getNetworkClass() == 3 || getNetworkClass() == 4)) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+
+            DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+            dbr.open();
+            Rnc rncDB = dbr.findRncByNameCid(String.valueOf(rnc.getRnc()), String.valueOf(rnc.getCid()));
+
+            DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+            dbl.open();
+            RncLogs rncLogDB = dbl.findRncLogsByRncCid(String.valueOf(rnc.getRnc()), String.valueOf(rnc.getCid()));
+
+            // CAS 1 : Nouveau RNC, Nouveau LOG
+            // Insertion dans la base de rnc sans txt ni lon lat
+            // Insertion dans la base de log
+            if(rncDB.NOT_IN_DB && rncLogDB == null) {
+                // RNC
+                rnc.set_lon(-1.0);
+                rnc.set_lat(-1.0);
+                rnc.set_txt("-");
+                rnc.NOT_IDENTIFIED = true;
+
+                dbr.addRnc(rnc);
+
+                rncLogDB = new RncLogs();
+                rncLogDB.set_tech(getNetworkClassTxt());
+                rncLogDB.set_mcc(String.valueOf(rnc.get_mcc()));
+                rncLogDB.set_mnc(String.valueOf(rnc.get_mnc()));
+                rncLogDB.set_cid(String.valueOf(rnc.getCid()));
+                rncLogDB.set_lac(String.valueOf(rnc.get_lac()));
+                rncLogDB.set_rnc(String.valueOf(rnc.getRnc()));
+                rncLogDB.set_lat(rnc.get_lat());
+                rncLogDB.set_lon(rnc.get_lon());
+                rncLogDB.set_txt(String.valueOf(rnc.get_txt()));
+                rncLogDB.set_psc(String.valueOf(rnc.get_psc()));
+                rncLogDB.set_date(sdf.format(new Date()));
+
+                // Logs
+                // Verifie que le RNC n'a pas déja connu de la base LOG
+                ArrayList<RncLogs> rncExistLogDB = dbl.findRncLogsByRnc(String.valueOf(rnc.get_real_rnc()));
+                if(rncExistLogDB.size() > 0) {
+                    rncLogDB.set_lat(rncExistLogDB.get(0).get_lat());
+                    rncLogDB.set_lon(rncExistLogDB.get(0).get_lon());
+                    rncLogDB.set_txt(rncExistLogDB.get(0).get_txt());
+
+                    rnc.set_lon(rncExistLogDB.get(0).get_lat());
+                    rnc.set_lat(rncExistLogDB.get(0).get_lon());
+                    rnc.set_txt(rncExistLogDB.get(0).get_txt());
+                    if(!rncExistLogDB.get(0).get_txt().equals("-")) rnc.NOT_IDENTIFIED = true;
+                }
+
+                dbl.addLog(rncLogDB);
+                Log.d(TAG, "CAS 1 : Nouveau RNC, Nouveau LOG");
+            }
+
+            // CAS 2 : RNC connu, LOG inconnu
+            // Mettre à jour l'objet courant
+            // Inserer un LOG avec text connu du RNC
+            if(!rncDB.NOT_IN_DB && rncLogDB == null) {
+                // RNC
+                rnc.set_lat(rncDB.get_lat());
+                rnc.set_lon(rncDB.get_lon());
+                rnc.set_txt(rncDB.get_txt());
+
+                // Logs
+                rncLogDB = new RncLogs();
+                rncLogDB.set_tech(getNetworkClassTxt());
+                rncLogDB.set_mcc(String.valueOf(rnc.get_mcc()));
+                rncLogDB.set_mnc(String.valueOf(rnc.get_mnc()));
+                rncLogDB.set_cid(String.valueOf(rnc.getCid()));
+                rncLogDB.set_lac(String.valueOf(rnc.get_lac()));
+                rncLogDB.set_rnc(String.valueOf(rnc.getRnc()));
+                rncLogDB.set_lat(rnc.get_lat());
+                rncLogDB.set_lon(rnc.get_lon());
+                rncLogDB.set_txt(String.valueOf(rnc.get_txt()));
+                rncLogDB.set_psc(String.valueOf(rnc.get_psc()));
+                rncLogDB.set_date(sdf.format(new Date()));
+
+                // Logs
+                // Verifie que le RNC n'a pas déja connu de la base LOG
+                ArrayList<RncLogs> rncExistLogDB = dbl.findRncLogsByRnc(String.valueOf(rnc.get_real_rnc()));
+                if(rncExistLogDB.size() > 0) {
+                    rncLogDB.set_lat(rncExistLogDB.get(0).get_lat());
+                    rncLogDB.set_lon(rncExistLogDB.get(0).get_lon());
+                    rncLogDB.set_txt(rncExistLogDB.get(0).get_txt());
+
+                    rnc.set_lon(rncExistLogDB.get(0).get_lat());
+                    rnc.set_lat(rncExistLogDB.get(0).get_lon());
+                    rnc.set_txt(rncExistLogDB.get(0).get_txt());
+                    if(!rncExistLogDB.get(0).get_txt().equals("-")) rnc.NOT_IDENTIFIED = true;
+                }
+
+                dbl.addLog(rncLogDB);
+                Log.d(TAG, "CAS 2 : RNC connu, LOG inconnu");
+            }
+
+            // CAS 3 : RNC inconnu, LOG connu
+            // Ajout dans la table RNC avec les infos de LOG
+            // LOG : mettre à jour la date
+            if(rncDB.NOT_IN_DB && rncLogDB != null) {
+                // RNC
+                if(rncLogDB.get_txt().equals("-")) rnc.NOT_IDENTIFIED = true;
+                rnc.set_lat(rncLogDB.get_lat());
+                rnc.set_lon(rncLogDB.get_lon());
+                rnc.set_txt(rncLogDB.get_txt());
+
+                dbr.addRnc(rnc);
+
+                // Logs
+                rncLogDB.set_date(sdf.format(new Date()));
+                dbl.updateLogs(rncLogDB);
+                Log.d(TAG, "CAS 3 : RNC inconnu, LOG connu");
+            }
+
+            // CAS 4 : RNC connu, LOG connu
+            // Mettre à jour l'objet courant et la table rnc (LOG prioritaire)
+            // Mettre à jour la date Log
+            if(!rncDB.NOT_IN_DB && rncLogDB != null) {
+                // RNC
+                // In secu we update actual RNC in database if lat & lon diff
+                // Verifie que le RNC n'a pas déja connu de la base LOG
+                ArrayList<RncLogs> rncExistLogDB = dbl.findRncLogsByRnc(String.valueOf(rnc.get_real_rnc()));
+                if(rncExistLogDB.size() > 0) {
+                    // Pour chaque rnc, vérifie si cohérence du lat/lon, sinon on update toutes les infos du rnc trouvé
+                    if (!rncDB.get_lat().equals(rncExistLogDB.get(0).get_lat())
+                            || !rncDB.get_lon().equals(rncExistLogDB.get(0).get_lon())) {
+                        dbr.updateOneRnc(rncDB.get_real_rnc(), rncExistLogDB.get(0));
+                    }
+
+                }
+
+                if(rncLogDB.get_txt().equals("-")) rnc.NOT_IDENTIFIED = true;
+                rnc.set_lat(rncLogDB.get_lat());
+                rnc.set_lon(rncLogDB.get_lon());
+                rnc.set_txt(rncLogDB.get_txt());
+
+                dbr.updateRnc(rnc);
+
+                // Logs
+                rncLogDB.set_date(sdf.format(new Date()));
+                if(cellChange) dbl.updateLogs(rncLogDB);
+                Log.d(TAG, "CAS 4 : RNC connu, LOG connu");
+            }
+
+            dbl.close();
+            dbr.close();
+            rncmobile.notifyListLogsHasChanged = true;
+        } else { // Only get DB vars
+            /*
+            DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+            dbr.open();
+            Rnc rncDB = dbr.findRncByNameCid(String.valueOf(rnc.getRnc()), String.valueOf(rnc.getCid()));
             rnc.set_lat(rncDB.get_lat());
+            rnc.set_lon(rncDB.get_lon());
             rnc.set_txt(rncDB.get_txt());
+            if(rncDB.NOT_IDENTIFIED) rnc.NOT_IDENTIFIED = true;
+            */
+            rnc.NOT_IDENTIFIED = true;
         }
 
         // Pas this rnc to UI
         setLoggedRnc(rnc);
-
-        if(cellChange) {
-            // Is this RNC in log ?
-            DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-            dbl.open();
-            RncLogs rncLog = dbl.findRncLogsByRncCid(String.valueOf(rnc.getRnc()), String.valueOf(rnc.getCid()));
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
-
-            if (rncLog != null) {
-                // Update log
-                rncLog.set_date(sdf.format(new Date()));
-                dbl.updateLogs(rncLog);
-            } else {
-                // Insert in log
-                if(rnc.get_cid() > 0 && rnc.get_lac() != 0/* && rnc.get_mnc() == 15*/) {
-
-                    rncLog = new RncLogs();
-                    rncLog.set_tech(getNetworkClassTxt());
-                    rncLog.set_mcc(String.valueOf(rnc.get_mcc()));
-                    rncLog.set_mnc(String.valueOf(rnc.get_mnc()));
-                    rncLog.set_cid(String.valueOf(rnc.getCid()));
-                    rncLog.set_lac(String.valueOf(rnc.get_lac()));
-                    rncLog.set_rnc(String.valueOf(rnc.getRnc()));
-                    rncLog.set_lat(rnc.get_lat());
-                    rncLog.set_lon(rnc.get_lon());
-                    rncLog.set_txt(String.valueOf(rnc.get_txt()));
-                    rncLog.set_psc(String.valueOf(rnc.get_psc()));
-                    rncLog.set_date(sdf.format(new Date()));
-
-                    // Check if a RNC is already identified
-                    ArrayList<RncLogs> lLogsRnc = dbl.findRncLogsByRnc(String.valueOf(rnc.getRnc()));
-
-                    if(lLogsRnc.size() > 0) {
-                        rncLog.set_lat(lLogsRnc.get(0).get_lat());
-                        rncLog.set_lon(lLogsRnc.get(0).get_lon());
-                        rncLog.set_txt(lLogsRnc.get(0).get_txt());
-
-                        // Update RNC already RNC
-                        rnc.set_txt(lLogsRnc.get(0).get_txt());
-                        rnc.set_lat(lLogsRnc.get(0).get_lat());
-                        rnc.set_lon(lLogsRnc.get(0).get_lon());
-                        dbr.updateRnc(rnc);
-                    }
-
-                    // Insert in database a main list
-                    dbl.addLog(rncLog);
-                }
-            }
-            dbl.close();
-            dbr.close();
-            rncmobile.notifyListLogsHasChanged = true;
-        }
 
         // Start PSC/PCI management if cell is know
         lNeigh.clear();
@@ -189,7 +284,7 @@ public class Telephony {
 
     Runnable dispatchCI = new Runnable() {
         public void run() {
-            if (signalChange || cellChange)
+            if ((signalChange || cellChange) && gsmCellLocation != null )
                 dispatchCellInfo();
             signalChange = false;
             cellChange = false;
@@ -312,7 +407,7 @@ public class Telephony {
     public String getNetworkClassTxt() {
         if (getNetworkClass() == 3) return TECH_UTMS_TXT;
         else if (getNetworkClass() == 4) return TECH_LTE_TXT;
-        else return TECH_UTMS_TXT;
+        else return UNIDENTIFIED_CELL_TEXT;
     }
 
     private int getMcc() {
@@ -339,5 +434,13 @@ public class Telephony {
 
     public void setCellChange(boolean cellChange) {
         this.cellChange = cellChange;
+    }
+
+    public AnfrInfos getAnfrInfos() {
+        return anfrInfos;
+    }
+
+    public void setAnfrInfos(AnfrInfos anfrInfos) {
+        this.anfrInfos = anfrInfos;
     }
 }

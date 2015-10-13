@@ -64,11 +64,14 @@ public class MapsLocationListeners implements GoogleMap.OnMyLocationChangeListen
         double km = distance / 1;
         double meter = distance * 1000;
 
-        if(km > 1)
-            txtMapExtInfosDistance.setText("BTS: " + kmFormat.format(km) + "km");
-        else
-            txtMapExtInfosDistance.setText("BTS: " + mFormat.format(meter) + "m");
-
+        if(tel.getLoggedRnc().NOT_IDENTIFIED) {
+            txtMapExtInfosDistance.setText("BTS: -");
+        } else {
+            if (km > 1)
+                txtMapExtInfosDistance.setText("BTS: " + kmFormat.format(km) + "km");
+            else
+                txtMapExtInfosDistance.setText("BTS: " + mFormat.format(meter) + "m");
+        }
     }
 
 }

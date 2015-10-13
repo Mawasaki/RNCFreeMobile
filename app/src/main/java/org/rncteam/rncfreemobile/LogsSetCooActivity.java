@@ -109,9 +109,7 @@ public class LogsSetCooActivity extends Activity {
         LatLng newPos = marker.getPosition();
 
         DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
         dbl.open();
-        dbr.open();
 
         ArrayList<RncLogs> lRnc = dbl.findRncLogsByRnc(String.valueOf(rnclogs.get_rnc()));
         for(int i=0;i<lRnc.size();i++) {
@@ -119,16 +117,9 @@ public class LogsSetCooActivity extends Activity {
             rncLog.set_lat(newPos.latitude);
             rncLog.set_lon(newPos.longitude);
             dbl.updateEditedLogs(rncLog);
-
-            // Update already rncs
-            Rnc rnc =  dbr.findRncByNameCid(String.valueOf(rncLog.get_rnc()), String.valueOf(rncLog.get_cid()));
-            rnc.set_lat(newPos.latitude);
-            rnc.set_lon(newPos.longitude);
-            dbr.updateRnc(rnc);
         }
 
         dbl.close();
-        dbr.close();
         this.finish();
     }
 }

@@ -48,6 +48,7 @@ public class Gps {
     private void setLocationListener() {
         locationListener = new LocationStateListener();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, (float)5.0, locationListener);
+        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, (float)5.0, locationListener);
     }
 
     private void setGpsListener() {

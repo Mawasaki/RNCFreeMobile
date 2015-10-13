@@ -92,7 +92,7 @@ public class Maps {
 
         setCameraListener();
         setLocationListener(activity);
-        setMarkerClickListener();
+        setMarkerClickListener(activity);
     }
 
     public void setMapMyLocationEnabled(boolean enabled) {
@@ -109,8 +109,8 @@ public class Maps {
         mMap.setOnMyLocationChangeListener(mapListener);
     }
 
-    public void setMarkerClickListener() {
-        MapsMarkerClickListeners mapMarkerListener = new MapsMarkerClickListeners();
+    public void setMarkerClickListener(Activity activity) {
+        MapsMarkerClickListeners mapMarkerListener = new MapsMarkerClickListeners(activity);
         mMap.setOnMarkerClickListener(mapMarkerListener);
     }
 

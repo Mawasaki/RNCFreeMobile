@@ -1,6 +1,8 @@
 package org.rncteam.rncfreemobile;
 
 import org.rncteam.rncfreemobile.adapters.MapsPopupAdapter;
+import org.rncteam.rncfreemobile.classes.Elevation;
+import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.Utils;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
@@ -21,7 +23,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -38,8 +43,13 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
     private GoogleMap mMap;
     private Maps maps;
+    private Gps gps;
     private Telephony tel;
     private View view;
+
+    private ImageButton btnActionProfile;
+    private RelativeLayout lytMapExtProfile;
+    private boolean btnOpen = false;
 
     private Handler handler;
 
@@ -51,6 +61,11 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         // Retrive main classes
         maps = rncmobile.getMaps();
         tel = rncmobile.getTelephony();
+        gps = rncmobile.getGps();
+
+        // Retrieve UI
+        btnActionProfile = (ImageButton) v.findViewById(R.id.btn_action_profile);
+        lytMapExtProfile = (RelativeLayout) v.findViewById(R.id.map_ext_profile);
 
         setUpMapIfNeeded();
 
@@ -59,6 +74,31 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
         handler = new Handler();
         displayLoading.run();
+
+        btnActionProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(btnOpen) {
+                    lytMapExtProfile.setVisibility(View.GONE);
+                    btnOpen = false;
+                }
+                else {
+                    lytMapExtProfile.setVisibility(View.VISIBLE);
+                    btnOpen = true;
+
+                    // draw profile chart
+                    if(!tel.getLoggedRnc().NOT_IDENTIFIED
+                            && tel.getLoggedRnc().get_lat() != -1.0
+                            && tel.getLoggedRnc().get_lon() != -1) {
+                        Elevation elevation = new Elevation(getActivity());
+                        elevation.initChart();
+                        elevation.getData(gps.getLatitude(), gps.getLongitude(),
+                                tel.getLoggedRnc().get_lat(), tel.getLoggedRnc().get_lon());
+                    } else Toast.makeText(rncmobile.getAppContext(),
+                            "Pas de profil: antenne non identifiée", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         return v;
     }
@@ -125,20 +165,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
                     dbl.open();
                     dbl.updateLogsNewRnc(tel.getMarkedRnc());
                     dbl.close();
-
-                    // Update RNC table
-                    DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
-                    dbr.open();
-
-                    List<Rnc> lRnc = dbr.findRncByName(String.valueOf(tel.getMarkedRnc().get_real_rnc()));
-                    for(int i=0;i<lRnc.size();i++) {
-                        Rnc rnc = lRnc.get(i);
-                        rnc.set_txt(tel.getMarkedRnc().get_txt());
-                        rnc.set_lat(tel.getMarkedRnc().get_lat());
-                        rnc.set_lon(tel.getMarkedRnc().get_lon());
-                        dbr.updateRnc(rnc);
-                    }
-                    dbr.close();
 
                     ViewPager pager = (ViewPager) getActivity().findViewById(R.id.pager);
                     pager.setCurrentItem(1);

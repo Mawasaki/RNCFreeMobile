@@ -1,10 +1,11 @@
 package org.rncteam.rncfreemobile.listeners;
 
+import android.app.Activity;
 import android.util.Log;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+import org.rncteam.rncfreemobile.classes.Elevation;
 import org.rncteam.rncfreemobile.rncmobile;
 
 /**
@@ -14,6 +15,11 @@ public class MapsMarkerClickListeners implements GoogleMap.OnMarkerClickListener
     private static final String TAG = "MapsMarkerClickListener";
 
     private Marker lastOpenned = null;
+    private Activity activity;
+
+    public MapsMarkerClickListeners(Activity activity) {
+        this.activity = activity;
+    }
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
@@ -23,8 +29,6 @@ public class MapsMarkerClickListeners implements GoogleMap.OnMarkerClickListener
         rncmobile.getMaps().setCenterCamera(marker.getPosition().latitude, marker.getPosition().longitude);
 
         marker.showInfoWindow();
-
-
 
         return true;
     }
