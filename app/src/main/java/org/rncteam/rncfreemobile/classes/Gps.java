@@ -56,6 +56,10 @@ public class Gps {
         lm.addGpsStatusListener(gpsListener);
     }
 
+    public boolean gpsStatus() {
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
     private void removeGpsStatusUpdate() {
         lm.removeGpsStatusListener(gpsListener);
     }

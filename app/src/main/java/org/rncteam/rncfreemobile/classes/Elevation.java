@@ -78,7 +78,7 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
         mSeekBarX.setOnSeekBarChangeListener(this);
 */
         mChart = (LineChart) activity.findViewById(R.id.chart_profile);
-        mChart.setViewPortOffsets(0, 20, 0, 0);
+        mChart.setViewPortOffsets(10, 20, 10, 10);
         //mChart.setBackgroundColor(Color.rgb(104, 241, 175));
 
         // no description text
@@ -86,6 +86,8 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
 
         // enable value highlighting
         mChart.setHighlightEnabled(true);
+
+        mChart.setAutoScaleMinMaxEnabled(true);
 
         // enable touch gestures
         mChart.setTouchEnabled(true);
@@ -98,6 +100,8 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
         mChart.setPinchZoom(false);
 
         mChart.setDrawGridBackground(false);
+
+        mChart.setPadding(10,10,10,10);
 
         XAxis x = mChart.getXAxis();
         x.setTypeface(tf);
@@ -178,7 +182,7 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
 
             int firstX = 0;
             int lastX = 0;
-            for (int i = 0; i < meter; i+=increment) {
+            for (int i = 0; i <= meter; i+=increment) {
                 xVals.add((i) + "");
                 if(i==0) firstX = i;
                 lastX = i;
@@ -215,8 +219,8 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
 
             // create a data object with the datasets
             LineData data = new LineData(xVals, set1);
-            data.setValueTypeface(tf);
-            data.setValueTextSize(9f);
+            //data.setValueTypeface(tf);
+            //data.setValueTextSize(9f);
             data.setDrawValues(false);
 
             ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();

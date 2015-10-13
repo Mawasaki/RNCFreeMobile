@@ -114,7 +114,6 @@ public class DatabaseRnc extends Database {
             ContentValues v = new ContentValues();
             v.put(COL_RNCS_LAT, newRnc.get_lat());
             v.put(COL_RNCS_LON, newRnc.get_lon());
-            v.put(COL_RNCS_TXT, newRnc.get_txt());
             v.put(COL_RNCS_RNC, newRnc.get_rnc());
 
             String rncLte = "40" + oldRncs.get(i).get_real_rnc();

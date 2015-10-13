@@ -52,7 +52,7 @@ public class CellNeighbours {
 
                         rnc.setLteRssi(cellInfoWcdma.getCellSignalStrength().getDbm());
 
-                        if (!cellInfoWcdma.isRegistered()) {
+                        if (!cellInfoWcdma.isRegistered() && tel.getNetworkClass() == 3) {
                             lRnc.add(rnc);
                         }
 
@@ -68,10 +68,10 @@ public class CellNeighbours {
                         rnc.set_psc(cellInfoLte.getCellIdentity().getPci());
                         rnc.set_lcid(cellInfoLte.getCellIdentity().getCi());
 
-                        rnc.setLteRssi(cellInfoLte.getCellSignalStrength().getDbm());
+                        rnc.setLteRssi(cellInfoLte.getCellSignalStrength().getDbm()/10);
 
                         // How the new API is tunneling LTE Neigh ?
-                        if (!cellInfoLte.isRegistered()) {
+                        if (!cellInfoLte.isRegistered() && tel.getNetworkClass() == 4) {
                             lRnc.add(rnc);
                         }
                     }
@@ -131,13 +131,12 @@ public class CellNeighbours {
                             }
                         }
                     }
-                }
-
-                if (nearestRnc != null) {
-                    nearestRnc.setLteRssi(lRnc.get(i).getLteRssi());
-                    lRnc.set(i, nearestRnc);
-                    overlapRnc = nearestRnc;
-                }
+                    if (nearestRnc != null) {
+                        nearestRnc.setLteRssi(lRnc.get(i).getLteRssi());
+                        lRnc.set(i, nearestRnc);
+                        overlapRnc = nearestRnc;
+                    }
+                } else lRnc.remove(i);
             }
         }
         dbr.close();

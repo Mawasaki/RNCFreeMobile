@@ -14,13 +14,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
 
 import java.util.List;
 
 public class rncmobile extends Application {
+    private static final String TAG = "rncmobile";
 
     private static Context context;
 
@@ -72,6 +75,7 @@ public class rncmobile extends Application {
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
     }
+
 
     public static Context getAppContext() {
         return context;

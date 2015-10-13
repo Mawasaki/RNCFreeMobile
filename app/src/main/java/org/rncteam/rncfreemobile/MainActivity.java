@@ -14,9 +14,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 /**
@@ -58,8 +60,25 @@ public class MainActivity extends ActionBarActivity {
         tabs.setViewPager(pager);
 
         SharedPreferences sp = rncmobile.getPreferences();
-        if(sp.getBoolean("screen", true)) Log.d(TAG, "Always on");
-        else  Log.d(TAG, "Always off");
+        if(sp.getBoolean("screen", true)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Gps gps = rncmobile.getGps();
+        if(gps != null) {
+            gps.disableGps();
+        }
+
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -71,13 +90,10 @@ public class MainActivity extends ActionBarActivity {
 
     public void onPause() {
         super.onPause();
+        //if(sp.getBoolean("screen", true)) rncmobile.powerRelease();
     }
 
     public void onStop() {
-        Gps gps = rncmobile.getGps();
-        if(gps != null) {
-            gps.disableGps();
-        }
         super.onStop();
     }
 
@@ -86,6 +102,15 @@ public class MainActivity extends ActionBarActivity {
         //MenuItem logToggle = menu.findItem(R.id.action_delete);
 
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sp = rncmobile.getPreferences();
+        if(sp.getBoolean("screen", true)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 
     @Override

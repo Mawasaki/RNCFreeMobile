@@ -4,7 +4,11 @@ package org.rncteam.rncfreemobile.classes;
  * Created by cedricf_25 on 14/07/2015.
  */
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.telephony.CellInfo;
+import android.telephony.CellInfoLte;
+import android.telephony.CellInfoWcdma;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -73,27 +77,59 @@ public class Telephony {
     private void dispatchCellInfo() {
         // Start new cell identification
         Rnc rnc = new Rnc();
-
         rnc.setIsRegistered(true);
         rnc.set_tech(getNetworkClassTxt());
         rnc.set_mcc(getMcc());
         rnc.set_mnc(getMnc());
         rnc.set_lac(gsmCellLocation.getLac());
         rnc.set_rnc(rnc.getRnc());
-        rnc.set_psc(gsmCellLocation.getPsc());
+        // Get some info of new API
+        List<CellInfo> lAci = getTelephonyManager().getAllCellInfo();
+        int psc = -1;
+        int signal = -1;
+        if (lAci != null && lAci.size() > 0) { // If device supports new API
+            for (CellInfo cellInfo : lAci) {
+                if (cellInfo != null && cellInfo instanceof CellInfoWcdma) {
+                    CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfo;
+                    if (cellInfoWcdma.isRegistered()) {
+                        psc = cellInfoWcdma.getCellIdentity().getPsc();
+                        signal = cellInfoWcdma.getCellSignalStrength().getDbm();
+                    }
+
+
+                }
+                if (cellInfo != null && cellInfo instanceof CellInfoLte) {
+                    CellInfoLte cellInfoLte = (CellInfoLte) cellInfo;
+                    if (cellInfoLte.isRegistered()) {
+                        psc = cellInfoLte.getCellIdentity().getPci();
+                    }
+
+                }
+                rnc.set_psc(psc);
+            }
+        } else {
+            rnc.set_psc(gsmCellLocation.getPsc());
+        }
+
+        rnc.setSignalStrength((signalStrength != null) ? signalStrength : null);
         rnc.set_lcid(gsmCellLocation.getCid());
         rnc.set_cid(rnc.getCid());
-        rnc.setSignalStrength((signalStrength != null) ? signalStrength : null);
         rnc.setNetworkName(getNetworkName());
 
         // Init different Cell calculation (signals, rnc, ...)
         rnc.calc();
 
+        // Doit on enregistrer intinerance
+        SharedPreferences sp = rncmobile.getPreferences();
+        boolean logRoaming = false;
+        if(sp != null && sp.getBoolean("log_roaming", true)) {
+            logRoaming = true;
+        }
         // CAS 1 : Nouveau RNC, Nouveau LOG
         // Insertion dans la base de rnc
         // Insertion dans la base de log
 
-        if(getMnc() == 15 && rnc.get_cid() > 0
+        if((logRoaming || getMnc() == 15) && rnc.get_cid() > 0 && rnc.get_cid() < 1000000000 /* Huuuu */
                 && (getNetworkClass() == 3 || getNetworkClass() == 4)) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
 
@@ -240,16 +276,7 @@ public class Telephony {
             dbl.close();
             dbr.close();
             rncmobile.notifyListLogsHasChanged = true;
-        } else { // Only get DB vars
-            /*
-            DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
-            dbr.open();
-            Rnc rncDB = dbr.findRncByNameCid(String.valueOf(rnc.getRnc()), String.valueOf(rnc.getCid()));
-            rnc.set_lat(rncDB.get_lat());
-            rnc.set_lon(rncDB.get_lon());
-            rnc.set_txt(rncDB.get_txt());
-            if(rncDB.NOT_IDENTIFIED) rnc.NOT_IDENTIFIED = true;
-            */
+        } else {
             rnc.NOT_IDENTIFIED = true;
         }
 

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
 import org.rncteam.rncfreemobile.listeners.MapsLocationListeners;
 import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;

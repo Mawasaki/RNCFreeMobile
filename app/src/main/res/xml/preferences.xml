@@ -9,6 +9,12 @@
             android:key="screen"
             android:summary="Garde l'ecran allumé lors de vos chasses">
         </CheckBoxPreference>
+        <CheckBoxPreference
+            android:title="Log en itinerance"
+            android:key="log_roaming"
+            android:summary="Enregistre les cells dans le log">
+        </CheckBoxPreference>
+
 
     </PreferenceCategory>
 
