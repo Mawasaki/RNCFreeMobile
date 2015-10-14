@@ -134,6 +134,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Elevation profile"
+            android:textSize="14dp"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_alignParentTop="true"

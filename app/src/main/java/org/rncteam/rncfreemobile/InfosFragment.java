@@ -91,7 +91,7 @@ public class InfosFragment extends Fragment {
         Integer nb_rnc = dbr.countAllRnc();
         dbr.close();
 
-        txtRncUpdate2.setText("Nb of RNCs = " + String.valueOf(nb_rnc));
+        txtRncUpdate2.setText("Nb of CIDs = " + String.valueOf(nb_rnc));
     }
 
     private void setInfoLog() {

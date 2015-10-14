@@ -60,6 +60,7 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
             holder.txtPsc = (TextView) convertView.findViewById(R.id.txt_psc);
             holder.txtRscp = (TextView) convertView.findViewById(R.id.txt_rscp);
             holder.txtData = (TextView) convertView.findViewById(R.id.txt_data);
+            holder.txrFreq = (TextView) convertView.findViewById(R.id.txt_freq_sect);
 
             holder.fl_background = (FrameLayout) convertView.findViewById(R.id.fl_monitor_umts_general);
 
@@ -79,6 +80,8 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         holder.txtRscp.setText(String.valueOf((2 * rnc.getUmtsRscp()) - 113) +" dBm");
         holder.txtData.setText(rnc.get_txt());
 
+        holder.txrFreq.setText(rnc.getFreqTxt() + " / " + rnc.getSectText());
+
         // Roaming
         if(rnc.get_mnc() != 15)
             holder.fl_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
@@ -97,6 +100,7 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         TextView txtPsc;
         TextView txtRscp;
         TextView txtData;
+        TextView txrFreq;
 
         FrameLayout fl_background;
     }

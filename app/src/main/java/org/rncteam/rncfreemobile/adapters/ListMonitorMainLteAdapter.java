@@ -61,6 +61,7 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
             holder.txtRsrq = (TextView) convertView.findViewById(R.id.txt_rsrq);
             holder.txtSnr = (TextView) convertView.findViewById(R.id.txt_snr);
             holder.txtData = (TextView) convertView.findViewById(R.id.txt_data);
+            holder.txrFreq = (TextView) convertView.findViewById(R.id.txt_freq_sect);
 
             convertView.setTag(holder);
         } else {
@@ -77,8 +78,10 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         holder.txtRssi.setText(String.valueOf(rnc.getLteRssi()) + " dBm");
         holder.txtRsrp.setText(String.valueOf(rnc.getLteRsrp()) + " dBm");
         holder.txtRsrq.setText(String.valueOf(rnc.getLteRsrq()) + " dB");
-        holder.txtSnr.setText(String.valueOf((rnc.getLteRssnr()/10) + " dB"));
+        holder.txtSnr.setText(String.valueOf((rnc.getLteRssnr() / 10) + " dB"));
         holder.txtData.setText(rnc.get_txt());
+
+        holder.txrFreq.setText(rnc.getFreqTxt() + " / " + rnc.getSectText());
 
         return convertView;
     }
@@ -94,6 +97,7 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         TextView txtRsrq;
         TextView txtSnr;
         TextView txtData;
+        TextView txrFreq;
     }
 
 }

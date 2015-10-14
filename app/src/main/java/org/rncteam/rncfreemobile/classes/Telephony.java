@@ -181,7 +181,6 @@ public class Telephony {
                 }
 
                 dbl.addLog(rncLogDB);
-                Log.d(TAG, "CAS 1 : Nouveau RNC, Nouveau LOG");
             }
 
             // CAS 2 : RNC connu, LOG inconnu
@@ -222,7 +221,6 @@ public class Telephony {
                 }
 
                 dbl.addLog(rncLogDB);
-                Log.d(TAG, "CAS 2 : RNC connu, LOG inconnu");
             }
 
             // CAS 3 : RNC inconnu, LOG connu
@@ -240,7 +238,6 @@ public class Telephony {
                 // Logs
                 rncLogDB.set_date(sdf.format(new Date()));
                 dbl.updateLogs(rncLogDB);
-                Log.d(TAG, "CAS 3 : RNC inconnu, LOG connu");
             }
 
             // CAS 4 : RNC connu, LOG connu
@@ -270,7 +267,6 @@ public class Telephony {
                 // Logs
                 rncLogDB.set_date(sdf.format(new Date()));
                 if(cellChange) dbl.updateLogs(rncLogDB);
-                Log.d(TAG, "CAS 4 : RNC connu, LOG connu");
             }
 
             dbl.close();
@@ -289,13 +285,17 @@ public class Telephony {
         cellNeighbours.startManager();
         lNeigh = cellNeighbours.getNearestNeighboringInRnc(rnc);
 
-        Maps maps = rncmobile.getMaps();
+        // Doit on centrer la carte
+        if(sp != null && sp.getBoolean("map_center", true)) {
+            Maps maps = rncmobile.getMaps();
+            Log.d(TAG,"Map center activé");
 
-        if(maps != null && maps.getMap() != null && !loggedRnc.NOT_IDENTIFIED && cellChange) {
-            maps.setLastZoom(12.0f);
-            maps.setCenterCamera(loggedRnc.get_lat(),
-                    loggedRnc.get_lon());
-        }
+            if (maps != null && maps.getMap() != null && !loggedRnc.NOT_IDENTIFIED && cellChange) {
+                maps.setLastZoom(12.0f);
+                maps.setCenterCamera(loggedRnc.get_lat(),
+                        loggedRnc.get_lon());
+            }
+        } else Log.d(TAG,"Map center désactivé");
     }
 
 

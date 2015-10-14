@@ -48,7 +48,7 @@ public class Gps {
     private void setLocationListener() {
         locationListener = new LocationStateListener();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, (float)5.0, locationListener);
-        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, (float)5.0, locationListener);
+        //lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, (float)5.0, locationListener);
     }
 
     private void setGpsListener() {
@@ -57,7 +57,9 @@ public class Gps {
     }
 
     public boolean gpsStatus() {
-        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if(lm != null)
+            return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        else return false;
     }
 
     private void removeGpsStatusUpdate() {
@@ -84,6 +86,7 @@ public class Gps {
         setGpsStatus(false);
         removeGpsStatusUpdate();
         removeLocationUpdate();
+        lm = null;
     }
 
     public void enableGps() {

@@ -60,7 +60,7 @@ public class MapsLocationListeners implements GoogleMap.OnMyLocationChangeListen
         txtMapExtInfosCid.setText("CID: " + tel.getLoggedRnc().get_cid());
         txtMapExtInfosTxt.setText(tel.getLoggedRnc().get_txt());
 
-        if(gps.gpsStatus()) {
+        if(gps != null && gps.gpsStatus()) {
             LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
 
             LatLng myLoc = new LatLng(location.getLatitude(), location.getLongitude());

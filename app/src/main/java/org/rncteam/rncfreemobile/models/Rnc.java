@@ -143,6 +143,28 @@ public class Rnc {
         else return rnc;
     }
 
+    public String getFreqTxt() {
+        if(get_cid() > 100 && get_cid() < 32767) return "2100 Mhz";
+        if(get_cid() > 32768 && get_cid() < 65435) return "900 Mhz";
+        if(get_cid() > 90 && get_cid() < 95) return "900 Mhz";
+        if(get_cid() > 20 && get_cid() < 25) return "2100 Mhz";
+        if(get_cid() > 60 && get_cid() < 65) return "2600 Mhz";
+        if(get_cid() > 80 && get_cid() < 85) return "2600 Mhz";
+        return "-";
+    }
+
+    public String getSectText() {
+        if(get_cid() > 100 && get_cid() < 32767) return "Secteur 1";
+        if(get_cid() > 32768 && get_cid() < 65435) return "Sexteur 11";
+        if(get_cid() > 20 && get_cid() < 95) {
+            if(String.valueOf(get_cid()).substring(1, 2).equals("1")) return "Secteur 1";
+            if(String.valueOf(get_cid()).substring(1, 2).equals("2")) return "Secteur 2";
+            if(String.valueOf(get_cid()).substring(1, 2).equals("3")) return "Secteur 3";
+            if(String.valueOf(get_cid()).substring(1, 2).equals("4")) return "Secteur 4";
+        }
+        return "-";
+    }
+
     // Getter & Setter Database
     public int get_id() {
         return _id;

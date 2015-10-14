@@ -111,6 +111,10 @@ public class MainActivity extends ActionBarActivity {
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+
+        Gps gps = rncmobile.getGps();
+
+        if(!gps.gpsStatus()) rncmobile.setGps(new Gps(rncmobile.getAppContext()));
     }
 
     @Override

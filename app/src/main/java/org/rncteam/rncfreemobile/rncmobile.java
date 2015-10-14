@@ -54,12 +54,6 @@ public class rncmobile extends Application {
         gps = new Gps(context);
         maps = new Maps();
 
-        // Signal listener
-        //tel.setSignalListener();
-
-        // Enable GPS
-        gps.enableGps();
-
         // Get preferences
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -70,7 +64,7 @@ public class rncmobile extends Application {
         onTransaction = false;
 
         // Crash report
-        //Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
+        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -87,6 +81,10 @@ public class rncmobile extends Application {
 
     public static Gps getGps() {
         return rncmobile.gps;
+    }
+
+    public static void setGps(Gps gps) {
+        rncmobile.gps = gps;
     }
 
     public static Maps getMaps() {
