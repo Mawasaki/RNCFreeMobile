@@ -68,17 +68,20 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
         Gps gps = rncmobile.getGps();
         if(gps != null) {
             gps.disableGps();
         }
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        //launchMonitorService();
     }
 
     @Override
@@ -121,16 +124,37 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if(id == R.id.action_settings) {
             Intent intentPA = new Intent(rncmobile.getAppContext(), SettingsActivity.class);
             startActivity(intentPA);
             return true;
         }
 
-        if (id == R.id.action_quit) {
+        if(id == R.id.action_quit) {
+            /*
+            Intent intent = new Intent();
+            intent.setAction(MonitorService.ACTION);
+            intent.putExtra(MonitorService.STOP_SERVICE_BROADCAST_KEY,
+                    MonitorService.RQS_STOP_SERVICE);
+
+            sendBroadcast(intent);
+*/
             finish();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        // Service
+    }
+
+    public void launchMonitorService() {
+        Intent i = new Intent(this, MonitorService.class);
+        i.putExtra("foo", "bar");
+        startService(i);
     }
 }

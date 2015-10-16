@@ -80,13 +80,14 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         holder.txtRscp.setText(String.valueOf((2 * rnc.getUmtsRscp()) - 113) +" dBm");
         holder.txtData.setText(rnc.get_txt());
 
-        holder.txrFreq.setText(rnc.getFreqTxt() + " / " + rnc.getSectText());
-
         // Roaming
         if(rnc.get_mnc() != 15)
             holder.fl_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
-        else
+        else {
             holder.fl_background.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            holder.txrFreq.setText(rnc.getFreqTxt() + ((rnc.getSectText().equals("-")) ? "" : " / " + rnc.getSectText()));
+        }
+
 
         return convertView;
     }

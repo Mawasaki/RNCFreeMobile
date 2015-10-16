@@ -86,14 +86,12 @@ public class Telephony {
         // Get some info of new API
         List<CellInfo> lAci = getTelephonyManager().getAllCellInfo();
         int psc = -1;
-        int signal = -1;
         if (lAci != null && lAci.size() > 0) { // If device supports new API
             for (CellInfo cellInfo : lAci) {
                 if (cellInfo != null && cellInfo instanceof CellInfoWcdma) {
                     CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfo;
                     if (cellInfoWcdma.isRegistered()) {
                         psc = cellInfoWcdma.getCellIdentity().getPsc();
-                        signal = cellInfoWcdma.getCellSignalStrength().getDbm();
                     }
 
 
@@ -288,14 +286,13 @@ public class Telephony {
         // Doit on centrer la carte
         if(sp != null && sp.getBoolean("map_center", true)) {
             Maps maps = rncmobile.getMaps();
-            Log.d(TAG,"Map center activé");
 
             if (maps != null && maps.getMap() != null && !loggedRnc.NOT_IDENTIFIED && cellChange) {
                 maps.setLastZoom(12.0f);
                 maps.setCenterCamera(loggedRnc.get_lat(),
                         loggedRnc.get_lon());
             }
-        } else Log.d(TAG,"Map center désactivé");
+        }
     }
 
 

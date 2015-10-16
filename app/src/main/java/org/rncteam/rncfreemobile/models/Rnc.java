@@ -139,7 +139,7 @@ public class Rnc {
 
     public String get_real_rnc() {
         String rnc = String.valueOf(_rnc);
-        if(rnc.substring(0,2).equals("40")) return rnc.substring(2, rnc.length());
+        if(rnc.substring(0,2).equals("40") && rnc.length() > 4) return rnc.substring(2, rnc.length());
         else return rnc;
     }
 
@@ -154,8 +154,8 @@ public class Rnc {
     }
 
     public String getSectText() {
-        if(get_cid() > 100 && get_cid() < 32767) return "Secteur 1";
-        if(get_cid() > 32768 && get_cid() < 65435) return "Sexteur 11";
+        if(get_cid() > 100 && get_cid() < 32767) return "-";
+        if(get_cid() > 32768 && get_cid() < 65435) return "-";
         if(get_cid() > 20 && get_cid() < 95) {
             if(String.valueOf(get_cid()).substring(1, 2).equals("1")) return "Secteur 1";
             if(String.valueOf(get_cid()).substring(1, 2).equals("2")) return "Secteur 2";

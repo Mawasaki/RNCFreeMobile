@@ -45,6 +45,10 @@
         <activity android:label="Crash management" android:name=".CrashActivity"/>
         <activity android:label="ImportExport management" android:name=".DataActivity"/>
         <activity android:label="Settings" android:name=".SettingsActivity"/>
+        <service
+            android:name=".MonitorService"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
