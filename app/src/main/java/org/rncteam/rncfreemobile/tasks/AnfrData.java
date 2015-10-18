@@ -143,8 +143,13 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                                 markerTitle = "grey";
                             }
                         } else {
-                            icon = R.drawable.circle_red;
-                            markerTitle = "red";
+                            if(tel.getLoggedRnc().get_txt().equals("-") && tel.getLoggedRnc().get_lat() == -1) {
+                                icon = R.drawable.circle_red;
+                                markerTitle = "red";
+                            } else {
+                                icon = R.drawable.circle_green;
+                                markerTitle = "red"; 
+                            }
                         }
 
                         AnfrInfos anfrInfos = new AnfrInfos();

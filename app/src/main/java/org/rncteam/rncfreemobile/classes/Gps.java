@@ -63,11 +63,13 @@ public class Gps {
     }
 
     private void removeGpsStatusUpdate() {
-        lm.removeGpsStatusListener(gpsListener);
+        if(lm != null)
+            lm.removeGpsStatusListener(gpsListener);
     }
 
     private void removeLocationUpdate() {
-        lm.removeUpdates(locationListener);
+        if(lm != null)
+            lm.removeUpdates(locationListener);
     }
 
     public void updateGpsStatus(GpsStatus gpsStatus) {

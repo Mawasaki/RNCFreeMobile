@@ -11,6 +11,11 @@ import java.lang.reflect.Method;
 public class Rnc {
     private static final String TAG = "RNC";
 
+    // Constants
+    private final String UNIDENTIFIED_CELL_TEXT = "-";
+    private final static String TECH_UTMS_TXT = "3G";
+    private final static String TECH_LTE_TXT = "4G";
+
     public boolean NOT_IDENTIFIED;
     public boolean NOT_IN_DB;
 

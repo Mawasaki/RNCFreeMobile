@@ -22,6 +22,12 @@
             android:summary="Centre la carte sur une antenne sur nouveau CID"
             android:checked="false">
         </CheckBoxPreference>
+        <CheckBoxPreference
+            android:title="Mode background service"
+            android:key="background_service"
+            android:summary="Enregitre les cid lorque l'appli n'est pas éxécutée"
+            android:checked="true">
+        </CheckBoxPreference>
 
 
     </PreferenceCategory>

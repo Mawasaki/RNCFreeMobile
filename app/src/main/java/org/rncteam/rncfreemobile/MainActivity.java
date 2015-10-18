@@ -37,6 +37,10 @@ public class MainActivity extends ActionBarActivity {
     CharSequence Titles[]={"Monitor","Logs","Infos","Carte"};
     int Numboftabs  = 4;
 
+    SharedPreferences sp;
+
+    private boolean isServiceRunning = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,10 +63,12 @@ public class MainActivity extends ActionBarActivity {
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
-        SharedPreferences sp = rncmobile.getPreferences();
+        sp = rncmobile.getPreferences();
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+
+        stopMonitorService();
     }
 
     @Override
@@ -81,7 +87,7 @@ public class MainActivity extends ActionBarActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        //launchMonitorService();
+        launchMonitorService();
     }
 
     @Override
@@ -93,7 +99,6 @@ public class MainActivity extends ActionBarActivity {
 
     public void onPause() {
         super.onPause();
-        //if(sp.getBoolean("screen", true)) rncmobile.powerRelease();
     }
 
     public void onStop() {
@@ -110,14 +115,16 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sp = rncmobile.getPreferences();
+        sp = rncmobile.getPreferences();
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        Gps gps = rncmobile.getGps();
+        //Gps gps = rncmobile.getGps();
 
-        if(!gps.gpsStatus()) rncmobile.setGps(new Gps(rncmobile.getAppContext()));
+        //if(!gps.gpsStatus()) rncmobile.setGps(new Gps(rncmobile.getAppContext()));
+
+        stopMonitorService();
     }
 
     @Override
@@ -131,14 +138,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         if(id == R.id.action_quit) {
-            /*
-            Intent intent = new Intent();
-            intent.setAction(MonitorService.ACTION);
-            intent.putExtra(MonitorService.STOP_SERVICE_BROADCAST_KEY,
-                    MonitorService.RQS_STOP_SERVICE);
-
-            sendBroadcast(intent);
-*/
             finish();
         }
 
@@ -150,11 +149,24 @@ public class MainActivity extends ActionBarActivity {
         super.onUserLeaveHint();
 
         // Service
+
+        launchMonitorService();
     }
 
     public void launchMonitorService() {
-        Intent i = new Intent(this, MonitorService.class);
-        i.putExtra("foo", "bar");
-        startService(i);
+        if(sp.getBoolean("background_service", true)) {
+            Intent i = new Intent(this, MonitorService.class);
+            i.putExtra("foo", "bar");
+            startService(i);
+        }
     }
+
+    public void stopMonitorService() {
+        Intent intent = new Intent();
+        intent.setAction(MonitorService.ACTION);
+        intent.putExtra(MonitorService.STOP_SERVICE_BROADCAST_KEY,
+                MonitorService.RQS_STOP_SERVICE);
+        sendBroadcast(intent);
+    }
+
 }
