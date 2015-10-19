@@ -158,6 +158,25 @@ public class DatabaseLogs extends Database {
         return lRnc;
     }
 
+    public ArrayList<RncLogs> findAllEmptyLogs() {
+        ArrayList<RncLogs> lRnc = new ArrayList<>();
+
+        String query = "SELECT * FROM " + TABLE_LOGS + " "
+                + "WHERE " + COL_LOGS_TXT + " = ?;";
+
+        Cursor c = mdb.rawQuery(query, new String[]{"-"});
+        if(c.getCount() > 0) {
+            c.moveToFirst();
+
+            while (!c.isAfterLast()) {
+                lRnc.add(cToRncLogs(c));
+                c.moveToNext();
+            }
+        }
+        c.close();
+        return lRnc;
+    }
+
     public RncLogs findRncLogsByRncCid(String rnc, String cid) {
         String query = "SELECT * FROM " + TABLE_LOGS + " "
                 + "WHERE " + COL_LOGS_RNC + " = ? "

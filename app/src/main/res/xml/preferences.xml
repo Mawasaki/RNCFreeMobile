@@ -7,26 +7,32 @@
         <CheckBoxPreference
             android:title="Ecran toujours allumé"
             android:key="screen"
-            android:summary="Garde l'ecran allumé lors de vos chasses"
-            android:checked="false">
+            android:defaultValue="false"
+            android:summary="Garde l'ecran allumé lors de vos chasses">
         </CheckBoxPreference>
         <CheckBoxPreference
             android:title="Log en itinerance"
             android:key="log_roaming"
-            android:summary="Enregistre les cells dans le log"
-            android:checked="true">
+            android:defaultValue="true"
+            android:summary="Enregistre les cells dans le log" >
         </CheckBoxPreference>
         <CheckBoxPreference
             android:title="Centrer la carte sur nouveau CID"
             android:key="map_center"
-            android:summary="Centre la carte sur une antenne sur nouveau CID"
-            android:checked="false">
+            android:defaultValue="false"
+            android:summary="Centre la carte sur une antenne sur nouveau CID">
         </CheckBoxPreference>
         <CheckBoxPreference
             android:title="Mode background service"
             android:key="background_service"
-            android:summary="Enregitre les cid lorque l'appli n'est pas éxécutée"
-            android:checked="true">
+            android:defaultValue="true"
+            android:summary="Enregistre les cid lorque l'appli n'est pas éxécutée">
+        </CheckBoxPreference>
+        <CheckBoxPreference
+            android:title="Exporter automatiquement"
+            android:key="auto_export"
+            android:defaultValue="true"
+            android:summary="Exporte automatiquement les CID non identifié">
         </CheckBoxPreference>
 
 

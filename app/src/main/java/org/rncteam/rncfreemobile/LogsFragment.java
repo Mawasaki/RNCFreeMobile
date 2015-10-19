@@ -2,6 +2,8 @@ package org.rncteam.rncfreemobile;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.media.MediaScannerConnection;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -19,8 +21,18 @@ import android.widget.ListView;
 import org.rncteam.rncfreemobile.adapters.ListLogsMainAdapter;
 
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
+import org.rncteam.rncfreemobile.models.RncLogs;
+import org.rncteam.rncfreemobile.tasks.AutoExportTask;
+import org.rncteam.rncfreemobile.tasks.NtmExportTask;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -38,6 +50,7 @@ public class LogsFragment extends Fragment {
     ListLogsMainAdapter adapterLogs;
 
     private Handler handler;
+    private Handler handler2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,7 +71,14 @@ public class LogsFragment extends Fragment {
         listViewLogsMain.setAdapter(adapterLogs);
 
         handler = new Handler();
+        handler2 = new Handler();
         displayLogs.run();
+
+        SharedPreferences sp = rncmobile.getPreferences();
+
+        if(sp.getBoolean("auto_export", true))
+            autoLogs.run();
+        else handler2.removeCallbacks(autoLogs);
 
         return v;
     }
@@ -138,6 +158,70 @@ public class LogsFragment extends Fragment {
             adapterLogs.notifyDataSetChanged();
             rncmobile.notifyListLogsHasChanged = false;
             handler.postDelayed(this, 3000);
+        }
+    };
+
+    private Runnable autoLogs = new Runnable() {
+        public void run() {
+
+            try {
+                // Some formats of final file
+                String delimiter = ";";
+                String crlf = "\r\n";
+
+                // FileName
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
+                Date now = new Date();
+                String NtmFileName = "NTM_" + formatter.format(now) + ".ntm";
+
+                // Directory
+                File ntmFile = new File(rncmobile.getAppContext().getExternalFilesDir(null), NtmFileName);
+                if (!ntmFile.exists())
+                    ntmFile.createNewFile();
+
+                BufferedWriter writer = new BufferedWriter
+                        (new OutputStreamWriter(new FileOutputStream(ntmFile),"iso-8859-1"));
+                //(new FileWriter(ntmFile, true));
+
+                DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+                dbl.open();
+                ArrayList<RncLogs> lRncLogs = dbl.findAllEmptyLogs();
+                dbl.close();
+
+                // Write lines
+                for (int i = 0; i < lRncLogs.size(); i++) {
+                    String finalLine = lRncLogs.get(i).get_tech() + delimiter +
+                            lRncLogs.get(i).get_mcc() + delimiter +
+                            lRncLogs.get(i).get_mnc() + delimiter +
+                            lRncLogs.get(i).get_cid() + delimiter +
+                            lRncLogs.get(i).get_lac() + delimiter +
+                            lRncLogs.get(i).get_rnc() + delimiter +
+                            (lRncLogs.get(i).get_psc().equals("0") ? "-1" : lRncLogs.get(i).get_psc()) + delimiter +
+                            lRncLogs.get(i).get_lat() + delimiter +
+                            lRncLogs.get(i).get_lon() + delimiter +
+                            lRncLogs.get(i).get_txt() + crlf;
+
+                    writer.write(finalLine);
+                }
+
+                writer.close();
+
+                MediaScannerConnection.scanFile(rncmobile.getAppContext(),
+                        new String[]{ntmFile.toString()},
+                        null,
+                        null);
+
+                // Now we send file to HTTP
+
+                AutoExportTask net = new AutoExportTask(NtmFileName);
+                net.execute();
+
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+            handler2.postDelayed(this, 1001 * 60);
         }
     };
 
