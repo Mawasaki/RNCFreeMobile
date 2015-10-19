@@ -168,7 +168,7 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
 
         // Button
         if(newRnc != null) {
-            if (anfrInfos.getRnc().NOT_IDENTIFIED == true && newRnc.get_mnc() == 15) {
+            if (anfrInfos.getRnc().NOT_IDENTIFIED == true/* && newRnc.get_mnc() == 15*/) {
                 bt1.setText("Attribuer le RNC " + newRnc.get_real_rnc() + " à cette addresse");
 
                 newRnc.set_lat(Double.valueOf(anfrInfos.getLat()));
@@ -178,11 +178,14 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
                 tel.setMarkedRnc(newRnc);
             } else if(newRnc.get_mnc() != 15) {
                 bt1.setText("Impossible d'attribuer un RNC Orange");
+                marker.setTitle("green");
             } else {
                 bt1.setText("Antenne déja identifiée");
+                marker.setTitle("green");
             }
         } else {
             bt1.setText("Non connecté");
+            marker.setTitle("green");
         }
 
         return(popup);

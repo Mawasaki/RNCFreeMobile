@@ -41,6 +41,7 @@ public class rncmobile extends Application {
     public static boolean notifyListLogsHasChanged;
 
     public static SharedPreferences preferences;
+    public static FragmentDrawer fragmentDrawer;
 
     public void onCreate(){
         super.onCreate();
@@ -64,7 +65,7 @@ public class rncmobile extends Application {
         onTransaction = false;
 
         // Crash report
-        //Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
+        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);

@@ -46,7 +46,7 @@
                 android:text="Text RNC"
                 android:textColor="#111111"
                 android:textSize="16dp"
-                android:backgroundTint="@color/ColorPrimary" />
+                android:backgroundTint="@color/colorPrimary" />
 
         </LinearLayout>
 
@@ -84,7 +84,7 @@
             android:layout_weight="1"
             android:textColor="#111111"
             android:layout_below="@id/txt_detail_text"
-            android:backgroundTint="@color/ColorPrimary"
+            android:backgroundTint="@color/colorPrimary"
             android:layout_gravity="left" />
 
         <EditText
@@ -96,7 +96,7 @@
             android:textSize="16dp"
             android:textColor="#111111"
             android:layout_below="@id/txt_detail_text"
-            android:backgroundTint="@color/ColorPrimary" />
+            android:backgroundTint="@color/colorPrimary" />
 
         </LinearLayout>
 

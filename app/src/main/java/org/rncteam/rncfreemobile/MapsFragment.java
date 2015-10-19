@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Marker;
 
@@ -153,6 +154,8 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         }
     };
 
+
+
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -166,8 +169,9 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
                     dbl.updateLogsNewRnc(tel.getMarkedRnc());
                     dbl.close();
 
-                    ViewPager pager = (ViewPager) getActivity().findViewById(R.id.pager);
-                    pager.setCurrentItem(1);
+                    // Redirect to Logs
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.displayView(1);
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:

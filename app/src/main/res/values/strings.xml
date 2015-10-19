@@ -6,4 +6,32 @@
     <string name="action_settings">Settings</string>
     <string name="action_delete">Delete</string>
     <string name="action_database">Database</string>
+
+    <string name="action_search">Search</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="nav_item_monitor">Monitor</string>
+    <string name="nav_item_logs">Logs</string>
+    <string name="nav_item_infos">Infos</string>
+    <string name="nav_item_maps">Maps</string>
+    <string name="nav_item_data">Import/Export</string>
+    <string name="nav_item_prefs">Preference</string>
+
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <item>@string/nav_item_monitor</item>
+        <item>@string/nav_item_logs</item>
+        <item>@string/nav_item_infos</item>
+        <item>@string/nav_item_maps</item>
+        <item>@string/nav_item_data</item>
+        <item>@string/nav_item_prefs</item>
+    </string-array>
+
+    <string name="title_monitor">Monitor</string>
+    <string name="title_logs">Logs</string>
+    <string name="title_infos">Infos</string>
+    <string name="title_maps">Maps</string>
+    <string name="title_data">Import/Export</string>
+    <string name="title_preference">Settings</string>
 </resources>

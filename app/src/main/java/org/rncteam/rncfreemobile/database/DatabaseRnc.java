@@ -142,10 +142,38 @@ public class DatabaseRnc extends Database {
         return lRnc;
     }
 
-    public Integer countAllRnc() {
+    public Integer countAllCid() {
         List<Rnc> lRnc = new ArrayList<>();
 
         String query = "SELECT count( " + COL_RNC_ID + ") AS nb_rnc FROM " + TABLE_RNCS;
+
+        Cursor c = mdb.rawQuery(query, null);
+        c.moveToFirst();
+
+        int nc_rnc = c.getInt(0);
+
+        return nc_rnc;
+    }
+
+    public Integer countUMTSRnc() {
+        String query = "SELECT "
+                + "count(DISTINCT " + COL_RNCS_RNC + ") AS nb_rnc "
+                + "FROM " + TABLE_RNCS + " "
+                + "WHERE " + COL_RNCS_TECH + " = '3G'";
+
+        Cursor c = mdb.rawQuery(query, null);
+        c.moveToFirst();
+
+        int nc_rnc = c.getInt(0);
+
+        return nc_rnc;
+    }
+
+    public Integer countLTERnc() {
+        String query = "SELECT "
+                + "count(DISTINCT " + COL_RNCS_RNC + ") AS nb_rnc "
+                + "FROM " + TABLE_RNCS + " "
+                + "WHERE " + COL_RNCS_TECH + " = '4G'";
 
         Cursor c = mdb.rawQuery(query, null);
         c.moveToFirst();

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by cedricf_25 on 12/10/2015.
  */
-public class ProfileTask  extends AsyncTask<String, String, JSONObject> {
+public class ProfileTask extends AsyncTask<String, String, JSONObject> {
     private static final String TAG = "ProfileTask";
 
     private Double myLat;
@@ -75,11 +75,10 @@ public class ProfileTask  extends AsyncTask<String, String, JSONObject> {
                 Log.d(TAG, jArray.getString("results").toString());
 
                 this.elevation.jData = jArray.getJSONArray("results");
-
                 this.elevation.dataOk = true;
+
             } catch (JSONException e) {
                 e.printStackTrace();
-                rncmobile.onTransaction = false;
             }
         }
     }

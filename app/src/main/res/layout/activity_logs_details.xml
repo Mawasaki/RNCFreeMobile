@@ -137,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:text="Text RNC"
                     android:textSize="16dp"
-                    android:backgroundTint="@color/ColorPrimary" />
+                    android:backgroundTint="@color/colorPrimary" />
 
             </LinearLayout>
 
@@ -174,7 +174,7 @@
                     android:textSize="16dp"
                     android:layout_weight="1"
                     android:layout_below="@id/txt_detail_text"
-                    android:backgroundTint="@color/ColorPrimary"
+                    android:backgroundTint="@color/colorPrimary"
                     android:layout_gravity="left" />
 
                 <EditText
@@ -185,7 +185,7 @@
                     android:text="LON"
                     android:textSize="16dp"
                     android:layout_below="@id/txt_detail_text"
-                    android:backgroundTint="@color/ColorPrimary" />
+                    android:backgroundTint="@color/colorPrimary" />
 
             </LinearLayout>
 
@@ -325,7 +325,7 @@
                     android:layout_height="wrap_content"
                     android:text="DELETE NOW"
                     android:textSize="16dp"
-                    android:background="@color/ColorPrimary"
+                    android:background="@color/colorPrimary"
                     android:layout_weight="1"
                     android:layout_below="@id/txt_detail_text" />
 

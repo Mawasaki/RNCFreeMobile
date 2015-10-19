@@ -22,7 +22,7 @@ android {
         }
 
         def versionMajor = 0
-        def versionMinor = 2
+        def versionMinor = 3
         def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
         def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
         def version_Code = versionProps['VERSION_CODE'].toInteger() + 1
@@ -71,4 +71,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:recyclerview-v7:23.1.0'
 }

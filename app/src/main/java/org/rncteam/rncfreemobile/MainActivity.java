@@ -1,72 +1,54 @@
 package org.rncteam.rncfreemobile;
 
-import org.rncteam.rncfreemobile.tasks.CsvRncDownloader;
 import org.rncteam.rncfreemobile.classes.Gps;
-import org.rncteam.rncfreemobile.classes.ViewPagerAdapter;
-import org.rncteam.rncfreemobile.view.SlidingTabLayout;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceActivity;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
+
 
 /**
  * Created by cedricf_25 on 15/02/2015.
  */
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
     private static final String TAG = "MainActivity";
 
     // Declaring Your View and Variables
-
-    Toolbar toolbar;
-    ViewPager pager;
-    ViewPagerAdapter adapter;
-    SlidingTabLayout tabs;
-    CharSequence Titles[]={"Monitor","Logs","Infos","Carte"};
-    int Numboftabs  = 4;
-
-    SharedPreferences sp;
-
-    private boolean isServiceRunning = true;
+    private Toolbar mToolbar;
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Creating The Toolbar and setting it as the Toolbar for the activity
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(adapter);
-
-        // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
+        rncmobile.fragmentDrawer = (FragmentDrawer)
+                getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+        rncmobile.fragmentDrawer.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
+        rncmobile.fragmentDrawer.setDrawerListener(this);
 
         sp = rncmobile.getPreferences();
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+
+        displayView(0);
 
         stopMonitorService();
     }
@@ -169,4 +151,50 @@ public class MainActivity extends ActionBarActivity {
         sendBroadcast(intent);
     }
 
+    @Override
+    public void onDrawerItemSelected(View view, int position) {
+        displayView(position);
+    }
+
+    public void displayView(int position) {
+        Fragment fragment = null;
+        String title = getString(R.string.app_name);
+        switch (position) {
+            case 0:
+                fragment = new MonitorFragment();
+                title = getString(R.string.title_monitor);
+                break;
+            case 1:
+                fragment = new LogsFragment();
+                title = getString(R.string.title_logs);
+                break;
+            case 2:
+                fragment = new InfosFragment();
+                title = getString(R.string.title_infos);
+                break;
+            case 3:
+                fragment = new MapsFragment();
+                title = getString(R.string.title_maps);
+                break;
+            case 4:
+                Intent intentDA = new Intent(rncmobile.getAppContext(), DataActivity.class);
+                startActivity(intentDA);
+                break;
+            case 5:
+                Intent intentPA = new Intent(rncmobile.getAppContext(), SettingsActivity.class);
+                startActivity(intentPA);
+            default:
+                break;
+        }
+
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container_body, fragment);
+            fragmentTransaction.commit();
+
+            // set the toolbar title
+            getSupportActionBar().setTitle(title);
+        }
+    }
 }

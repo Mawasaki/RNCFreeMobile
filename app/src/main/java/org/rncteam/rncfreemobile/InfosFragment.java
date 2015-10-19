@@ -31,6 +31,7 @@ public class InfosFragment extends Fragment {
     TextView txtInfoVersion2;
     TextView txtRncUpdate;
     TextView txtRncUpdate2;
+    TextView txtRncUpdate3;
     TextView txtLogsNbTotal;
     TextView txtLogsNbUmts;
     TextView txtLogsNbLte;
@@ -50,6 +51,7 @@ public class InfosFragment extends Fragment {
         // Rnc update
         txtRncUpdate = (TextView) v.findViewById(R.id.txt_rnc_database);
         txtRncUpdate2 = (TextView) v.findViewById(R.id.txt_rnc_database2);
+        txtRncUpdate3 = (TextView) v.findViewById(R.id.txt_rnc_database3);
         // Info logs
         txtLogsNbTotal = (TextView) v.findViewById(R.id.txt_logs_nb_total);
         txtLogsNbUmts = (TextView) v.findViewById(R.id.txt_logs_nb_umts);
@@ -88,10 +90,13 @@ public class InfosFragment extends Fragment {
 
         DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
         dbr.open();
-        Integer nb_rnc = dbr.countAllRnc();
+        Integer nb_cid = dbr.countAllCid();
+        Integer nb_rnc_umts = dbr.countUMTSRnc();
+        Integer nb_rnc_lte = dbr.countLTERnc();
         dbr.close();
 
-        txtRncUpdate2.setText("Nb of CIDs = " + String.valueOf(nb_rnc));
+        txtRncUpdate2.setText("Nb of CIDs = " + String.valueOf(nb_cid));
+        txtRncUpdate3.setText("Nb of RNCs UMTS/LTE = " + String.valueOf(nb_rnc_umts) + "/" + String.valueOf(nb_rnc_lte));
     }
 
     private void setInfoLog() {
