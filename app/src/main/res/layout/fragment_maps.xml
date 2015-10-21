@@ -53,7 +53,7 @@
         android:layout_height="75dp"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"
-        android:background="#AAFFFFFF"
+        android:background="#BBFFFFFF"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="10dp"

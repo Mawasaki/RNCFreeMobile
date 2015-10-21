@@ -3,24 +3,20 @@ package org.rncteam.rncfreemobile;
 /**
  * Created by cedric on 14/07/2015.
  */
-import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.classes.Telephony;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.WindowManager;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class rncmobile extends Application {
     private static final String TAG = "rncmobile";
@@ -29,7 +25,6 @@ public class rncmobile extends Application {
 
     // Class Objects
     private static Telephony tel;
-    private static Gps gps;
     private static Maps maps;
 
     public static boolean isAppStart;
@@ -37,7 +32,7 @@ public class rncmobile extends Application {
     public static boolean onTransaction;
     public static boolean markerClicked;
 
-    public static List<RncLogs> listRncLogs;
+    public static ArrayList<RncLogs> listRncLogs;
     public static boolean notifyListLogsHasChanged;
 
     public static SharedPreferences preferences;
@@ -52,7 +47,6 @@ public class rncmobile extends Application {
         tel = new Telephony(getAppContext());
 
         // Initialize specific class
-        gps = new Gps(context);
         maps = new Maps();
 
         // Get preferences
@@ -65,7 +59,7 @@ public class rncmobile extends Application {
         onTransaction = false;
 
         // Crash report
-        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
+        //Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -78,14 +72,6 @@ public class rncmobile extends Application {
 
     public static Telephony getTelephony() {
         return tel;
-    }
-
-    public static Gps getGps() {
-        return rncmobile.gps;
-    }
-
-    public static void setGps(Gps gps) {
-        rncmobile.gps = gps;
     }
 
     public static Maps getMaps() {

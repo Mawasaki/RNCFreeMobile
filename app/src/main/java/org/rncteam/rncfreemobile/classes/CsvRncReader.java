@@ -49,7 +49,7 @@ public class CsvRncReader {
     private Rnc lToRnc(String[] l) {
         Rnc rnc = new Rnc();
 
-        rnc.set_tech(l[0]);
+        rnc.set_tech(((String.valueOf(l[0])).equals("3G") ? 3 : 4));
         rnc.set_mcc(Integer.valueOf(l[1]));
         rnc.set_mnc(Integer.valueOf(l[2]));
         rnc.set_cid(Integer.valueOf(l[3]));

@@ -87,9 +87,10 @@ public class Maps {
                         new LatLng(46.71109, 1.7191036), 5.0f));
             }
 
-        } else
+        } else {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(lastPosLat, lastPosLon), lastZoom));
+        }
 
         setMapMyLocationEnabled(true);
 
@@ -126,6 +127,15 @@ public class Maps {
         if(mMap.isMyLocationEnabled())
             this.lastPosLon = longitude;
     }
+
+    public void setLastPosLatGps(double latitude) {
+        this.lastPosLat = latitude;
+    }
+
+    public void setLastPosLonGps(double longitude) {
+        this.lastPosLon = longitude;
+    }
+
 
     public Map<Marker, AnfrInfos> getMarkers() {
         return markers;
@@ -173,7 +183,7 @@ public class Maps {
         return mMap;
     }
 
-    public void setAnfrAntennasMarkers(Rnc rnc, double lat, double lng, String title, AnfrInfos anfrInfos, int icon) {
+    public void setAnfrAntennasMarkers(double lat, double lng, String title, AnfrInfos anfrInfos, int icon) {
 
         markers.put(mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(lat, lng))

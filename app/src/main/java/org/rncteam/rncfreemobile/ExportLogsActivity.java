@@ -44,28 +44,19 @@ import java.util.ListIterator;
 public class ExportLogsActivity extends Activity {
     private static final String TAG = "ExportLogsActivity";
 
-    private List<RncLogs> lRncLogs;
     private ArrayList<Export> lExport;
 
     // UI
     private TextView txtExportCountTotal;
-    private TextView txtExportCountUmts;
-    private TextView txtExportCountLte;
     private TextView txtResponse;
     private EditText inpImportNickname;
-    private EditText inpImportName;
     private Button btnExportLog;
     private ListView listViewExportLogs;
 
     ListExportHistoryAdapter adapter;
 
     Handler handler;
-    Telephony tel;
-    // Count
-    private int nbUmtsLogs;
-    private int nbLteLogs;
 
-    private Context context;
     Activity activity;
 
     @Override
@@ -78,23 +69,14 @@ public class ExportLogsActivity extends Activity {
         activity = this;
 
         txtExportCountTotal = (TextView )findViewById(R.id.txt_export_count);
-        txtExportCountUmts = (TextView )findViewById(R.id.txt_export_count_umts);
-        txtExportCountLte = (TextView )findViewById(R.id.txt_export_count_lte);
 
         txtResponse = (TextView )findViewById(R.id.txt_export_text_result);
         txtResponse.setText("");
 
         inpImportNickname = (EditText) findViewById(R.id.inp_import_nickname);
-        inpImportName = (EditText) findViewById(R.id.inp_import_name);
         btnExportLog = (Button) findViewById(R.id.btn_export_logs);
 
         listViewExportLogs = (ListView) findViewById(R.id.list_export_logs);
-
-        // GetList of logs
-        getAllRncLogs();
-
-        // Set count logs
-        countLogsByTech();
 
         // Initialise list export history
         lExport = new ArrayList<>();
@@ -103,104 +85,32 @@ public class ExportLogsActivity extends Activity {
         listViewExportLogs.setAdapter(adapter);
 
         // Set text to UI
-        txtExportCountTotal.setText(String.valueOf(lRncLogs.size()));
-        txtExportCountUmts.setText(String.valueOf(nbUmtsLogs));
-        txtExportCountLte.setText(String.valueOf(nbLteLogs));
+        DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+        dbl.open();
+        txtExportCountTotal.setText(String.valueOf(dbl.countAllLogs()));
+        dbl.close();
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         if(lExport.size() > 0) {
             inpImportNickname.setText(lExport.get(0).get_user_nick());
-            inpImportName.setText(lExport.get(0).get_name());
         }
-
-        handler = new Handler();
-        displayResponse.run();
 
         // Button export management
         btnExportLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    // Control of form
-                    if (!inpImportNickname.getText().toString().equals("")) {
-                        // Some formats of final file
-                        String delimiter = ";";
-                        String crlf = "\r\n";
+                if (!inpImportNickname.getText().toString().equals("")) {
 
-                        // FileName
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-                        Date now = new Date();
-                        String NtmFileName = "NTM_" + formatter.format(now) + ".ntm";
+                    NtmExportTask net = new NtmExportTask(ExportLogsActivity.this,
+                            inpImportNickname.getText().toString());
+                    net.execute();
 
-                        // Directory
-                        File ntmFile = new File(rncmobile.getAppContext().getExternalFilesDir(null), NtmFileName);
-                        if (!ntmFile.exists())
-                            ntmFile.createNewFile();
-
-                        BufferedWriter writer = new BufferedWriter
-                                (new OutputStreamWriter(new FileOutputStream(ntmFile),"iso-8859-1"));
-                                //(new FileWriter(ntmFile, true));
-
-                        // Write lines
-                        for (int i = 0; i < lRncLogs.size(); i++) {
-                            String finalLine = lRncLogs.get(i).get_tech() + delimiter +
-                                    lRncLogs.get(i).get_mcc() + delimiter +
-                                    lRncLogs.get(i).get_mnc() + delimiter +
-                                    lRncLogs.get(i).get_cid() + delimiter +
-                                    lRncLogs.get(i).get_lac() + delimiter +
-                                    lRncLogs.get(i).get_rnc() + delimiter +
-                                    (lRncLogs.get(i).get_psc().equals("0") ? "-1" : lRncLogs.get(i).get_psc()) + delimiter +
-                                    lRncLogs.get(i).get_lat() + delimiter +
-                                    lRncLogs.get(i).get_lon() + delimiter +
-                                    lRncLogs.get(i).get_txt() + crlf;
-
-                            writer.write(finalLine);
-                        }
-
-                        writer.close();
-
-                        MediaScannerConnection.scanFile(rncmobile.getAppContext(),
-                                new String[]{ntmFile.toString()},
-                                null,
-                                null);
-
-                        // Now we send file to HTTP
-
-                        NtmExportTask net = new NtmExportTask(ExportLogsActivity.this, NtmFileName,
-                                inpImportNickname.getText().toString(), inpImportName.getText().toString());
-                        net.NtmExportSetData(lRncLogs.size(), nbUmtsLogs, nbLteLogs);
-                        net.execute();
-
-                        handler = new Handler();
-                        displayResponse.run();
-
-                    } else {
-                        Toast.makeText(rncmobile.getAppContext(), "Saisir un pseudo", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                } else {
+                    Toast.makeText(rncmobile.getAppContext(), "Saisir un pseudo", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-    }
-
-    private void getAllRncLogs() {
-        DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-
-        dbl.open();
-        lRncLogs = dbl.findAllRncLogs();
-        dbl.close();
-    }
-
-    private void countLogsByTech() {
-        this.nbUmtsLogs = 0;
-        this.nbLteLogs = 0;
-        for(int i=0;i<lRncLogs.size();i++) {
-            if(lRncLogs.get(i).get_tech().equals("3G")) nbUmtsLogs++;
-            if(lRncLogs.get(i).get_tech().equals("4G")) nbLteLogs++;
-        }
     }
 
     private void getAllExports() {
@@ -211,16 +121,12 @@ public class ExportLogsActivity extends Activity {
         dbe.close();
     }
 
-    private Runnable displayResponse = new Runnable() {
-        public void run() {
-            // Update list
-            getAllExports();
-            adapter.notifyDataSetChanged();
+    public void updateHistoryList() {
+        // Update list
+        getAllExports();
+        adapter.notifyDataSetChanged();
 
-            //InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            //imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-
-            handler.postDelayed(this, 5000);
-        }
-    };
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
 }

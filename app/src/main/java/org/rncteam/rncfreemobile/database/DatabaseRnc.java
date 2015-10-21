@@ -28,7 +28,7 @@ public class DatabaseRnc extends Database {
         super(context);
     }
 
-    public void addRnc(Rnc rnc) {
+    public long addRnc(Rnc rnc) {
         ContentValues v = new ContentValues();
 
         v.put(COL_RNCS_TECH, rnc.get_tech());
@@ -42,7 +42,7 @@ public class DatabaseRnc extends Database {
         v.put(COL_RNCS_LON, rnc.get_lon());
         v.put(COL_RNCS_TXT, rnc.get_txt());
 
-        mdb.insert(TABLE_RNCS, null, v);
+        return mdb.insert(TABLE_RNCS, null, v);
     }
 
     public void addMassiveRnc(List<Rnc> lRnc) {
@@ -53,8 +53,8 @@ public class DatabaseRnc extends Database {
         for (int i=0;i< lRnc.size();i++) {
             statement.clearBindings();
 
-            statement.bindString(1, String.valueOf(i));
-            statement.bindString(2, lRnc.get(i).get_tech());
+            statement.bindLong(1, i);
+            statement.bindLong(2, lRnc.get(i).get_tech());
             statement.bindLong(3, lRnc.get(i).get_mcc());
             statement.bindLong(4, lRnc.get(i).get_mnc());
             statement.bindLong(5, lRnc.get(i).get_cid());
@@ -77,17 +77,6 @@ public class DatabaseRnc extends Database {
     }
 
 
-    public void deleteOneRnc(Rnc rnc) {
-        String rncLte = "40" + rnc.get_real_rnc();
-        // UMTS
-        mdb.delete(TABLE_RNCS, COL_RNCS_RNC + " = ?",
-                new String[]{String.valueOf(rnc.get_real_rnc())});
-
-        mdb.delete(TABLE_RNCS, COL_RNCS_RNC + " = ?",
-                new String[]{String.valueOf(rncLte)});
-    }
-
-
     public void updateRnc(Rnc rnc) {
         ContentValues v = new ContentValues();
 
@@ -100,28 +89,19 @@ public class DatabaseRnc extends Database {
                 new String[]{String.valueOf(rnc.get_rnc()), String.valueOf(rnc.get_cid())});
     }
 
-    public void updateOneRnc(String oldRnc, RncLogs newRnc) {
+    public void updateAllRnc(Rnc rnc) {
+        ContentValues v = new ContentValues();
 
-        // Retrieve all old RNC
-        open();
-        List<Rnc> oldRncs = findRncByName(oldRnc);
+        String rncUmts = String.valueOf(rnc.get_real_rnc());
+        String rncLte = "40" + String.valueOf(rnc.get_real_rnc());
 
-        for(int i=0;i<oldRncs.size();i++) {
-            String newRncTxt = "";
-            if(oldRncs.get(i).get_tech().equals("3G")) newRncTxt = newRnc.get_rnc();
-            else newRncTxt = "40" + newRnc.get_rnc();
+        v.put(COL_RNCS_LAT, rnc.get_lat());
+        v.put(COL_RNCS_LON, rnc.get_lon());
+        v.put(COL_RNCS_TXT, rnc.get_txt());
 
-            ContentValues v = new ContentValues();
-            v.put(COL_RNCS_LAT, newRnc.get_lat());
-            v.put(COL_RNCS_LON, newRnc.get_lon());
-            v.put(COL_RNCS_RNC, newRnc.get_rnc());
-
-            String rncLte = "40" + oldRncs.get(i).get_real_rnc();
-
-            mdb.update(TABLE_RNCS, v, COL_RNCS_RNC + " = ? OR "
-                            + COL_RNCS_RNC + " = ?",
-                    new String[]{String.valueOf(oldRncs.get(i).get_real_rnc()), rncLte});
-        }
+        mdb.update(TABLE_RNCS, v, COL_RNCS_RNC + " = ? OR "
+                        + COL_RNCS_RNC + " = ?",
+                new String[]{rncUmts, rncLte});
     }
 
     public List<Rnc> findAllRnc() {
@@ -183,11 +163,11 @@ public class DatabaseRnc extends Database {
         return nc_rnc;
     }
 
-    public Rnc findRncByNameCid(String rncName, String cid) {
-        Rnc rnc = new Rnc();
+    public Rnc findRncByRncCid(String rncName, String cid) {
+        Rnc rnc;
 
         String query = "SELECT * FROM " + TABLE_RNCS + " WHERE "
-                + COL_RNCS_RNC + " = ? AND "
+                + "(" + COL_RNCS_RNC + " = ? ) AND "
                 + COL_RNCS_CID + " = ?; ";
 
         Cursor c = mdb.rawQuery(query, new String[]{rncName, cid});
@@ -195,46 +175,24 @@ public class DatabaseRnc extends Database {
         if (c.getCount() > 0) {
             c.moveToFirst();
             rnc = cToRnc(c);
-
-            // But a RNC is not identified if txt is unknown
-            if(rnc.get_txt().equals("-"))
-                rnc.NOT_IDENTIFIED = true;
         }
-        else {
-            rnc.NOT_IDENTIFIED = true;
-            rnc.NOT_IN_DB = true;
-        }
+        else rnc = null;
 
         c.close();
 
         return rnc;
     }
 
-    public List<Rnc> findRncByName(String rncName) {
-        List<Rnc> lRnc = new ArrayList<>();
+    public ArrayList<Rnc> findRncByRnc(String rncName) {
+        ArrayList<Rnc> lRnc = new ArrayList<>();
 
-        // For 3G
+        String rncUmts = rncName;
+        String rncLte = "40" + rncName;
+
         String query = "SELECT * FROM " + TABLE_RNCS + " WHERE "
-                + COL_RNCS_RNC + " = ?;";
+                + COL_RNCS_RNC + " = ? OR " + COL_RNCS_RNC + " = ?;";
 
-        Cursor c = mdb.rawQuery(query, new String[]{rncName});
-        c.moveToFirst();
-
-        while(!c.isAfterLast()) {
-            Rnc rnc = cToRnc(c);
-            lRnc.add(rnc);
-            c.moveToNext();
-        }
-
-        c.close();
-
-        // For 4G
-        query = "SELECT * FROM " + TABLE_RNCS + " WHERE "
-                + COL_RNCS_RNC + " = ?;";
-
-        String lteRnc = "40" + rncName;
-
-        c = mdb.rawQuery(query, new String[]{lteRnc});
+        Cursor c = mdb.rawQuery(query, new String[]{rncUmts,rncLte});
         c.moveToFirst();
 
         while(!c.isAfterLast()) {
@@ -300,13 +258,13 @@ public class DatabaseRnc extends Database {
         Rnc rnc = new Rnc();
 
         rnc.set_id(c.getInt(0));
-        rnc.set_tech(c.getString(1));
-        rnc.set_mcc(Integer.valueOf(c.getString(2)));
-        rnc.set_mnc(Integer.valueOf(c.getString(3)));
-        rnc.set_cid(Integer.valueOf(c.getString(4)));
-        rnc.set_lac(Integer.valueOf(c.getString(5)));
-        rnc.set_rnc(Integer.valueOf(c.getString(6)));
-        rnc.set_psc(Integer.valueOf(c.getString(7)));
+        rnc.set_tech(c.getInt(1));
+        rnc.set_mcc(c.getInt(2));
+        rnc.set_mnc(c.getInt(3));
+        rnc.set_cid(c.getInt(4));
+        rnc.set_lac(c.getInt(5));
+        rnc.set_rnc(c.getInt(6));
+        rnc.set_psc(c.getInt(7));
         rnc.set_lat(c.getDouble(8));
         rnc.set_lon(c.getDouble(9));
         rnc.set_txt(c.getString(10));

@@ -39,8 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:label="Edit RNC" android:name=".LogsDetailsActivity"/>
-        <activity android:label="Show on map" android:name=".LogsMapsActivity"/>*
-        <activity android:label="Set Coordinates" android:name=".LogsSetCooActivity"/>
+        *
         <activity android:label="Export Logs" android:name=".ExportLogsActivity"/>
         <activity android:label="Crash management" android:name=".CrashActivity"/>
         <activity android:label="ImportExport management" android:name=".DataActivity"/>

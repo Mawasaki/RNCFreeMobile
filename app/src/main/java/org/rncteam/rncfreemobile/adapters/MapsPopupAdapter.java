@@ -100,8 +100,8 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         txt6.setText("Support : " + anfrInfos.getTypeSupport());
 
         // Tech
-        umts.setTextColor((anfrInfos.getRnc().get_tech() == "3G") ? Color.parseColor("#000000") : Color.parseColor("#DDDDDD"));
-        lte.setTextColor((anfrInfos.getRnc().get_tech() == "4G") ? Color.parseColor("#000000") : Color.parseColor("#DDDDDD"));
+        //umts.setTextColor((anfrInfos.getRnc().get_tech() == 3) ? Color.parseColor("#000000") : Color.parseColor("#DDDDDD"));
+        //lte.setTextColor((anfrInfos.getRnc().get_tech() == 4) ? Color.parseColor("#000000") : Color.parseColor("#DDDDDD"));
 
         // Antenna Image
         JSONArray secteurs = anfrInfos.getAzimuts();

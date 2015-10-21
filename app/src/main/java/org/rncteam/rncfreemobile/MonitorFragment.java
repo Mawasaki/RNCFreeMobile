@@ -1,14 +1,11 @@
 package org.rncteam.rncfreemobile;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,14 +26,15 @@ import java.util.ArrayList;
 /**
  * Created by cedricf_25 on 14/07/2015.
  */
+@SuppressWarnings("DefaultFileTemplate")
+
 public class MonitorFragment extends Fragment {
     private static final String TAG = "MonitorFragment";
 
     private FrameLayout fl;
     private FrameLayout fl_2g;
-    ListView listViewRncMain;
-    ListView listViewRncPsc;
-    View v;
+    private ListView listViewRncMain;
+    private ListView listViewRncPsc;
 
     private Telephony tel;
 
@@ -46,7 +44,7 @@ public class MonitorFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.v =inflater.inflate(R.layout.fragment_monitor,container,false);
+        View v =inflater.inflate(R.layout.fragment_monitor,container,false);
 
         setHasOptionsMenu(true);
 
@@ -70,12 +68,6 @@ public class MonitorFragment extends Fragment {
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_monitor, menu);
 
@@ -93,20 +85,12 @@ public class MonitorFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public void onPause() {
-        super.onPause();
-    }
-
-    public void onStop() {
-        super.onStop();
-    }
-
     public void onResume() {
         super.onResume();
-        tel.setCellChange(true);
+        //tel.setCellChange(true);
     }
 
-    private Runnable displayMonitor = new Runnable() {
+    private final Runnable displayMonitor = new Runnable() {
         public void run() {
 
             listViewRncMain.setVisibility(View.VISIBLE);
@@ -124,10 +108,10 @@ public class MonitorFragment extends Fragment {
                     listViewRncMain.setVisibility(View.GONE);
                     listViewRncPsc.setVisibility(View.GONE);
                 } else {
-                    if (lRncs.get(0).get_tech().equals("3G")) {
+                    if (lRncs.get(0).get_tech() == 3) {
                         ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(rncmobile.getAppContext(), lRncs);
                         listViewRncMain.setAdapter(adapter);
-                    } else if (lRncs.get(0).get_tech().equals("4G")) {
+                    } else if (lRncs.get(0).get_tech() == 4) {
                         ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(rncmobile.getAppContext(), lRncs);
                         listViewRncMain.setAdapter(adapter);
                     } else {
@@ -142,8 +126,11 @@ public class MonitorFragment extends Fragment {
                     listViewRncPsc.setAdapter(adapterPsc);
                 } else listViewRncPsc.setVisibility(View.GONE);
 
+            } else {
+                listViewRncMain.setVisibility(View.GONE);
+                listViewRncPsc.setVisibility(View.GONE);
+                fl_2g.setVisibility(View.GONE); //// TODO: 21/10/2015  
             }
-
             handler.postDelayed(this, 1000);
         }
     };

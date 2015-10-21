@@ -39,13 +39,13 @@ public class Database  extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_TABLE_RNCS = "CREATE TABLE " + TABLE_RNCS + "("
             + COL_RNC_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COL_RNCS_TECH + " TEXT NOT NULL, "
-            + COL_RNCS_MCC + " TEXT NOT NULL, "
-            + COL_RNCS_MNC + " TEXT NOT NULL, "
-            + COL_RNCS_CID + " TEXT NOT NULL, "
-            + COL_RNCS_LAC + " TEXT NOT NULL, "
-            + COL_RNCS_RNC + " TEXT NOT NULL, "
-            + COL_RNCS_PSC + " TEXT NOT NULL, "
+            + COL_RNCS_TECH + " INTEGER NOT NULL, "
+            + COL_RNCS_MCC + " INTEGER NOT NULL, "
+            + COL_RNCS_MNC + " INTEGER NOT NULL, "
+            + COL_RNCS_CID + " INTEGER NOT NULL, "
+            + COL_RNCS_LAC + " INTEGER NOT NULL, "
+            + COL_RNCS_RNC + " INTEGER NOT NULL, "
+            + COL_RNCS_PSC + " INTEGER NOT NULL, "
             + COL_RNCS_LAT + " DOUBLE NOT NULL, "
             + COL_RNCS_LON + " DOUBLE NOT NULL, "
             + COL_RNCS_TXT + " TEXT NOT NULL "
@@ -70,31 +70,13 @@ public class Database  extends SQLiteOpenHelper {
     protected static final String TABLE_LOGS = "logs";
 
     protected static final String COL_LOGS_ID = "_id";
-    protected static final String COL_LOGS_TECH   = "_tech";
-    protected static final String COL_LOGS_MCC    = "_mcc";
-    protected static final String COL_LOGS_MNC    = "_mnc";
-    protected static final String COL_LOGS_CID    = "_cid";
-    protected static final String COL_LOGS_LAC    = "_lac";
-    protected static final String COL_LOGS_RNC    = "_rnc";
-    protected static final String COL_LOGS_PSC    = "_psc";
-    protected static final String COL_LOGS_LON     = "_lon";
-    protected static final String COL_LOGS_LAT     = "_lat";
+    protected static final String COL_LOGS_RNC_ID   = "_rnc_id";
     protected static final String COL_LOGS_DATE    = "_date";
-    protected static final String COL_LOGS_TXT    = "_txt";
 
     private static final String SQL_CREATE_TABLE_LOGS = "CREATE TABLE " + TABLE_LOGS + "("
             + COL_LOGS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COL_LOGS_TECH + " TEXT NOT NULL, "
-            + COL_LOGS_MCC + " TEXT NOT NULL, "
-            + COL_LOGS_MNC + " TEXT NOT NULL, "
-            + COL_LOGS_CID + " TEXT NOT NULL, "
-            + COL_LOGS_LAC + " TEXT NOT NULL, "
-            + COL_LOGS_RNC + " TEXT NOT NULL, "
-            + COL_LOGS_PSC + " TEXT NOT NULL, "
-            + COL_LOGS_LAT + " DOUBLE NOT NULL, "
-            + COL_LOGS_LON + " DOUBLE NOT NULL, "
-            + COL_LOGS_DATE + " TEXT NOT NULL, "
-            + COL_LOGS_TXT + " TEXT NOT NULL "
+            + COL_LOGS_RNC_ID + " INTEGER NOT NULL, "
+            + COL_LOGS_DATE + " TEXT NOT NULL "
             + ");";
 
     /* Table Export declaration */
@@ -106,11 +88,8 @@ public class Database  extends SQLiteOpenHelper {
     protected static final String COL_EXPORT_USER_PWD  = "_user_pwd";
     protected static final String COL_EXPORT_USER_TXT  = "_user_txt";
     protected static final String COL_EXPORT_USER_TEL  = "_user_tel";
-    protected static final String COL_EXPORT_NAME      = "_name";
     protected static final String COL_EXPORT_DATE      = "_date";
     protected static final String COL_EXPORT_NB        = "_nb";
-    protected static final String COL_EXPORT_NB_UMTS   = "_nb_umts";
-    protected static final String COL_EXPORT_NB_LTE    = "_nb_lte";
     protected static final String COL_EXPORT_STATE     = "_state";
     protected static final String COL_EXPORT_TYPE      = "_type";
     protected static final String COL_EXPORT_APP_VS    = "_app_version";
@@ -122,11 +101,8 @@ public class Database  extends SQLiteOpenHelper {
             + COL_EXPORT_USER_PWD + " TEXT NOT NULL, "
             + COL_EXPORT_USER_TXT + " TEXT NOT NULL, "
             + COL_EXPORT_USER_TEL + " TEXT NOT NULL, "
-            + COL_EXPORT_NAME + " TEXT NOT NULL, "
             + COL_EXPORT_DATE + " TEXT NOT NULL, "
             + COL_EXPORT_NB + " TEXT NOT NULL, "
-            + COL_EXPORT_NB_UMTS + " TEXT NOT NULL, "
-            + COL_EXPORT_NB_LTE + " TEXT NOT NULL, "
             + COL_EXPORT_STATE + " TEXT NOT NULL, "
             + COL_EXPORT_TYPE + " TEXT NOT NULL, "
             + COL_EXPORT_APP_VS + " TEXT NOT NULL "

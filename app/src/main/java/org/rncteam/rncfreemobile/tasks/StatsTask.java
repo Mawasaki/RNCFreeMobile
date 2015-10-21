@@ -20,6 +20,7 @@ import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by cedricf_25 on 19/10/2015.
@@ -31,7 +32,7 @@ public class StatsTask extends AsyncTask<String, String, JSONObject> {
     View v;
     JSONObject jData;
 
-    ArrayList<NameValuePair> postParams;
+    HashMap<String, String> postParams;
 
     private String url = "http://rfm.dataremix.fr/stats.php";
 
@@ -44,8 +45,8 @@ public class StatsTask extends AsyncTask<String, String, JSONObject> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        postParams = new ArrayList<NameValuePair>(1);
-        postParams.add(new BasicNameValuePair("action", "Future action"));
+        postParams = new HashMap<>();
+        postParams.put("action", "Future action");
     }
 
     @Override

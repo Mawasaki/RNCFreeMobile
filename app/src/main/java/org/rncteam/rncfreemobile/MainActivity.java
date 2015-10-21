@@ -1,7 +1,5 @@
 package org.rncteam.rncfreemobile;
 
-import org.rncteam.rncfreemobile.classes.Gps;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -57,11 +55,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     protected void onDestroy() {
         super.onDestroy();
 
-        Gps gps = rncmobile.getGps();
-        if(gps != null) {
-            gps.disableGps();
-        }
-
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
@@ -101,10 +94,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-
-        //Gps gps = rncmobile.getGps();
-
-        //if(!gps.gpsStatus()) rncmobile.setGps(new Gps(rncmobile.getAppContext()));
 
         stopMonitorService();
     }

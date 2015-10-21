@@ -14,6 +14,7 @@ import org.rncteam.rncfreemobile.classes.JSONParser;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by cedricf_25 on 12/10/2015.
@@ -28,9 +29,9 @@ public class ProfileTask extends AsyncTask<String, String, JSONObject> {
 
     private String url = "http://rfm.dataremix.fr/elevation.php";
 
-    ArrayList<NameValuePair> postParams;
-
     JSONArray jData;
+
+    HashMap<String, String> postParams;
 
     Elevation elevation;
 
@@ -50,16 +51,13 @@ public class ProfileTask extends AsyncTask<String, String, JSONObject> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        postParams = new ArrayList<NameValuePair>(8);
+        postParams = new HashMap<>();
 
-        postParams.add(new BasicNameValuePair("my_lat", Double.toString(myLat)));
-        postParams.add(new BasicNameValuePair("my_lon", Double.toString(myLon)));
-        postParams.add(new BasicNameValuePair("rnc_lat", Double.toString(rncLat)));
-        postParams.add(new BasicNameValuePair("rnc_lon", Double.toString(rncLon)));
-        postParams.add(new BasicNameValuePair("samples", "100"));
-
-        Log.d(TAG, "" + myLat + "-" + myLon + " / " + rncLat + "-" + rncLon);
-
+        postParams.put("my_lat", Double.toString(myLat));
+        postParams.put("my_lon", Double.toString(myLon));
+        postParams.put("rnc_lat", Double.toString(rncLat));
+        postParams.put("rnc_lon", Double.toString(rncLon));
+        postParams.put("samples", "100");
     }
     @Override
     protected JSONObject doInBackground(String... args) {

@@ -23,9 +23,9 @@ android {
 
         def versionMajor = 0
         def versionMinor = 3
-        def versionPatch = versionProps['VERSION_PATCH'].toInteger() + value
-        def versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
-        def version_Code = versionProps['VERSION_CODE'].toInteger() + 1
+        def versionPatch = versionProps['VERSION_PATCH'].toInteger()// + value
+        def versionBuild = versionProps['VERSION_BUILD'].toInteger()// + 1
+        def version_Code = versionProps['VERSION_CODE'].toInteger()// + 1
         //def run_task = versionProps['RUN_TASK']
 
         versionProps['VERSION_PATCH'] = versionPatch.toString()

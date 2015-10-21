@@ -65,7 +65,6 @@ public class ListExportHistoryAdapter extends BaseAdapter {
             holder.txtMainInfo = (TextView) convertView.findViewById(R.id.txt_export_history_infos);
             holder.txtDate = (TextView) convertView.findViewById(R.id.txt_export_history_date);
             holder.txtNbTotal = (TextView) convertView.findViewById(R.id.txt_export_history_text_nb_total);
-            holder.txtNbDetailed = (TextView) convertView.findViewById(R.id.txt_export_history_text_nb_detailed);
             holder.txtType = (TextView) convertView.findViewById(R.id.txt_export_history_text_type);
             holder.txtTel = (TextView) convertView.findViewById(R.id.txt_export_history_text_tel);
             holder.txtVersion = (TextView) convertView.findViewById(R.id.txt_export_history_text_version);
@@ -81,11 +80,7 @@ public class ListExportHistoryAdapter extends BaseAdapter {
 
         // Set data to UI
         String mainInfo = "#" + String.valueOf(export.get_id()) + " "
-                + ((export.get_name().equals("")) ? "" : export.get_name() + " ") + "by "
                 + export.get_user_nick();
-
-        String nbDetailed = "Number exported: " + export.get_nb()
-                + " / 3G: " + export.get_nb_umts() + " / 4G: " + export.get_nb_lte();
 
         // Date
         String fDate = "";
@@ -95,8 +90,7 @@ public class ListExportHistoryAdapter extends BaseAdapter {
 
         holder.txtMainInfo.setText(mainInfo);
         holder.txtDate.setText(String.valueOf(fDate));
-        holder.txtNbTotal.setText("Number Total Exported: " + export.get_nb());
-        holder.txtNbDetailed.setText(nbDetailed);
+        holder.txtNbTotal.setText("Number exported: " + export.get_nb());
         holder.txtType.setText("Type of export: " + export.get_type());
         holder.txtTel.setText("Phone: " + export.get_user_tel());
         holder.txtVersion.setText("App version: " + export.get_app_version());

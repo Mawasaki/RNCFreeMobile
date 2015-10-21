@@ -210,6 +210,7 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
             }
 
             // Add h of antenna to las point
+
             AnfrInfos ai = tel.getAnfrInfos();
             vals1.add(new Entry(lastPoint + Float.valueOf(ai.getHauteur()), lastI));
 

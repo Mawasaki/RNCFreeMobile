@@ -1,20 +1,16 @@
 package org.rncteam.rncfreemobile.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.AnfrInfos;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
-import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.JSONParser;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
@@ -22,6 +18,7 @@ import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by cedricf_25 on 24/07/2015.
@@ -30,19 +27,15 @@ import java.util.ArrayList;
 public class AnfrData extends AsyncTask<String, String, JSONObject> {
     private static final String TAG = "AnfrData";
 
-    private Telephony tel;
-    private Gps gps;
-    private Maps maps;
+    private final Telephony tel;
+    private final Maps maps;
 
-    ArrayList<Rnc> lRnc;
+    private ArrayList<Rnc> lRnc;
 
-    ArrayList<NameValuePair> postParams;
-
-    private String url = "http://rfm.dataremix.fr/supports.php";
+    private HashMap<String, String> postParams;
 
     public AnfrData() {
         tel = rncmobile.getTelephony();
-        gps = rncmobile.getGps();
         maps = rncmobile.getMaps();
 
         rncmobile.onTransaction = false;
@@ -52,24 +45,21 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        postParams = new ArrayList<NameValuePair>(8);
-
-        DatabaseRnc rncDB = new DatabaseRnc(rncmobile.getAppContext());
-        rncDB.open();
+        postParams = new HashMap<>();
 
         LatLngBounds cs = maps.getProjection();
-
         LatLng sw = cs.southwest;
         LatLng ne = cs.northeast;
 
+        DatabaseRnc rncDB = new DatabaseRnc(rncmobile.getAppContext());
+        rncDB.open();
         lRnc = rncDB.findListRncByCoo(sw.latitude, ne.latitude, sw.longitude, ne.longitude);
-
         rncDB.close();
 
-        postParams.add(new BasicNameValuePair("lat_sw", Double.toString(sw.latitude)));
-        postParams.add(new BasicNameValuePair("lon_sw", Double.toString(sw.longitude)));
-        postParams.add(new BasicNameValuePair("lat_ne", Double.toString(ne.latitude)));
-        postParams.add(new BasicNameValuePair("lon_ne", Double.toString(ne.longitude)));
+        postParams.put("lat_sw", Double.toString(sw.latitude));
+        postParams.put("lon_sw", Double.toString(sw.longitude));
+        postParams.put("lat_ne", Double.toString(ne.latitude));
+        postParams.put("lon_ne", Double.toString(ne.longitude));
 
         rncmobile.onTransaction = true;
     }
@@ -77,44 +67,40 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
     @Override
     protected JSONObject doInBackground(String... args) {
         JSONParser jParser = new JSONParser();
-        JSONObject json = jParser.getJSONFromUrl(url, postParams);
-        return json;
+        String url = "http://rfm.dataremix.fr/supports.php";
+        return jParser.getJSONFromUrl(url, postParams);
     }
 
     @Override
     protected void onPostExecute(JSONObject jArray) {
-        String markerTitle;
+        String markerTitle = "";
+        int icon = 0;
+
         rncmobile.onTransaction = false;
         rncmobile.getMaps().removeMarkers();
 
         if(jArray != null) {
             try {
-                // Gettings errors
                 if(jArray.getString("return").equals("SUPPORTS")) {
 
                     JSONArray jData = jArray.getJSONArray("DATA");
 
-                    Log.d(TAG,"Nb antennes : " + jData.length());
                     for(int i=0;i<jData.length();i++) {
+                        AnfrInfos anfrInfos = new AnfrInfos();
 
                         Rnc rnc = new Rnc();
-                        rnc.NOT_IDENTIFIED = true;
-                        markerTitle = "";
 
                         double anfr_lat = Double.valueOf(jData.getJSONObject(i).getString("lat"));
                         double anfr_lon = Double.valueOf(jData.getJSONObject(i).getString("lon"));
 
-                        int icon = 0;
-
-                        if (jData.getJSONObject(i).getString("Dte_En_Service") != "null") {
-                            // Check if in RNC Mobile database
+                        if (!jData.getJSONObject(i).getString("Dte_En_Service").equals("null")) {
 
                             if (lRnc.size() > 0) {
                                 for (int j = 0; j < lRnc.size(); j++) {
-                                    double rnc_lat1 = Double.valueOf(lRnc.get(j).get_lat()) + 0.005;
-                                    double rnc_lon1 = Double.valueOf(lRnc.get(j).get_lon()) + 0.005;
-                                    double rnc_lat2 = Double.valueOf(lRnc.get(j).get_lat()) - 0.005;
-                                    double rnc_lon2 = Double.valueOf(lRnc.get(j).get_lon()) - 0.005;
+                                    double rnc_lat1 = lRnc.get(j).get_lat() + 0.005;
+                                    double rnc_lon1 = lRnc.get(j).get_lon() + 0.005;
+                                    double rnc_lat2 = lRnc.get(j).get_lat() - 0.005;
+                                    double rnc_lon2 = lRnc.get(j).get_lon() - 0.005;
 
                                     if (rnc_lat1 >= anfr_lat && rnc_lat2 <= anfr_lat
                                             && rnc_lon1 >= anfr_lon && rnc_lon2 <= anfr_lon) {
@@ -126,33 +112,28 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                             }
 
                             Telephony tel = rncmobile.getTelephony();
-                            //rnc = null; // Start bug
-                            if (tel != null && rnc != null && tel.getLoggedRnc() != null && !rnc.NOT_IDENTIFIED) {
+
+                            if (tel != null && tel.getLoggedRnc() != null && !rnc.NOT_IDENTIFIED) {
                                 if (!rnc.get_real_rnc().equals(tel.getLoggedRnc().get_real_rnc())) {
                                     icon = R.drawable.circle_green;
                                     markerTitle = "green";
                                 } else {
                                     icon = R.drawable.circle_orange;
                                     markerTitle = "orange";
-                                    AnfrInfos ai = new AnfrInfos();
-                                    ai.setHauteur(jData.getJSONObject(i).getString("AER_NB_ALT_BAS"));
-                                    tel.setAnfrInfos(ai);
+                                    anfrInfos.setHauteur(jData.getJSONObject(i).getString("AER_NB_ALT_BAS"));
+                                    tel.setAnfrInfos(anfrInfos);
                                 }
                             } else {
                                 icon = R.drawable.circle_grey;
                                 markerTitle = "grey";
                             }
                         } else {
-                            if(tel != null && tel.getLoggedRnc().get_txt().equals("-") && tel.getLoggedRnc().get_lat() == -1) {
+                            if(tel != null) {
                                 icon = R.drawable.circle_red;
                                 markerTitle = "red";
-                            } else {
-                                icon = R.drawable.circle_green;
-                                markerTitle = "red"; 
                             }
                         }
 
-                        AnfrInfos anfrInfos = new AnfrInfos();
 
                         anfrInfos.setLieu(jData.getJSONObject(i).getString("ADR_LB_LIEU"));
                         anfrInfos.setAdd1(jData.getJSONObject(i).getString("ADR_LB_ADD1"));
@@ -176,7 +157,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
                         anfrInfos.setRnc(rnc);
 
-                        maps.setAnfrAntennasMarkers(rnc,
+                        maps.setAnfrAntennasMarkers(
                                 Double.parseDouble(jData.getJSONObject(i).getString("lat")),
                                 Double.parseDouble(jData.getJSONObject(i).getString("lon")),
                                 markerTitle,
@@ -191,9 +172,5 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
                 rncmobile.onTransaction = false;
             }
         }
-        else {
-            // Implement error getting cells
-        }
     }
-
 }

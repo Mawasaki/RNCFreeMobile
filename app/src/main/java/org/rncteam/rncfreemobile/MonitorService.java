@@ -1,6 +1,5 @@
 package org.rncteam.rncfreemobile;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,12 +10,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import org.rncteam.rncfreemobile.classes.Gps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 
 import java.io.BufferedInputStream;
@@ -122,8 +119,8 @@ public class MonitorService extends Service {
                                     + (tel.getLoggedRnc().get_rnc() + ":")
                                     + (tel.getLoggedRnc().get_cid() + " | ")
                                     + (tel.getLoggedRnc().get_lac() + " | ")
-                                    + ((tel.getLoggedRnc().get_tech().equals("3G") ? (2 * tel.getLoggedRnc().getUmtsRscp() - 113) + " dBm" : ""))
-                                    + ((tel.getLoggedRnc().get_tech().equals("4G") ? tel.getLoggedRnc().getLteRssi() + " dBm" : "")))
+                                    + ((tel.getLoggedRnc().get_tech() == 3 ? (2 * tel.getLoggedRnc().getUmtsRscp() - 113) + " dBm" : ""))
+                                    + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRssi() + " dBm" : "")))
                                     .setContentText(tel.getLoggedRnc().get_txt())
                                     .setSmallIcon(R.drawable.ic_notif_small_icon)
                                     .setLargeIcon(logoBitmap)

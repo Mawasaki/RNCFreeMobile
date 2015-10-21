@@ -80,11 +80,15 @@ public class DataActivity extends Activity {
             @Override
             public void onClick(View view) {
                 DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+                DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
                 dbr.open();
+                dbl.open();
                 dbr.deleteAllRnc();
+                dbl.deleteRncLogs();
                 dbr.close();
+                dbl.close();
 
-                // Update UI Monitor
+                rncmobile.notifyListLogsHasChanged = true;
                 Telephony tel = rncmobile.getTelephony();
                 tel.setCellChange(true);
 
@@ -157,7 +161,7 @@ public class DataActivity extends Activity {
                                 lRncLogs.get(i).get_cid() + delimiter +
                                 lRncLogs.get(i).get_lac() + delimiter +
                                 lRncLogs.get(i).get_rnc() + delimiter +
-                                (lRncLogs.get(i).get_psc().equals("0") ? "-1" : lRncLogs.get(i).get_psc()) + delimiter +
+                                ((lRncLogs.get(i).get_psc() == 0) ? -1 : lRncLogs.get(i).get_psc()) + delimiter +
                                 lRncLogs.get(i).get_lat() + delimiter +
                                 lRncLogs.get(i).get_lon() + delimiter +
                                 lRncLogs.get(i).get_txt() + crlf;

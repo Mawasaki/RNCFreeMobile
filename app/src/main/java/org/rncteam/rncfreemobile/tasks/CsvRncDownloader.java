@@ -9,6 +9,7 @@ import android.os.PowerManager;
 import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.classes.CsvRncReader;
+import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
@@ -165,29 +166,11 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     dbi.updateInfo("rncBaseUpdate", sdf.format(new Date()), "-");
 
                     dbi.close();
-
-                    // Update current logs
-                    DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-                    dbl.open();
-
-                    List<RncLogs> lRncLogs = dbl.findAllRncLogs();
-                    for(int i=0;i<lRncLogs.size();i++) {
-
-                        RncLogs rncLogs = lRncLogs.get(i);
-                        Rnc rnc = dbr.findRncByNameCid(rncLogs.get_rnc(),rncLogs.get_cid());
-
-                        if(!rnc.NOT_IDENTIFIED) {
-                            rncLogs.set_lat(rnc.get_lat());
-                            rncLogs.set_lon(rnc.get_lon());
-                            rncLogs.set_txt(rnc.get_txt());
-                            dbl.updateEditedLogs(rncLogs);
-
-                            dbl.findAllRncLogsMainList();
-                        }
-                    }
-
                     dbr.close();
-                    dbl.close();
+
+                    rncmobile.notifyListLogsHasChanged = true;
+                    Telephony tel = rncmobile.getTelephony();
+                    tel.setCellChange(true);
 
                     mProgressDialog.dismiss();
                 }

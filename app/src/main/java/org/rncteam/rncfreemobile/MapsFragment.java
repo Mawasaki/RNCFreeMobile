@@ -2,15 +2,10 @@ package org.rncteam.rncfreemobile;
 
 import org.rncteam.rncfreemobile.adapters.MapsPopupAdapter;
 import org.rncteam.rncfreemobile.classes.Elevation;
-import org.rncteam.rncfreemobile.classes.Gps;
-import org.rncteam.rncfreemobile.classes.Utils;
-import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
-import org.rncteam.rncfreemobile.models.Rnc;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Handler;
@@ -18,23 +13,16 @@ import android.support.annotation.Nullable;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Marker;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by cedricf_25 on 14/07/2015.
@@ -44,7 +32,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
     private GoogleMap mMap;
     private Maps maps;
-    private Gps gps;
     private Telephony tel;
     private View view;
 
@@ -62,7 +49,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         // Retrive main classes
         maps = rncmobile.getMaps();
         tel = rncmobile.getTelephony();
-        gps = rncmobile.getGps();
 
         // Retrieve UI
         btnActionProfile = (ImageButton) v.findViewById(R.id.btn_action_profile);
@@ -89,11 +75,11 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
                     // draw profile chart
                     if(!tel.getLoggedRnc().NOT_IDENTIFIED
-                            && tel.getLoggedRnc().get_lat() != -1.0
-                            && tel.getLoggedRnc().get_lon() != -1) {
+                            && tel.getLoggedRnc().get_lat() != 0.0
+                            && tel.getLoggedRnc().get_lon() != 0.0) {
                         Elevation elevation = new Elevation(getActivity());
                         elevation.initChart();
-                        elevation.getData(gps.getLatitude(), gps.getLongitude(),
+                        elevation.getData(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude(),
                                 tel.getLoggedRnc().get_lat(), tel.getLoggedRnc().get_lon());
                     } else Toast.makeText(rncmobile.getAppContext(),
                             "Pas de profil: antenne non identifiée", Toast.LENGTH_SHORT).show();
@@ -164,10 +150,10 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
                     Telephony tel = rncmobile.getTelephony();
 
                     // Update RNC Logs : Adresse, CP, Commune, gps
-                    DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-                    dbl.open();
-                    dbl.updateLogsNewRnc(tel.getMarkedRnc());
-                    dbl.close();
+                    DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+                    dbr.open();
+                    dbr.updateAllRnc(tel.getMarkedRnc());
+                    dbr.close();
 
                     // Redirect to Logs
                     MainActivity activity = (MainActivity) getActivity();

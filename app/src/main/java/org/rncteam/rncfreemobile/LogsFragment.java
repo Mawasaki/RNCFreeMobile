@@ -45,8 +45,6 @@ public class LogsFragment extends Fragment {
     ListView listViewLogsMain;
     View v;
 
-    int count_d = 4001;
-
     ListLogsMainAdapter adapterLogs;
 
     private Handler handler;
@@ -75,11 +73,11 @@ public class LogsFragment extends Fragment {
         displayLogs.run();
 
         SharedPreferences sp = rncmobile.getPreferences();
-
+/*
         if(sp.getBoolean("auto_export", true))
             autoLogs.run();
         else handler2.removeCallbacks(autoLogs);
-
+*/
         return v;
     }
 
@@ -138,10 +136,16 @@ public class LogsFragment extends Fragment {
     }
 
     public void getAllRncLogs() {
-        DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
 
+        DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
         dbl.open();
-        dbl.findAllRncLogsMainList();
+
+        ArrayList<RncLogs> lRncLogs = dbl.findAllRncLogs();
+
+        rncmobile.listRncLogs.clear();
+        for(int i=0;i<lRncLogs.size();i++)
+            rncmobile.listRncLogs.add(i,lRncLogs.get(i));
+
         dbl.close();
     }
 
@@ -160,7 +164,7 @@ public class LogsFragment extends Fragment {
             handler.postDelayed(this, 3000);
         }
     };
-
+/*
     private Runnable autoLogs = new Runnable() {
         public void run() {
 
@@ -217,12 +221,11 @@ public class LogsFragment extends Fragment {
                 net.execute();
 
             } catch (IOException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
 
             handler2.postDelayed(this, 1001 * 60);
         }
     };
-
+*/
 }

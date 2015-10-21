@@ -109,8 +109,8 @@ public class InfosFragment extends Fragment {
         int nbLteLogs = 0;
 
         for(int i=0;i<lRncLogs.size();i++) {
-            if(lRncLogs.get(i).get_tech().equals("3G")) nbUmtsLogs++;
-            if(lRncLogs.get(i).get_tech().equals("4G")) nbLteLogs++;
+            if(lRncLogs.get(i).get_tech() == 3) nbUmtsLogs++;
+            if(lRncLogs.get(i).get_tech() == 4) nbLteLogs++;
         }
 
         txtLogsNbTotal.setText("Total: " + lRncLogs.size());

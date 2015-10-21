@@ -1,6 +1,5 @@
 package org.rncteam.rncfreemobile.listeners;
 
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -17,8 +16,8 @@ import org.rncteam.rncfreemobile.tasks.AnfrData;
 public class MapsChangeListeners implements OnCameraChangeListener {
     private static final String TAG = "MapsChangeListeners";
 
-    private Maps maps;
-    boolean zoom_info;
+    private final Maps maps;
+    private boolean zoom_info;
 
     public MapsChangeListeners(Maps maps) {
         super();
@@ -37,8 +36,8 @@ public class MapsChangeListeners implements OnCameraChangeListener {
 
         int dataState = tel.getDataActivity();
         /*if(dataState != 0) {*/
-            if (position.zoom > 9 && tel != null) {
-                if (rncmobile.onTransaction == false && rncmobile.markerClicked == false) {
+            if (position.zoom > 9) {
+                if (!rncmobile.onTransaction && !rncmobile.markerClicked) {
                     AnfrData anfrData = new AnfrData();
                     anfrData.execute();
                     zoom_info = true;

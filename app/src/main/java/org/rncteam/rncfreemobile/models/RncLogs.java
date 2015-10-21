@@ -19,21 +19,20 @@ public class RncLogs implements Serializable {
     private static final String TAG = "RNCLOGS";
 
     private int _id;
+    private int _rnc_id;
     private String _date;
-    private String _tech;
-    private String _mcc;
-    private String _mnc;
-    private String _cid;
-    private String _lac;
-    private String _rnc;
-    private String _psc;
+    private int _tech;
+    private int _mcc;
+    private int _mnc;
+    private int _cid;
+    private int _lac;
+    private int _rnc;
+    private int _psc;
     private Double _lat;
     private Double _lon;
     private String _txt;
 
     public RncLogs() {
-        _lat = -1.0;
-        _lon = -1.0;
     }
 
     public String get_fr_datetime() {
@@ -104,6 +103,14 @@ public class RncLogs implements Serializable {
         this._id = _id;
     }
 
+    public int get_rnc_id() {
+        return _rnc_id;
+    }
+
+    public void set_rnc_id(int _rnc_id) {
+        this._rnc_id = _rnc_id;
+    }
+
     public String get_date() {
         return _date;
     }
@@ -112,59 +119,59 @@ public class RncLogs implements Serializable {
         this._date = _date;
     }
 
-    public String get_tech() {
+    public int get_tech() {
         return _tech;
     }
 
-    public void set_tech(String _tech) {
+    public void set_tech(int _tech) {
         this._tech = _tech;
     }
 
-    public String get_mcc() {
+    public int get_mcc() {
         return _mcc;
     }
 
-    public void set_mcc(String _mcc) {
+    public void set_mcc(int _mcc) {
         this._mcc = _mcc;
     }
 
-    public String get_mnc() {
+    public int get_mnc() {
         return _mnc;
     }
 
-    public void set_mnc(String _mnc) {
+    public void set_mnc(int _mnc) {
         this._mnc = _mnc;
     }
 
-    public String get_cid() {
+    public int get_cid() {
         return _cid;
     }
 
-    public void set_cid(String _cid) {
+    public void set_cid(int _cid) {
         this._cid = _cid;
     }
 
-    public String get_lac() {
+    public int get_lac() {
         return _lac;
     }
 
-    public void set_lac(String _lac) {
+    public void set_lac(int _lac) {
         this._lac = _lac;
     }
 
-    public String get_rnc() {
+    public int get_rnc() {
         return _rnc;
     }
 
-    public void set_rnc(String _rnc) {
+    public void set_rnc(int _rnc) {
         this._rnc = _rnc;
     }
 
-    public String get_psc() {
+    public int get_psc() {
         return _psc;
     }
 
-    public void set_psc(String _psc) {
+    public void set_psc(int _psc) {
         this._psc = _psc;
     }
 

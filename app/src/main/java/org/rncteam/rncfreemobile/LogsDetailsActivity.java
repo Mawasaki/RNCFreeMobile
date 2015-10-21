@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.database.Database;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
@@ -59,19 +60,23 @@ public class LogsDetailsActivity extends Activity {
     protected void onPause() {
         super.onPause();
         // Write new text and new coordinates
-        DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-        dbl.open();
+        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+        dbr.open();
 
-        RncLogs rncLog = dbl.findRncLogsByRncCid(String.valueOf(rnclogs.get_rnc()), String.valueOf(rnclogs.get_cid()));
-        if(rncLog != null) {
-            rncLog.set_txt(this.txtDetailText.getText().toString());
-            rncLog.set_lat(Double.valueOf(this.txtDetailLat.getText().toString()));
-            rncLog.set_lon(Double.valueOf(this.txtDetailLon.getText().toString()));
-            dbl.updateEditedLogs(rncLog);
+        Rnc rnc = dbr.findRncByRncCid(String.valueOf(rnclogs.get_rnc()), String.valueOf(rnclogs.get_cid()));
+        if(rnc != null) {
+            rnc.set_txt(this.txtDetailText.getText().toString());
+            rnc.set_lat(Double.valueOf(this.txtDetailLat.getText().toString()));
+            rnc.set_lon(Double.valueOf(this.txtDetailLon.getText().toString()));
+            dbr.updateRnc(rnc);
         }
+
+        Telephony tel = rncmobile.getTelephony();
+        tel.setCellChange(true);
+
         rncmobile.notifyListLogsHasChanged = true;
 
-        dbl.close();
+        dbr.close();
     }
 
     @Override
@@ -94,10 +99,10 @@ public class LogsDetailsActivity extends Activity {
 
         txtDetailTitle.setText("Cell Information (" + rnclogs.get_tech() + ")");
         txtDetailProvider.setText(rnclogs.get_mcc() + "" + rnclogs.get_mnc());
-        txtDetailCid.setText(rnclogs.get_cid());
-        txtDetailLac.setText(rnclogs.get_lac());
-        txtDetailRnc.setText(rnclogs.get_rnc());
-        txtDetailText.setText(rnclogs.get_txt());
+        txtDetailCid.setText(String.valueOf(rnclogs.get_cid()));
+        txtDetailLac.setText(String.valueOf(rnclogs.get_lac()));
+        txtDetailRnc.setText(String.valueOf(rnclogs.get_rnc()));
+        txtDetailText.setText(String.valueOf(rnclogs.get_txt()));
         txtDetailLat.setText(String.valueOf(rnclogs.get_lat()));
         txtDetailLon.setText(String.valueOf(rnclogs.get_lon()));
     }

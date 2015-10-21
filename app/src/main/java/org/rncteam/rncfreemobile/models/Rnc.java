@@ -2,8 +2,13 @@ package org.rncteam.rncfreemobile.models;
 
 import android.telephony.SignalStrength;
 
+import org.rncteam.rncfreemobile.database.Database;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
+import org.rncteam.rncfreemobile.rncmobile;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /**
  * Created by cedric_f25 on 15/07/2015.
@@ -21,7 +26,7 @@ public class Rnc {
 
     // Database attributes
     private int _id;
-    private String _tech;
+    private Integer _tech;
     private Integer _mcc;
     private Integer _mnc;
     private Integer _lcid;
@@ -48,11 +53,12 @@ public class Rnc {
     private SignalStrength signalStrength;
 
     public Rnc() {
-        _lon = -1.0;
-        _lat = -1.0;
+        _lon = 0.0;
+        _lat = 0.0;
+        _txt = "-";
         _lcid = -1;
-        NOT_IDENTIFIED = false;
-        NOT_IN_DB = false;
+        NOT_IDENTIFIED = true;
+        NOT_IN_DB = true;
 
         umtsRscp = -1;
         lteRssi = -1;
@@ -65,26 +71,9 @@ public class Rnc {
         networkName = "err";
     }
 
-    public void calc() {
-        // Signal Strength
-        if(signalStrength != null) {
-            if(get_tech().equals("3G"))
-                umtsRscp = signalStrength.getGsmSignalStrength();
-
-            if(get_tech().equals("4G")) {
-                setLteSignals();
-                lteRssi = 17 + getLteRsrp() + getLteRsrq();
-            }
-        }
-
-        // CID & RNC
-        _cid = getCid();
-        _rnc = getRnc();
-    }
-
     // UMTS Management
     public int getCid() {
-        if(get_tech().equals("4G")) return get_lcid() & 0xff;
+        if(get_tech() == 4) return get_lcid() & 0xff;
         if (getStdRnc() >= 256 && getStdRnc() <= 1000 && get_mnc() == 15) {
             return getExtCid();
         } else {
@@ -94,7 +83,7 @@ public class Rnc {
 
     public int getRnc() {
         // In UTMS, we can have extend RNC, alright
-        if(get_tech().equals("4G")) return get_lcid() >> 8;
+        if(get_tech() == 4) return get_lcid() >> 8;
         if (getStdRnc() >= 256 && getStdRnc() <= 1000 && get_mnc() == 15) {
             return getExtRnc();
         } else {
@@ -118,7 +107,7 @@ public class Rnc {
     }
 
     // LTE Signals management
-    private void setLteSignals() {
+    public void setLteSignals() {
         setLteAsu(getLteSignalByType(signalStrength, "getLteAsuLevel"));
         setLteRsrp(getLteSignalByType(signalStrength, "getLteRsrp"));
         setLteRsrq(getLteSignalByType(signalStrength, "getLteRsrq"));
@@ -170,6 +159,48 @@ public class Rnc {
         return "-";
     }
 
+    public Rnc getThisRnc(ArrayList<Rnc> lRnc, Rnc rnc) {
+        for(int i=0;i<lRnc.size();i++) {
+            if(lRnc.get(i).get_cid() == rnc.getCid()) {
+                Rnc rRnc = lRnc.get(i);
+                if(rRnc.get_lat() == 0.0 && rRnc.get_lon() == 0.0 && rRnc.get_txt().equals("-")) {
+                    rRnc.NOT_IDENTIFIED = true;
+                } else rRnc.NOT_IDENTIFIED = false;
+                return rRnc;
+            }
+        }
+        return null;
+    }
+
+    public Rnc getAnIdentifiedRnc(ArrayList<Rnc> lRnc) {
+        for(int i=0;i<lRnc.size();i++) {
+            if(!lRnc.get(i).get_txt().equals("-")
+                    && lRnc.get(i).get_lat() != 0.0 && lRnc.get(i).get_lon() != 0.0) {
+                return lRnc.get(i);
+            }
+        }
+        return null;
+    }
+
+    public void updateFamilyUnknowRnc(ArrayList<Rnc> lRnc, Rnc rnc) {
+
+        for(int i=0;i<lRnc.size();i++) {
+            if(lRnc.get(i).get_txt().equals("-")
+                    && lRnc.get(i).get_lat() == 0.0 && lRnc.get(i).get_lon() == 0.0) {
+                Rnc rncToUpdate = lRnc.get(i);
+                rncToUpdate.set_lat(rnc.get_lat());
+                rncToUpdate.set_lon(rnc.get_lon());
+                rncToUpdate.set_txt(rnc.get_txt());
+
+                DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+                dbr.open();
+                dbr.updateRnc(rncToUpdate);
+                dbr.close();
+            }
+        }
+
+    }
+
     // Getter & Setter Database
     public int get_id() {
         return _id;
@@ -179,11 +210,11 @@ public class Rnc {
         this._id = _id;
     }
 
-    public String get_tech() {
+    public int get_tech() {
         return _tech;
     }
 
-    public void set_tech(String _tech) {
+    public void set_tech(int _tech) {
         this._tech = _tech;
     }
 
@@ -333,20 +364,20 @@ public class Rnc {
         this.lteCqi = lteCqi;
     }
 
-    public SignalStrength getSignalStrength() {
-        return signalStrength;
-    }
-
-    public void setSignalStrength(SignalStrength signalStrength) {
-        this.signalStrength = signalStrength;
-    }
-
     public String getNetworkName() {
         return networkName;
     }
 
     public void setNetworkName(String networkName) {
         this.networkName = networkName;
+    }
+
+    public SignalStrength getSignalStrength() {
+        return signalStrength;
+    }
+
+    public void setSignalStrength(SignalStrength signalStrength) {
+        this.signalStrength = signalStrength;
     }
 }
 

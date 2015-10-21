@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,16 +18,14 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.LogsDetailsActivity;
-import org.rncteam.rncfreemobile.LogsMapsActivity;
-import org.rncteam.rncfreemobile.LogsSetCooActivity;
+import org.rncteam.rncfreemobile.MainActivity;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by cedricf_25 on 21/07/2015.
@@ -39,10 +36,10 @@ public class ListLogsMainAdapter extends BaseAdapter {
     private Context context;
     private Activity activity;
 
-    protected List<RncLogs> lCell;
+    protected ArrayList<RncLogs> lCell;
     LayoutInflater inflater;
 
-    public ListLogsMainAdapter(Activity activity, Context context, List<RncLogs> listCell) {
+    public ListLogsMainAdapter(Activity activity, Context context, ArrayList<RncLogs> listCell) {
         this.lCell = listCell;
         this.inflater = LayoutInflater.from(context);
         this.context = context;
@@ -59,10 +56,6 @@ public class ListLogsMainAdapter extends BaseAdapter {
 
     public long getItemId(int position) {
         return lCell.get(position).get_id();
-    }
-
-    public void remove() {
-
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -87,7 +80,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
 
         final RncLogs rncLog = lCell.get(position);
 
-        String mainInfo = String.valueOf(rncLog.get_tech()) + " "
+        String mainInfo = String.valueOf((rncLog.get_tech() == 3) ? "3G" : "4G" ) + " "
                 + String.valueOf(rncLog.get_rnc()) + " "
                 + String.valueOf(rncLog.get_cid()) + " "
                 + String.valueOf(rncLog.get_lac()) + " "
@@ -107,7 +100,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
         holder.txtOperator.setText(lDate);
 
         // Roaming operator
-        if(!rncLog.get_mnc().equals("15"))
+        if(rncLog.get_mnc() != 15)
             holder.fm_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
         else
             holder.fm_background.setBackgroundColor(Color.parseColor("#FFFFFF"));
@@ -121,7 +114,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
             public void onClick(View view) {
                 PopupMenu popup = new PopupMenu(rncmobile.getAppContext(), view);
                 popup.getMenuInflater().inflate(R.menu.menu_logs_listview, popup.getMenu());
-                if(rncLog.get_lat() == -1.0) popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(false);
+                if(rncLog.get_lat() == 0.0) popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(false);
                 else popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(true);
                 popup.show();
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -137,15 +130,13 @@ public class ListLogsMainAdapter extends BaseAdapter {
                                 return true;
 
                             case R.id.action_logs_listview_maps:
-                                Intent intentLMA = new Intent(li.getContext(), LogsMapsActivity.class);
-                                intentLMA.putExtra("logsInfosObject", rncLog);
-                                activity.startActivity(intentLMA);
+                                MainActivity mainActivity1 = (MainActivity) activity;
+                                mainActivity1.displayView(3);
                                 return true;
 
                             case R.id.action_logs_listview_set_coo:
-                                Intent intentLSCA = new Intent(li.getContext(), LogsSetCooActivity.class);
-                                intentLSCA.putExtra("logsInfosObject", rncLog);
-                                activity.startActivity(intentLSCA);
+                                MainActivity mainActivity2 = (MainActivity) activity;
+                                mainActivity2.displayView(3);
                                 return true;
 
                             case R.id.action_logs_listview_edit:
@@ -191,8 +182,6 @@ public class ListLogsMainAdapter extends BaseAdapter {
                 });
             }
         });
-
-
 
         return convertView;
     }

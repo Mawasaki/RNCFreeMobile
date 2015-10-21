@@ -6,7 +6,7 @@ import org.rncteam.rncfreemobile.models.Rnc;
 /**
  * Created by cedric_f25 on 21/09/2015.
  */
-public class AnfrInfos {
+final public class AnfrInfos {
     private static final String TAG = "AnfrInfos";
 
     private String lieu;
