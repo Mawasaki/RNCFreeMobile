@@ -139,7 +139,7 @@ public class DatabaseRnc extends Database {
         String query = "SELECT "
                 + "count(DISTINCT " + COL_RNCS_RNC + ") AS nb_rnc "
                 + "FROM " + TABLE_RNCS + " "
-                + "WHERE " + COL_RNCS_TECH + " = '3G'";
+                + "WHERE " + COL_RNCS_TECH + " = 3";
 
         Cursor c = mdb.rawQuery(query, null);
         c.moveToFirst();
@@ -153,7 +153,7 @@ public class DatabaseRnc extends Database {
         String query = "SELECT "
                 + "count(DISTINCT " + COL_RNCS_RNC + ") AS nb_rnc "
                 + "FROM " + TABLE_RNCS + " "
-                + "WHERE " + COL_RNCS_TECH + " = '4G'";
+                + "WHERE " + COL_RNCS_TECH + " = 4";
 
         Cursor c = mdb.rawQuery(query, null);
         c.moveToFirst();

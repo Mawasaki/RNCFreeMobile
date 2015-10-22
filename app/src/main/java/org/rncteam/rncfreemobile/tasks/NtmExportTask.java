@@ -3,6 +3,7 @@ package org.rncteam.rncfreemobile.tasks;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -40,8 +41,8 @@ import java.util.Locale;
  */
 public class NtmExportTask extends AsyncTask<Void, Void, String> {
     private static final String TAG = "NtmExportTask";
-    //private static final String S_URL = "http://rncmobile.fr/appimport.php";
-    private static final String S_URL = "http://rfm.dataremix.fr/export.php";
+    private static final String S_URL = "http://rncmobile.fr/appimport.php";
+    //private static final String S_URL = "http://rfm.dataremix.fr/export.php";
 
     private final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
 
@@ -57,9 +58,11 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
     private int state;
 
-    public NtmExportTask(Activity activity, String nickName) {
+    public NtmExportTask(Activity activity) {
         this.activity = (ExportLogsActivity)activity;
-        this.nickname = nickName;
+
+        SharedPreferences sp = rncmobile.getPreferences();
+        this.nickname = sp.getString("nickname", "nonIdentified");
 
         this.tel = rncmobile.getTelephony();
 
@@ -123,13 +126,6 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             }
 
             // Nickname
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"user_nick\"" + lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(this.nickname);
-            dos.writeBytes(lineEnd);
-
-            // Nickname2
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"user\"" + lineEnd);
             dos.writeBytes(lineEnd);
@@ -198,8 +194,6 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
                 Log.d(TAG, "Response : " + resp);
 
                 httpResponse = resp;
-
-
 
                 state = 1;
             }

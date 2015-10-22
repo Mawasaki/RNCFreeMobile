@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/nav_header_container"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="60dp"
         android:layout_alignParentTop="true"
         android:background="@color/colorPrimary">
 
@@ -18,24 +18,34 @@
             android:text="RNC Free Mobile"
             android:gravity="center"
             android:layout_marginTop="10dp"
-            android:textSize="20dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="18dp"
             android:textStyle="bold"/>
 
         <ImageView
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="50dp"
-            android:src="@mipmap/ic_launcher"
-            android:layout_centerHorizontal="true" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="0dp"
+            android:src="@mipmap/ic_launcher" />
 
     </RelativeLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/drawerList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nav_header_container"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"/>
 
     <RelativeLayout
         android:id="@+id/lyt_nav_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_below="@id/nav_header_container">
+        android:layout_margin="5dp"
+        android:paddingBottom="20dp"
+        android:layout_alignParentBottom="true">
 
         <ProgressBar
             android:id="@+id/nav_progress_bar"
@@ -68,19 +78,10 @@
 
     </RelativeLayout>
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/drawerList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lyt_nav_progress_bar"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="20dp"/>
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:layout_margin="0dp"
+        android:layout_marginLeft="5dp"
         android:layout_alignParentBottom="true">
 
         <TextView

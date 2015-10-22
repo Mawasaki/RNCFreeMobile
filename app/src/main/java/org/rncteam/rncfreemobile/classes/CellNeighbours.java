@@ -133,6 +133,7 @@ public class CellNeighbours {
                     }
                     if (nearestRnc != null) {
                         nearestRnc.setLteRssi(lRnc.get(i).getLteRssi());
+                        if(!rnc.NOT_IDENTIFIED) nearestRnc.NOT_IDENTIFIED = false;
                         lRnc.set(i, nearestRnc);
                         overlapRnc = nearestRnc;
                     }

@@ -4,6 +4,12 @@
         android:title="RNC Free Mobile Preference"
         android:key="pref_key_storage_settings">
 
+        <EditTextPreference
+            android:title="Pseudo"
+            android:key="nickname"
+            android:summary="Nom lors des exports">
+        </EditTextPreference>
+
         <CheckBoxPreference
             android:title="Ecran toujours allumé"
             android:key="screen"

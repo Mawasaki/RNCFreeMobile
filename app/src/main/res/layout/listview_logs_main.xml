@@ -22,7 +22,6 @@
             android:id="@+id/layout_logs_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="3"
             android:orientation="horizontal" >
 
             <TextView
@@ -30,8 +29,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cells infos"
-                android:layout_weight="1.5"
                 android:textColor="@android:color/black" />
+
+            <ImageView
+                android:id="@+id/imv_logs_main_sync"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="3dp"
+                android:alpha="0.5" />
 
             <TextView
                 android:id="@+id/txt_logs_operator"
@@ -60,7 +65,6 @@
                 android:layout_height="24dp"
                 android:layout_marginLeft="5dp"
                 android:src="@drawable/ic_more_vert"
-                android:layout_toRightOf="@+id/txt_logs_text"
                 android:background="@null" />
 
 

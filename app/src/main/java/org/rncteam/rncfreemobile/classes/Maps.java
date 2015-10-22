@@ -1,27 +1,19 @@
 package org.rncteam.rncfreemobile.classes;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.RelativeLayout;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
@@ -41,26 +33,15 @@ public class Maps {
     private float lastZoom;
     private double lastPosLat;
     private double lastPosLon;
-    private double antLat;
-    private double antLon;
 
-    private ArrayList<Polyline> polyline;
     private Map<Marker, AnfrInfos> markers;
-    private ArrayList<Marker> markersMax;
-
-    private FragmentActivity fa;
 
     public Maps() {
         lastZoom = 0;
         lastPosLat = 0.0;
         lastPosLon = 0.0;
 
-        polyline = new ArrayList<Polyline>();
         markers = new HashMap<Marker, AnfrInfos>();
-        markersMax = new ArrayList<Marker>();
-
-        antLat = 0.0;
-        antLon = 0.0;
 
         this.mMap = null;
     }
@@ -128,19 +109,6 @@ public class Maps {
             this.lastPosLon = longitude;
     }
 
-    public void setLastPosLatGps(double latitude) {
-        this.lastPosLat = latitude;
-    }
-
-    public void setLastPosLonGps(double longitude) {
-        this.lastPosLon = longitude;
-    }
-
-
-    public Map<Marker, AnfrInfos> getMarkers() {
-        return markers;
-    }
-
     public AnfrInfos getAnfrInfoMarkers(Marker marker) {
         return markers.get(marker);
     }
@@ -173,6 +141,33 @@ public class Maps {
                 .build();
 
         this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    public void switchMarkerIcon(Rnc newRnc) {
+        Marker oldMarker = null;
+        Marker newMarker = null;
+        if(markers != null && markers.size() > 0) {
+            Iterator it = markers.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                Marker m = (Marker) pair.getKey();
+                AnfrInfos anfrInfos = (AnfrInfos) pair.getValue();
+
+                // Find marker with icon Orange
+                if (m.getTitle().equals("orange")) oldMarker = m;
+
+                // Find marker to change
+                if (anfrInfos.getRnc().get_real_rnc().equals(newRnc.get_real_rnc())) newMarker = m;
+
+            }
+            // Switch
+            if (oldMarker != null && newMarker != null) {
+                oldMarker.setTitle("green");
+                oldMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.circle_green));
+                newMarker.setTitle("orange");
+                newMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.circle_orange));
+            }
+        }
     }
 
     public void setMap(GoogleMap map) {

@@ -24,8 +24,8 @@ import java.util.HashMap;
  * Created by cedricf_25 on 24/07/2015.
  */
 
-public class AnfrData extends AsyncTask<String, String, JSONObject> {
-    private static final String TAG = "AnfrData";
+public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
+    private static final String TAG = "AnfrDataTask";
 
     private final Telephony tel;
     private final Maps maps;
@@ -34,7 +34,7 @@ public class AnfrData extends AsyncTask<String, String, JSONObject> {
 
     private HashMap<String, String> postParams;
 
-    public AnfrData() {
+    public AnfrDataTask() {
         tel = rncmobile.getTelephony();
         maps = rncmobile.getMaps();
 

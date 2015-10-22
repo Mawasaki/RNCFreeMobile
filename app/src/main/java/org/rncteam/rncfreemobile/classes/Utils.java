@@ -1,16 +1,83 @@
 package org.rncteam.rncfreemobile.classes;
 
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.rncteam.rncfreemobile.rncmobile;
+
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by cedricf_25 on 09/10/2015.
  */
 final public class Utils {
     private static final String TAG = "RNCLOGS";
+
+    static public String get_fr_datetime(String sDate) {
+        Date date = new Date();
+        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = iso8601Format.parse(sDate);
+        } catch (ParseException e) {
+            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
+        }
+
+        long when = date.getTime();
+        int flags = 0;
+        flags |= android.text.format.DateUtils.FORMAT_SHOW_TIME;
+        flags |= android.text.format.DateUtils.FORMAT_SHOW_DATE;
+        flags |= android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
+        flags |= android.text.format.DateUtils.FORMAT_SHOW_YEAR;
+
+        String finalDateTime = android.text.format.DateUtils.formatDateTime(rncmobile.getAppContext(),
+                when + TimeZone.getDefault().getOffset(when), flags);
+
+        return finalDateTime;
+    }
+
+    static public String get_time(String sDate) {
+        Date date = new Date();
+        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = iso8601Format.parse(sDate);
+        } catch (ParseException e) {
+            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
+        }
+
+        return new SimpleDateFormat("HH:mm:ss").format(date);
+    }
+
+    static public String get_formated_date_abbrev(String sDate) {
+        Date d = get_date_obj(sDate);
+
+        try {
+            long prev = d.getTime();
+            long now = System.currentTimeMillis();
+            return String.valueOf(DateUtils.getRelativeTimeSpanString(prev, now, 0L, DateUtils.FORMAT_ABBREV_ALL));
+        } catch (Exception e) {
+
+        }
+        return "";
+    }
+
+    static public Date get_date_obj(String sDate) {
+        Date date = new Date();
+        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = iso8601Format.parse(sDate);
+        } catch (ParseException e) {
+            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
+        }
+
+        return date;
+    }
 
     public double calculationByDistance(LatLng StartP, LatLng EndP) {
         int Radius = 6371;// radius of earth in Km
@@ -25,18 +92,6 @@ final public class Utils {
                 * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
                 * Math.sin(dLon / 2);
         double c = 2 * Math.asin(Math.sqrt(a));
-
-
-        // INFOS TO USE:
-        /*
-        double valueResult = Radius * c;
-        double km = valueResult / 1;
-        DecimalFormat newFormat = new DecimalFormat("####");
-        int kmInDec = Integer.valueOf(newFormat.format(km));
-        double meter = valueResult % 1000;
-        int meterInDec = Integer.valueOf(newFormat.format(meter));
-        //Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
-                //+ " Meter   " + meterInDec);*/
 
         return Radius * c;
     }

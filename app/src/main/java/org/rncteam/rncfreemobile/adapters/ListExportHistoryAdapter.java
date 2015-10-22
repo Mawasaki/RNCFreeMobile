@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.classes.Utils;
 import org.rncteam.rncfreemobile.models.Export;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
@@ -83,10 +84,11 @@ public class ListExportHistoryAdapter extends BaseAdapter {
                 + export.get_user_nick();
 
         // Date
-        String fDate = "";
+        // Date
+        String lDate = ""; String fDate = "";
         Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000L);
-        if(export.get_date_obj().after(date)) fDate = export.get_time();
-        else fDate = export.get_fr_datetime();
+
+        fDate = Utils.get_formated_date_abbrev(export.get_date());
 
         holder.txtMainInfo.setText(mainInfo);
         holder.txtDate.setText(String.valueOf(fDate));

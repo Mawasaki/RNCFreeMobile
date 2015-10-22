@@ -86,7 +86,12 @@ public class InfosFragment extends Fragment {
         if (lInfo.size() > 0)
             txtRncUpdate.setText((String) lInfo.get(1));
 
-        if(txtRncUpdate.getText().equals("0")) txtRncUpdate.setText("Please update");
+        if(txtRncUpdate.getText().equals("0")) {
+            txtRncUpdate.setText("Please update");
+            rncmobile.rncDataCharged = false;
+        } else {
+            rncmobile.rncDataCharged = true;
+        }
 
         DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
         dbr.open();

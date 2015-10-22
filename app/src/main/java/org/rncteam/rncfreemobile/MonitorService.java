@@ -115,10 +115,9 @@ public class MonitorService extends Service {
                 } else if (tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4) {
                     notification = new Notification.Builder(thisService)
                             .setContentTitle(String.valueOf(tel.getLoggedRnc().getNetworkName()
-                                    + " (" + tel.getLoggedRnc().get_tech() + ") ")
+                                    + " (" + ((tel.getLoggedRnc().get_tech() == 3) ? "3G" : "4G") + ") ")
                                     + (tel.getLoggedRnc().get_rnc() + ":")
                                     + (tel.getLoggedRnc().get_cid() + " | ")
-                                    + (tel.getLoggedRnc().get_lac() + " | ")
                                     + ((tel.getLoggedRnc().get_tech() == 3 ? (2 * tel.getLoggedRnc().getUmtsRscp() - 113) + " dBm" : ""))
                                     + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRssi() + " dBm" : "")))
                                     .setContentText(tel.getLoggedRnc().get_txt())

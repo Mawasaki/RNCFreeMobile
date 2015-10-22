@@ -16,6 +16,7 @@ import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.tasks.AutoExportTask;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -146,15 +147,11 @@ public class Telephony {
                     dbl.open();
 
                     long lastInsertId = -1;
-                    Rnc iRncs = null;
-                    Rnc iRnc = null;
 
                     // Get all entries of this RNC
                     ArrayList<Rnc> lRncDb = dbr.findRncByRnc(rnc.get_real_rnc());
-                    // Check if we find a family already identified just one line
-                    iRncs = rnc.getAnIdentifiedRnc(lRncDb);
                     // Check if we know RNC and is identified or not
-                    iRnc = rnc.getThisRnc(lRncDb, rnc);
+                    Rnc iRnc = rnc.getThisRnc(lRncDb, rnc);
 
                     // If RNC is know
                     if(iRnc != null) {
@@ -165,33 +162,15 @@ public class Telephony {
                             rnc.set_lon(iRnc.get_lon());
                             rnc.set_txt(iRnc.get_txt());
                             rnc.NOT_IDENTIFIED = false;
-                        } else {
-                            // If not identified, get infos by others if know and update
-                            if(iRncs != null) {
-                                rnc.set_lat(iRncs.get_lat());
-                                rnc.set_lon(iRncs.get_lon());
-                                rnc.set_txt(iRncs.get_txt());
-                                rnc.NOT_IDENTIFIED = false;
-                                dbr.updateRnc(rnc);
-                            } // Else nothing to do
                         }
-                        // We won't have not identified RNC
-                        rnc.updateFamilyUnknowRnc(lRncDb,rnc);
+                        rnc.set_id(iRnc.get_id());
                     } else {
-                        // If not know, check is we can set a info from family
-                        if(iRncs != null) {
-                            rnc.set_lat(iRncs.get_lat());
-                            rnc.set_lon(iRncs.get_lon());
-                            rnc.set_txt(iRncs.get_txt());
-                            rnc.NOT_IDENTIFIED = false;
-                            lastInsertId = dbr.addRnc(rnc);
-                        } else {
-                            // Just add
-                            lastInsertId = dbr.addRnc(rnc);
-                        }
+                        lastInsertId = dbr.addRnc(rnc);
+                        rnc.set_id((int)lastInsertId);
                     }
 
                     // For log, we prepare infos
+                    int logsSync = -1;
                     RncLogs rncLogs = new RncLogs();
                     rncLogs.set_date(sdf.format(new Date()));
 
@@ -206,6 +185,7 @@ public class Telephony {
                             // If we find a log, just update it
                             if(iRncLogs != null) {
                                 iRncLogs.set_date(sdf.format(new Date()));
+                                logsSync = iRncLogs.get_sync();
                                 dbl.updateLogs(iRncLogs);
                             } else {
                                 // Else add log
@@ -218,15 +198,27 @@ public class Telephony {
 
                     dbl.close();
                     dbr.close();
+
+                    // Switch icon map
+                    Maps maps = rncmobile.getMaps();
+                    maps.switchMarkerIcon(rnc);
+
+                    // If unknow cid, && 20815.csv charged send to site && not synced
+                    if(rnc.NOT_IDENTIFIED && logsSync < 1/* && rncmobile.rncDataCharged*/) {
+                        AutoExportTask aet = new AutoExportTask();
+                        aet.execute(rnc);
+                    }
                 } else {
                     // No cell change
                     Rnc iRnc = getLoggedRnc();
                     rnc.set_lat(iRnc.get_lat());
                     rnc.set_lon(iRnc.get_lon());
                     rnc.set_txt(iRnc.get_txt());
+                    rnc.set_id(iRnc.get_id());
                     rnc.NOT_IDENTIFIED = iRnc.NOT_IDENTIFIED;
                 }
                 setLoggedRnc(rnc);
+
             }
         } else setLoggedRnc(null);
 

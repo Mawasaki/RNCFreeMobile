@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.classes.CsvRncReader;
 import org.rncteam.rncfreemobile.classes.Telephony;
+import org.rncteam.rncfreemobile.database.Database;
 import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
@@ -24,6 +25,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -152,10 +154,30 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
 
                     // Add CVS to database
                     DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+                    DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
                     dbr.open();
+                    dbl.open();
 
+                    // Save Logs
+                    ArrayList<RncLogs> lRncLogs = dbl.findAllRncLogs();
+
+                    // Delete and fill RNCs
                     dbr.deleteAllRnc();
+                    dbl.deleteRncLogs();
                     dbr.addMassiveRnc(lRnc);
+
+                    // Reaffects logs
+                    for(int i=0;i<lRncLogs.size();i++) {
+                        RncLogs rncLogs = lRncLogs.get(i);
+                        Rnc rnc = dbr.findRncByRncCid(
+                                String.valueOf(rncLogs.get_rnc()),
+                                String.valueOf(rncLogs.get_cid()));
+
+                        if(rnc != null) {
+                                rncLogs.set_rnc_id(rnc.get_id());
+                        }
+                        dbl.addLog(rncLogs);
+                    }
 
                     // Mark info
                     DatabaseInfo dbi = new DatabaseInfo(rncmobile.getAppContext());
@@ -167,6 +189,7 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
 
                     dbi.close();
                     dbr.close();
+                    dbl.close();
 
                     rncmobile.notifyListLogsHasChanged = true;
                     Telephony tel = rncmobile.getTelephony();

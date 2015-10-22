@@ -2,6 +2,7 @@ package org.rncteam.rncfreemobile;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Handler;
@@ -49,13 +50,13 @@ public class ExportLogsActivity extends Activity {
     // UI
     private TextView txtExportCountTotal;
     private TextView txtResponse;
-    private EditText inpImportNickname;
+    private TextView txtImportNickname;
     private Button btnExportLog;
     private ListView listViewExportLogs;
 
-    ListExportHistoryAdapter adapter;
+    private SharedPreferences sp;
 
-    Handler handler;
+    ListExportHistoryAdapter adapter;
 
     Activity activity;
 
@@ -66,6 +67,7 @@ public class ExportLogsActivity extends Activity {
         setContentView(R.layout.activity_export_logs);
 
         final Context context = this.getApplicationContext();
+        sp = rncmobile.getPreferences();
         activity = this;
 
         txtExportCountTotal = (TextView )findViewById(R.id.txt_export_count);
@@ -73,7 +75,7 @@ public class ExportLogsActivity extends Activity {
         txtResponse = (TextView )findViewById(R.id.txt_export_text_result);
         txtResponse.setText("");
 
-        inpImportNickname = (EditText) findViewById(R.id.inp_import_nickname);
+        txtImportNickname = (TextView) findViewById(R.id.txt_import_text_nickname);
         btnExportLog = (Button) findViewById(R.id.btn_export_logs);
 
         listViewExportLogs = (ListView) findViewById(R.id.list_export_logs);
@@ -92,23 +94,16 @@ public class ExportLogsActivity extends Activity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        if(lExport.size() > 0) {
-            inpImportNickname.setText(lExport.get(0).get_user_nick());
-        }
+        txtImportNickname.setText("Nickname: " + sp.getString("nickname", "nonIdentified"));
+
 
         // Button export management
         btnExportLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!inpImportNickname.getText().toString().equals("")) {
 
-                    NtmExportTask net = new NtmExportTask(ExportLogsActivity.this,
-                            inpImportNickname.getText().toString());
-                    net.execute();
-
-                } else {
-                    Toast.makeText(rncmobile.getAppContext(), "Saisir un pseudo", Toast.LENGTH_SHORT).show();
-                }
+                NtmExportTask net = new NtmExportTask(ExportLogsActivity.this);
+                net.execute();
             }
         });
     }

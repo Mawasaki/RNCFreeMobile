@@ -38,6 +38,8 @@ public class rncmobile extends Application {
     public static SharedPreferences preferences;
     public static FragmentDrawer fragmentDrawer;
 
+    public static boolean rncDataCharged;
+
     public void onCreate(){
         super.onCreate();
 
@@ -58,8 +60,11 @@ public class rncmobile extends Application {
         // Transaction with http server
         onTransaction = false;
 
+        // Data of 20815.csv charged
+        rncDataCharged = false;
+
         // Crash report
-        //Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
+        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);

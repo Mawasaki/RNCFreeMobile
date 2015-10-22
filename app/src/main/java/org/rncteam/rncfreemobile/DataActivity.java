@@ -83,8 +83,10 @@ public class DataActivity extends Activity {
                 DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
                 dbr.open();
                 dbl.open();
+
                 dbr.deleteAllRnc();
                 dbl.deleteRncLogs();
+
                 dbr.close();
                 dbl.close();
 

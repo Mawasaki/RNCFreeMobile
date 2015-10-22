@@ -94,14 +94,6 @@
                     android:textColor="#111111"
                     android:text="Nickname :" />
 
-                <EditText
-                    android:id="@+id/inp_import_nickname"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="14dp"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:focusableInTouchMode="true"/>
 
             </LinearLayout>
 

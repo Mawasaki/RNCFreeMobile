@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.LogsDetailsActivity;
 import org.rncteam.rncfreemobile.MainActivity;
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.classes.Utils;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
@@ -72,6 +74,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
             holder.txtTxt = (TextView) convertView.findViewById(R.id.txt_logs_text);
             holder.txtOperator = (TextView) convertView.findViewById(R.id.txt_logs_operator);
             holder.fm_background = (FrameLayout) convertView.findViewById(R.id.fm_logs_general);
+            holder.imvSync = (ImageView) convertView.findViewById(R.id.imv_logs_main_sync);
 
             convertView.setTag(holder);
         } else {
@@ -89,10 +92,11 @@ public class ListLogsMainAdapter extends BaseAdapter {
         // Date
         String lDate = ""; String fDate = "";
         Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000L);
-        if(rncLog.get_date_obj().after(date)) lDate = rncLog.get_time();
-        else lDate = rncLog.get_fr_datetime();
 
-        fDate = rncLog.get_formated_date_abbrev();
+        if(Utils.get_date_obj(rncLog.get_date()).after(date)) lDate = Utils.get_time(rncLog.get_date());
+        else lDate = Utils.get_fr_datetime(rncLog.get_date());
+
+        fDate = Utils.get_formated_date_abbrev(rncLog.get_date());
 
         holder.txtMainInfo.setText(mainInfo);
         holder.txtDate.setText(String.valueOf(fDate));
@@ -106,6 +110,17 @@ public class ListLogsMainAdapter extends BaseAdapter {
             holder.fm_background.setBackgroundColor(Color.parseColor("#FFFFFF"));
         // Popup
         ImageButton btnMenu = (ImageButton) convertView.findViewById(R.id.logs_btn_menu);
+
+        // Sync
+        // If rncIdentified, dismiss imageview
+        if(rncLog.isRncIdentified()) holder.imvSync.setVisibility(View.GONE);
+        else  holder.imvSync.setVisibility(View.VISIBLE);
+        // Set good sync img
+        if(rncLog.get_sync() != 0) {
+            holder.imvSync.setImageResource(R.drawable.ic_done_black);
+        } else {
+            holder.imvSync.setImageResource(R.drawable.ic_autorenew_black);
+        }
 
         final View f_view = convertView;
 
@@ -191,6 +206,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
         TextView txtDate;
         TextView txtTxt;
         TextView txtOperator;
+        ImageView imvSync;
         FrameLayout fm_background;
     }
 }

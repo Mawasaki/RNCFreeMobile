@@ -8,7 +8,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.rncmobile;
-import org.rncteam.rncfreemobile.tasks.AnfrData;
+import org.rncteam.rncfreemobile.tasks.AnfrDataTask;
 
 /**
  * Created by cedricf_25 on 14/07/2015.
@@ -38,8 +38,8 @@ public class MapsChangeListeners implements OnCameraChangeListener {
         /*if(dataState != 0) {*/
             if (position.zoom > 9) {
                 if (!rncmobile.onTransaction && !rncmobile.markerClicked) {
-                    AnfrData anfrData = new AnfrData();
-                    anfrData.execute();
+                    AnfrDataTask anfrDataTask = new AnfrDataTask();
+                    anfrDataTask.execute();
                     zoom_info = true;
                 } else rncmobile.markerClicked = false;
             } else {

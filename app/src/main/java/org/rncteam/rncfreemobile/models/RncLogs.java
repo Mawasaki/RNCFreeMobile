@@ -31,67 +31,14 @@ public class RncLogs implements Serializable {
     private Double _lat;
     private Double _lon;
     private String _txt;
+    private int _sync;
 
     public RncLogs() {
     }
 
-    public String get_fr_datetime() {
-        Date date = new Date();
-        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            date = iso8601Format.parse(get_date());
-        } catch (ParseException e) {
-            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
-        }
-
-        long when = date.getTime();
-        int flags = 0;
-        flags |= android.text.format.DateUtils.FORMAT_SHOW_TIME;
-        flags |= android.text.format.DateUtils.FORMAT_SHOW_DATE;
-        flags |= android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
-        flags |= android.text.format.DateUtils.FORMAT_SHOW_YEAR;
-
-        String finalDateTime = android.text.format.DateUtils.formatDateTime(rncmobile.getAppContext(),
-                when + TimeZone.getDefault().getOffset(when), flags);
-
-        return finalDateTime;
-    }
-
-    public String get_time() {
-        Date date = new Date();
-        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            date = iso8601Format.parse(get_date());
-        } catch (ParseException e) {
-            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
-        }
-
-        return new SimpleDateFormat("HH:mm:ss").format(date);
-    }
-
-    public String get_formated_date_abbrev() {
-        Date d = get_date_obj();
-
-        try {
-            long prev = d.getTime();
-            long now = System.currentTimeMillis();
-            return String.valueOf(DateUtils.getRelativeTimeSpanString(prev, now, 0L, DateUtils.FORMAT_ABBREV_ALL));
-        } catch (Exception e) {
-
-        }
-        return "";
-    }
-
-    public Date get_date_obj() {
-        Date date = new Date();
-        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            date = iso8601Format.parse(get_date());
-        } catch (ParseException e) {
-            Log.e(TAG, "Parsing ISO8601 datetime failed", e);
-        }
-
-        return date;
+    public boolean isRncIdentified() {
+        if(get_txt().equals("-") && get_lat() == 0.0 && get_lon() == 0.0) return false;
+        else return true;
     }
 
     // Getter & setter
@@ -197,5 +144,13 @@ public class RncLogs implements Serializable {
 
     public void set_txt(String _txt) {
         this._txt = _txt;
+    }
+
+    public int get_sync() {
+        return _sync;
+    }
+
+    public void set_sync(int _sync) {
+        this._sync = _sync;
     }
 }

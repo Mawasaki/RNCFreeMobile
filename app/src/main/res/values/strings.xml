@@ -16,7 +16,7 @@
     <string name="nav_item_infos">Infos</string>
     <string name="nav_item_maps">Maps</string>
     <string name="nav_item_data">Import/Export</string>
-    <string name="nav_item_prefs">Preference</string>
+    <string name="nav_item_prefs">Settings</string>
 
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">

@@ -15,4 +15,9 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
 }

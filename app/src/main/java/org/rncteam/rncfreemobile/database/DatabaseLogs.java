@@ -24,13 +24,14 @@ public class DatabaseLogs extends Database {
     }
 
     // RNC Table Management
-    public void addLog(RncLogs rncLog) {
+    public long addLog(RncLogs rncLog) {
         ContentValues v = new ContentValues();
 
         v.put(COL_LOGS_RNC_ID, rncLog.get_rnc_id());
         v.put(COL_LOGS_DATE, rncLog.get_date());
+        v.put(COL_LOGS_SYNC, 0);
 
-        mdb.insert(TABLE_LOGS, null, v);
+        return mdb.insert(TABLE_LOGS, null, v);
     }
 
     public void updateLogs(RncLogs rncLog) {
@@ -40,6 +41,15 @@ public class DatabaseLogs extends Database {
 
         mdb.update(TABLE_LOGS, v, COL_LOGS_RNC_ID + " = ?",
                 new String[]{String.valueOf(rncLog.get_rnc_id())});
+    }
+
+    public void updateSyncLogs(Rnc rnc, int sync) {
+        ContentValues v = new ContentValues();
+
+        v.put(COL_LOGS_SYNC, sync);
+
+        mdb.update(TABLE_LOGS, v, COL_LOGS_RNC_ID + " = ?",
+                new String[]{String.valueOf(rnc.get_id())});
     }
 
     public void deleteRncLogs() {
@@ -102,6 +112,7 @@ public class DatabaseLogs extends Database {
         rncLog.set_id(c.getInt(0));
         rncLog.set_rnc_id(c.getInt(1));
         rncLog.set_date(c.getString(2));
+        rncLog.set_sync(c.getInt(3));
 
         return rncLog;
     }
@@ -122,6 +133,7 @@ public class DatabaseLogs extends Database {
         rncLog.set_lon(c.getDouble(c.getColumnIndex(COL_RNCS_LON)));
         rncLog.set_date(c.getString(c.getColumnIndex(COL_LOGS_DATE)));
         rncLog.set_txt(c.getString(c.getColumnIndex(COL_RNCS_TXT)));
+        rncLog.set_sync(c.getInt(c.getColumnIndex(COL_LOGS_SYNC)));
 
         return rncLog;
     }

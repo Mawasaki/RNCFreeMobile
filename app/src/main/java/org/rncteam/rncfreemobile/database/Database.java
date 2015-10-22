@@ -72,11 +72,13 @@ public class Database  extends SQLiteOpenHelper {
     protected static final String COL_LOGS_ID = "_id";
     protected static final String COL_LOGS_RNC_ID   = "_rnc_id";
     protected static final String COL_LOGS_DATE    = "_date";
+    protected static final String COL_LOGS_SYNC    = "_sync";
 
     private static final String SQL_CREATE_TABLE_LOGS = "CREATE TABLE " + TABLE_LOGS + "("
             + COL_LOGS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COL_LOGS_RNC_ID + " INTEGER NOT NULL, "
-            + COL_LOGS_DATE + " TEXT NOT NULL "
+            + COL_LOGS_DATE + " TEXT NOT NULL, "
+            + COL_LOGS_SYNC + " INTEGER NOT NULL "
             + ");";
 
     /* Table Export declaration */
