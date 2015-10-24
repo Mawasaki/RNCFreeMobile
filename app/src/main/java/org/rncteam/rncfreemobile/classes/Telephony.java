@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.telephony.CellInfo;
 import android.telephony.CellInfoLte;
+import android.telephony.CellInfoWcdma;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -103,6 +104,11 @@ public class Telephony {
         int psc = -1;
         if (lAci != null && lAci.size() > 0) {
             for (CellInfo cellInfo : lAci) {
+                if (cellInfo != null && cellInfo instanceof CellInfoWcdma) {
+                    CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfo;
+                    if (cellInfoWcdma.isRegistered())
+                        psc = cellInfoWcdma.getCellIdentity().getPsc();
+                }
                 if (cellInfo != null && cellInfo instanceof CellInfoLte) {
                     CellInfoLte cellInfoLte = (CellInfoLte) cellInfo;
                     if (cellInfoLte.isRegistered())
@@ -134,91 +140,109 @@ public class Telephony {
         }
 
         // Protect some bad infos from API
-        if((logRoaming || rnc.get_mnc() == 15) && rnc.get_cid() > 0) {
-            // Protect some bad infos from LTE
-            if(logRoaming || (getNetworkClass() == 3 && (rnc.get_cid() > 999 && rnc.get_cid() < 10000)) ||
-                    (getNetworkClass() == 4 && (rnc.get_cid() > 40999 && rnc.get_cid() < 410000))) {
+        // Manage only 3G/4G
+        if(getNetworkClass() == 3 || getNetworkClass() == 4) {
+            if((logRoaming || rnc.get_mnc() == 15) && rnc.get_cid() > 0) {
+                // Protect some bad infos from LTE
+                if(logRoaming || (rnc.get_cid() > 999 && rnc.get_cid() < 10000) ||
+                        ((rnc.get_cid() > 40999 && rnc.get_cid() < 410000))) {
 
-                // Start RNC management just if cell change
-                if(cellChange) {
-                    DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
-                    dbr.open();
-                    DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-                    dbl.open();
+                    // Start RNC management just if cell change
+                    if(cellChange) {
+                        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+                        dbr.open();
+                        DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+                        dbl.open();
 
-                    long lastInsertId = -1;
+                        long lastInsertId = -1;
 
-                    // Get all entries of this RNC
-                    ArrayList<Rnc> lRncDb = dbr.findRncByRnc(rnc.get_real_rnc());
-                    // Check if we know RNC and is identified or not
-                    Rnc iRnc = rnc.getThisRnc(lRncDb, rnc);
+                        // Get all entries of this RNC
+                        ArrayList<Rnc> lRncDb = dbr.findRncByRnc(rnc.get_real_rnc());
+                        // Check if we know RNC and is identified or not
+                        Rnc iRnc = rnc.getThisRnc(lRncDb, rnc);
 
-                    // If RNC is know
-                    if(iRnc != null) {
-                        // if RNC is already identified
-                        if(!iRnc.NOT_IDENTIFIED) {
-                            // Just set good info
-                            rnc.set_lat(iRnc.get_lat());
-                            rnc.set_lon(iRnc.get_lon());
-                            rnc.set_txt(iRnc.get_txt());
-                            rnc.NOT_IDENTIFIED = false;
-                        }
-                        rnc.set_id(iRnc.get_id());
-                    } else {
-                        lastInsertId = dbr.addRnc(rnc);
-                        rnc.set_id((int)lastInsertId);
-                    }
-
-                    // For log, we prepare infos
-                    int logsSync = -1;
-                    RncLogs rncLogs = new RncLogs();
-                    rncLogs.set_date(sdf.format(new Date()));
-
-                    // if we detect an insertion, add in log
-                    if(lastInsertId > 0) {
-                        rncLogs.set_rnc_id((int)lastInsertId);
-                        dbl.addLog(rncLogs);
-                    } else {
-                        // Check if present in rnc database and we have already set this cid
+                        // If RNC is know
                         if(iRnc != null) {
-                            RncLogs iRncLogs = dbl.findOneRncLogs(iRnc.get_id());
-                            // If we find a log, just update it
-                            if(iRncLogs != null) {
-                                iRncLogs.set_date(sdf.format(new Date()));
-                                logsSync = iRncLogs.get_sync();
-                                dbl.updateLogs(iRncLogs);
+                            // if RNC is already identified
+                            if(!iRnc.NOT_IDENTIFIED) {
+                                // Just set good info
+                                rnc.set_lat(iRnc.get_lat());
+                                rnc.set_lon(iRnc.get_lon());
+                                rnc.set_txt(iRnc.get_txt());
+                                rnc.NOT_IDENTIFIED = false;
                             } else {
-                                // Else add log
-                                rncLogs.set_rnc_id(iRnc.get_id());
-                                dbl.addLog(rncLogs);
+                                // Recopy the name of cell and gps if exists
+                                rnc = rnc.setInfosFromAnotherRnc(lRncDb, rnc);
+                                rnc.AUTOLOG = true;
+                                dbr.updateRnc(rnc);
+                            }
+                            rnc.set_id(iRnc.get_id());
+                        } else {
+                            // Recopy the name of cell and gps if exists
+                            rnc = rnc.setInfosFromAnotherRnc(lRncDb, rnc);
+                            rnc.AUTOLOG = true;
+                            lastInsertId = dbr.addRnc(rnc);
+                            rnc.set_id((int)lastInsertId);
+                        }
+
+                        // For log, we prepare infos
+                        int logsSync = 0;
+                        RncLogs rncLogs = new RncLogs();
+                        rncLogs.set_date(sdf.format(new Date()));
+
+                        // if we detect an insertion, add in log
+                        if(lastInsertId > 0) {
+                            rncLogs.set_rnc_id((int)lastInsertId);
+                            dbl.addLog(rncLogs);
+                        } else {
+                            // Check if present in rnc database and we have already set this cid
+                            if(iRnc != null) {
+                                RncLogs iRncLogs = dbl.findOneRncLogs(iRnc.get_id());
+                                // If we find a log, just update it
+                                if(iRncLogs != null) {
+                                    iRncLogs.set_date(sdf.format(new Date()));
+                                    logsSync = iRncLogs.get_sync();
+                                    dbl.updateLogs(iRncLogs);
+                                } else {
+                                    // Else add log
+                                    rncLogs.set_rnc_id(iRnc.get_id());
+                                    logsSync = 0;
+                                    dbl.addLog(rncLogs);
+                                }
                             }
                         }
+                        rncmobile.notifyListLogsHasChanged = true;
+
+                        dbl.close();
+                        dbr.close();
+
+                        // Switch icon map
+                        Maps maps = rncmobile.getMaps();
+                        maps.switchMarkerIcon(rnc);
+
+                        // Autolog
+                        /* Comm for tests
+                        if(logsSync == 1 || (rnc.AUTOLOG && logsSync == 0 && rnc.get_mnc() == 15 && rncmobile.rncDataCharged)) {
+                            AutoExportTask aet = new AutoExportTask(rnc);
+                            aet.execute();
+                        }*/
+                        // FOR TESTS
+                        if(logsSync < 2) {
+                            AutoExportTask aet = new AutoExportTask(rnc);
+                            aet.execute();
+                        }
+                    } else {
+                        // No cell change
+                        Rnc iRnc = getLoggedRnc();
+                        rnc.set_lat(iRnc.get_lat());
+                        rnc.set_lon(iRnc.get_lon());
+                        rnc.set_txt(iRnc.get_txt());
+                        rnc.set_id(iRnc.get_id());
+                        rnc.NOT_IDENTIFIED = iRnc.NOT_IDENTIFIED;
                     }
-                    rncmobile.notifyListLogsHasChanged = true;
+                    setLoggedRnc(rnc);
 
-                    dbl.close();
-                    dbr.close();
-
-                    // Switch icon map
-                    Maps maps = rncmobile.getMaps();
-                    maps.switchMarkerIcon(rnc);
-
-                    // If unknow cid, && 20815.csv charged send to site && not synced
-                    if(rnc.NOT_IDENTIFIED && logsSync < 1/* && rncmobile.rncDataCharged*/) {
-                        AutoExportTask aet = new AutoExportTask();
-                        aet.execute(rnc);
-                    }
-                } else {
-                    // No cell change
-                    Rnc iRnc = getLoggedRnc();
-                    rnc.set_lat(iRnc.get_lat());
-                    rnc.set_lon(iRnc.get_lon());
-                    rnc.set_txt(iRnc.get_txt());
-                    rnc.set_id(iRnc.get_id());
-                    rnc.NOT_IDENTIFIED = iRnc.NOT_IDENTIFIED;
                 }
-                setLoggedRnc(rnc);
-
             }
         } else setLoggedRnc(null);
 

@@ -13,6 +13,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 /**
@@ -40,6 +41,7 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
     @Override
     protected String doInBackground(Void... unsued) {
         try {
+
             URL url = new URL(S_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
@@ -48,6 +50,9 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
 
             conn.setDoInput(true);
             conn.setDoOutput(true);
+
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
 
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Cache-Control", "no-cache");
@@ -84,6 +89,10 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
             reader.close();
 
             return "";
+
+        } catch (SocketTimeoutException e) {
+            Log.d(TAG, "TimeOut: " + e.toString());
+            return null;
 
         } catch (Exception e) {
             Log.d(TAG, "Error send file: " + e.toString());

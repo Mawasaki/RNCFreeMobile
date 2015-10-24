@@ -3,7 +3,6 @@ package org.rncteam.rncfreemobile;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.media.MediaScannerConnection;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -164,68 +163,4 @@ public class LogsFragment extends Fragment {
             handler.postDelayed(this, 3000);
         }
     };
-/*
-    private Runnable autoLogs = new Runnable() {
-        public void run() {
-
-            try {
-                // Some formats of final file
-                String delimiter = ";";
-                String crlf = "\r\n";
-
-                // FileName
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-                Date now = new Date();
-                String NtmFileName = "NTM_" + formatter.format(now) + ".ntm";
-
-                // Directory
-                File ntmFile = new File(rncmobile.getAppContext().getExternalFilesDir(null), NtmFileName);
-                if (!ntmFile.exists())
-                    ntmFile.createNewFile();
-
-                BufferedWriter writer = new BufferedWriter
-                        (new OutputStreamWriter(new FileOutputStream(ntmFile),"iso-8859-1"));
-                //(new FileWriter(ntmFile, true));
-
-                DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
-                dbl.open();
-                ArrayList<RncLogs> lRncLogs = dbl.findAllEmptyLogs();
-                dbl.close();
-
-                // Write lines
-                for (int i = 0; i < lRncLogs.size(); i++) {
-                    String finalLine = lRncLogs.get(i).get_tech() + delimiter +
-                            lRncLogs.get(i).get_mcc() + delimiter +
-                            lRncLogs.get(i).get_mnc() + delimiter +
-                            lRncLogs.get(i).get_cid() + delimiter +
-                            lRncLogs.get(i).get_lac() + delimiter +
-                            lRncLogs.get(i).get_rnc() + delimiter +
-                            (lRncLogs.get(i).get_psc().equals("0") ? "-1" : lRncLogs.get(i).get_psc()) + delimiter +
-                            lRncLogs.get(i).get_lat() + delimiter +
-                            lRncLogs.get(i).get_lon() + delimiter +
-                            lRncLogs.get(i).get_txt() + crlf;
-
-                    writer.write(finalLine);
-                }
-
-                writer.close();
-
-                MediaScannerConnection.scanFile(rncmobile.getAppContext(),
-                        new String[]{ntmFile.toString()},
-                        null,
-                        null);
-
-                // Now we send file to HTTP
-
-                AutoExportTask net = new AutoExportTask(NtmFileName);
-                net.execute();
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-
-            handler2.postDelayed(this, 1001 * 60);
-        }
-    };
-*/
 }

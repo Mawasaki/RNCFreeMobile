@@ -1,13 +1,15 @@
-package org.rncteam.rncfreemobile.classes;
+package org.rncteam.rncfreemobile.tasks;
 
 /**
  * Created by cedricf_25 on 24/07/2015.
  */
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ public class JSONParser {
     public JSONObject getJSONFromUrl(String sUrl, HashMap<String, String> params) {
         // Making HTTP request
         HttpURLConnection conn;
+        JSONObject jArray = null;
         try {
             URL url = new URL(sUrl);
             conn = (HttpURLConnection) url.openConnection();
@@ -36,7 +39,7 @@ public class JSONParser {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-            conn.setConnectTimeout(5000);
+            conn.setConnectTimeout(10000);
             conn.setReadTimeout(10000);
 
             StringBuilder requestParams = new StringBuilder();
@@ -56,46 +59,37 @@ public class JSONParser {
                         conn.getOutputStream());
                 writer.write(requestParams.toString());
                 writer.flush();
+
+                // Get response
+                String json = "";
+
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream(), "iso-8859-1"), 8);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+
+                conn.disconnect();
+                json = sb.toString();
+                jArray = new JSONObject(json);
             }
+            return jArray;
 
-        } catch (Exception e) {
-            Log.d(TAG, "HTTP Error: " + e.toString());
-            //Toast.makeText(rncmobile.getAppContext(), "Erreur HTTP. Vérifier la connexion", Toast.LENGTH_LONG).show();
-            rncmobile.onTransaction = false;
+        } catch (SocketTimeoutException e) {
+            Log.d(TAG, "TimeOut: " + e.toString());
             return null;
-        }
-
-        // Get response
-        String json = "";
-        try {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream(), "iso-8859-1"), 8);
-
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-
-            conn.disconnect();
-            json = sb.toString();
-
-        } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
-            Toast.makeText(rncmobile.getAppContext(), "Erreur de serveur", Toast.LENGTH_LONG).show();
-            rncmobile.onTransaction = false;
+        } catch (IOException e) {
+            Log.d("Buffer Error", "Error converting result " + e.toString());
             return null;
-        }
-
-        // try parse the string to a JSON object
-        JSONObject jArray = null;
-        try {
-            jArray = new JSONObject(json);
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
-            rncmobile.onTransaction = false;
+            return null;
+        } catch (Exception e) {
+            Log.d(TAG, "Error: " + e.toString());
             return null;
         }
-        return jArray;
     }
 }

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.classes.CsvRncReader;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,21 +52,28 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
     protected String doInBackground(String... sUrl) {
         InputStream input = null;
         OutputStream output = null;
-        HttpURLConnection connection = null;
+        HttpURLConnection conn = null;
 
         try {
-            URL url = new URL(csvFileUrl);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.connect();
 
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                return "Server returned HTTP " + connection.getResponseCode()
-                        + " " + connection.getResponseMessage();
+            URL url = new URL(csvFileUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.connect();
+
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(20000);
+
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                return "Server returned HTTP " + conn.getResponseCode()
+                        + " " + conn.getResponseMessage();
             }
 
-            int fileLength = connection.getContentLength();
+            int fileLength = conn.getContentLength();
 
-            input = connection.getInputStream();
+            input = conn.getInputStream();
             output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/20815.csv");
 
             byte data[] = new byte[4096];
@@ -82,6 +91,9 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     publishProgress(("" + total * 100 / fileLength));
                 output.write(data, 0, count);
             }
+        } catch (SocketTimeoutException e) {
+            Log.d(TAG, "TimeOut: " + e.toString());
+            return null;
 
         } catch (Exception e) {
             return e.toString();
@@ -95,8 +107,8 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
             } catch (IOException ignored) {
             }
 
-            if (connection != null)
-                connection.disconnect();
+            if (conn != null)
+                conn.disconnect();
         }
         return null;
     }

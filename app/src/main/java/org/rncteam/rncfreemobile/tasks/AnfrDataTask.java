@@ -1,6 +1,10 @@
 package org.rncteam.rncfreemobile.tasks;
 
+import android.app.Activity;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -11,7 +15,6 @@ import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.AnfrInfos;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
-import org.rncteam.rncfreemobile.classes.JSONParser;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Rnc;
@@ -30,6 +33,9 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
     private final Telephony tel;
     private final Maps maps;
 
+    // UI
+    RelativeLayout lytPbLoading;
+
     private ArrayList<Rnc> lRnc;
 
     private HashMap<String, String> postParams;
@@ -38,7 +44,6 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
         tel = rncmobile.getTelephony();
         maps = rncmobile.getMaps();
 
-        rncmobile.onTransaction = false;
     }
 
     @Override
@@ -61,7 +66,9 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
         postParams.put("lat_ne", Double.toString(ne.latitude));
         postParams.put("lon_ne", Double.toString(ne.longitude));
 
-        rncmobile.onTransaction = true;
+        // Loader
+        lytPbLoading = (RelativeLayout) rncmobile.getMainActivity().findViewById(R.id.loadingPanel);
+        lytPbLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -76,8 +83,9 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
         String markerTitle = "";
         int icon = 0;
 
-        rncmobile.onTransaction = false;
         rncmobile.getMaps().removeMarkers();
+
+        lytPbLoading.setVisibility(View.GONE);
 
         if(jArray != null) {
             try {
@@ -169,7 +177,6 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
 
             } catch (JSONException e) {
                 e.printStackTrace();
-                rncmobile.onTransaction = false;
             }
         }
     }

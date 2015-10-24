@@ -59,9 +59,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         mMap.setInfoWindowAdapter(new MapsPopupAdapter(getActivity().getLayoutInflater()));
         mMap.setOnInfoWindowClickListener(this);
 
-        handler = new Handler();
-        displayLoading.run();
-
         btnActionProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,17 +101,12 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     public void onPause() {
         super.onPause();
         rncmobile.markerClicked = false;
-        rncmobile.onTransaction = false;
-
-        handler.removeCallbacksAndMessages(displayLoading);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-
-        displayLoading.run();
     }
 
     private void setUpMapIfNeeded() {
@@ -128,19 +120,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         maps.setMap(mMap);
         maps.initializeMap(getActivity());
         rncmobile.setMaps(maps);
-        rncmobile.onTransaction = false;
     }
-
-    private Runnable displayLoading = new Runnable() {
-        public void run() {
-            if(rncmobile.onTransaction == true) view.findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
-            else view.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-
-            handler.postDelayed(this, 1000);
-        }
-    };
-
-
 
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override

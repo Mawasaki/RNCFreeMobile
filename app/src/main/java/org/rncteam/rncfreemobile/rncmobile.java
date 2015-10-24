@@ -7,6 +7,7 @@ import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.classes.Telephony;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +30,8 @@ public class rncmobile extends Application {
 
     public static boolean isAppStart;
 
-    public static boolean onTransaction;
+    public static Activity mainActivity;
+
     public static boolean markerClicked;
 
     public static ArrayList<RncLogs> listRncLogs;
@@ -57,9 +59,6 @@ public class rncmobile extends Application {
         // Application start
         isAppStart = true;
 
-        // Transaction with http server
-        onTransaction = false;
-
         // Data of 20815.csv charged
         rncDataCharged = false;
 
@@ -85,6 +84,13 @@ public class rncmobile extends Application {
 
     public static void setMaps(Maps maps) {
         rncmobile.maps = maps;
+    }
+
+    public static void setMainActivity(Activity activity) {
+        mainActivity = activity;
+    }
+    public static Activity getMainActivity() {
+        return mainActivity;
     }
 
     public static SharedPreferences getPreferences() {

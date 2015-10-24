@@ -1,5 +1,7 @@
 package org.rncteam.rncfreemobile.listeners;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -19,6 +21,8 @@ public class MapsChangeListeners implements OnCameraChangeListener {
     private final Maps maps;
     private boolean zoom_info;
 
+    private AnfrDataTask lastAnfrDataTask;
+
     public MapsChangeListeners(Maps maps) {
         super();
         this.maps = maps;
@@ -32,24 +36,18 @@ public class MapsChangeListeners implements OnCameraChangeListener {
         this.maps.setLastPosLon(position.target.longitude);
         this.maps.setLastZoom(position.zoom);
 
-        Telephony tel = rncmobile.getTelephony();
-
-        int dataState = tel.getDataActivity();
-        /*if(dataState != 0) {*/
-            if (position.zoom > 9) {
-                if (!rncmobile.onTransaction && !rncmobile.markerClicked) {
-                    AnfrDataTask anfrDataTask = new AnfrDataTask();
-                    anfrDataTask.execute();
-                    zoom_info = true;
-                } else rncmobile.markerClicked = false;
-            } else {
-                rncmobile.getMaps().removeMarkers();
-                if (zoom_info)
-                    Toast.makeText(rncmobile.getAppContext(), "Zoom trop élévé pour afficher les antennes", Toast.LENGTH_SHORT).show();
-                zoom_info = false;
-            }
-        /*} else {
-            Toast.makeText(rncmobile.getAppContext(), "Non connecté", Toast.LENGTH_SHORT).show();
-        }*/
+        if (position.zoom > 9) {
+            if (!rncmobile.markerClicked) {
+                AnfrDataTask anfrDataTask = new AnfrDataTask();
+                lastAnfrDataTask = anfrDataTask;
+                anfrDataTask.execute();
+                zoom_info = true;
+            } else rncmobile.markerClicked = false;
+        } else {
+            rncmobile.getMaps().removeMarkers();
+            if (zoom_info)
+                Toast.makeText(rncmobile.getAppContext(), "Zoom trop élévé pour afficher les antennes", Toast.LENGTH_SHORT).show();
+            zoom_info = false;
+        }
     }
 }

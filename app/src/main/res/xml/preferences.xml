@@ -34,12 +34,6 @@
             android:defaultValue="true"
             android:summary="Enregistre les cid lorque l'appli n'est pas éxécutée">
         </CheckBoxPreference>
-        <CheckBoxPreference
-            android:title="Exporter automatiquement"
-            android:key="auto_export"
-            android:defaultValue="true"
-            android:summary="Exporte automatiquement les CID non identifié">
-        </CheckBoxPreference>
 
 
     </PreferenceCategory>

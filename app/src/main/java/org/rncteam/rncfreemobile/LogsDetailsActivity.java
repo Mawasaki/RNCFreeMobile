@@ -117,4 +117,11 @@ public class LogsDetailsActivity extends Activity {
 
         this.finish();
     }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        finish();
+    }
 }

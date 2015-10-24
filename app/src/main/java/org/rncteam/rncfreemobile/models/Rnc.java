@@ -22,7 +22,7 @@ public class Rnc {
     private final static String TECH_LTE_TXT = "4G";
 
     public boolean NOT_IDENTIFIED;
-    public boolean NOT_IN_DB;
+    public boolean AUTOLOG;
 
     // Database attributes
     private int _id;
@@ -58,7 +58,7 @@ public class Rnc {
         _txt = "-";
         _lcid = -1;
         NOT_IDENTIFIED = true;
-        NOT_IN_DB = true;
+        AUTOLOG = false;
 
         umtsRscp = -1;
         lteRssi = -1;
@@ -133,8 +133,12 @@ public class Rnc {
 
     public String get_real_rnc() {
         String rnc = String.valueOf(_rnc);
-        if(rnc.substring(0,2).equals("40") && rnc.length() > 4) return rnc.substring(2, rnc.length());
-        else return rnc;
+        if(rnc.length() > 4) {
+            if (rnc.substring(0, 2).equals("40") && rnc.length() > 4) {
+                return rnc.substring(2, rnc.length());
+            }
+        }
+        return rnc;
     }
 
     public String getFreqTxt() {
@@ -182,6 +186,20 @@ public class Rnc {
         return null;
     }
 
+    public Rnc setInfosFromAnotherRnc(ArrayList<Rnc> lRnc, Rnc rnc) {
+        // Check if this rnc is unknown
+        if(rnc.NOT_IDENTIFIED) {
+            Rnc iRnc = getAnIdentifiedRnc(lRnc);
+            if(iRnc != null) {
+                rnc.set_lon(iRnc.get_lon());
+                rnc.set_lat(iRnc.get_lat());
+                rnc.set_txt(getFormattedString(iRnc.get_txt()));
+                rnc.NOT_IDENTIFIED = false;
+            }
+        }
+        return rnc;
+    }
+
     public void updateFamilyUnknowRnc(ArrayList<Rnc> lRnc, Rnc rnc) {
 
         for(int i=0;i<lRnc.size();i++) {
@@ -199,6 +217,14 @@ public class Rnc {
             }
         }
 
+    }
+
+    // Redifine txt of a new RNC from 20815.csv
+    private String getFormattedString(String rncName) {
+        // Pos of [
+        int pos = rncName.indexOf("[");
+        if(pos == -1) return rncName;
+        else return rncName.substring(0, pos - 1);
     }
 
     // Getter & Setter Database

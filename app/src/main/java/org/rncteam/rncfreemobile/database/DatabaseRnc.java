@@ -80,6 +80,7 @@ public class DatabaseRnc extends Database {
     public void updateRnc(Rnc rnc) {
         ContentValues v = new ContentValues();
 
+        v.put(COL_RNCS_TECH, rnc.get_tech());
         v.put(COL_RNCS_LAT, rnc.get_lat());
         v.put(COL_RNCS_LON, rnc.get_lon());
         v.put(COL_RNCS_TXT, rnc.get_txt());

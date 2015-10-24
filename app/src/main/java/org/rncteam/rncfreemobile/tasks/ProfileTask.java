@@ -1,19 +1,12 @@
 package org.rncteam.rncfreemobile.tasks;
 
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.util.Log;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.classes.Elevation;
-import org.rncteam.rncfreemobile.classes.JSONParser;
-import org.rncteam.rncfreemobile.rncmobile;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -70,8 +63,6 @@ public class ProfileTask extends AsyncTask<String, String, JSONObject> {
     protected void onPostExecute(JSONObject jArray) {
         if(jArray != null) {
             try {
-                Log.d(TAG, jArray.getString("results").toString());
-
                 this.elevation.jData = jArray.getJSONArray("results");
                 this.elevation.dataOk = true;
 

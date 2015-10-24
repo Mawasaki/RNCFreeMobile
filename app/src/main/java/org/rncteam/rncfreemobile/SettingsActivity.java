@@ -20,4 +20,11 @@ public class SettingsActivity extends PreferenceActivity {
         super.onPause();
 
     }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        finish();
+    }
 }

@@ -1,6 +1,5 @@
 package org.rncteam.rncfreemobile.tasks;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -9,17 +8,12 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.classes.JSONParser;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

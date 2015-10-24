@@ -57,4 +57,11 @@ public class CrashActivity extends Activity {
                     System.exit(1);
                 }
             };
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        finish();
+    }
 }

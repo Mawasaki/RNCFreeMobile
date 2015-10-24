@@ -102,22 +102,15 @@ public class MonitorFragment extends Fragment {
                 lRncs.clear();
                 lRncs.add(tel.getLoggedRnc());
 
-                if (tel.getNetworkClass() == 2) {
-                    fl.setVisibility(View.GONE);
-                    fl_2g.setVisibility(View.VISIBLE);
-                    listViewRncMain.setVisibility(View.GONE);
-                    listViewRncPsc.setVisibility(View.GONE);
+                if (lRncs.get(0).get_tech() == 3) {
+                    ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(rncmobile.getAppContext(), lRncs);
+                    listViewRncMain.setAdapter(adapter);
+                } else if (lRncs.get(0).get_tech() == 4) {
+                    ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(rncmobile.getAppContext(), lRncs);
+                    listViewRncMain.setAdapter(adapter);
                 } else {
-                    if (lRncs.get(0).get_tech() == 3) {
-                        ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(rncmobile.getAppContext(), lRncs);
-                        listViewRncMain.setAdapter(adapter);
-                    } else if (lRncs.get(0).get_tech() == 4) {
-                        ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(rncmobile.getAppContext(), lRncs);
-                        listViewRncMain.setAdapter(adapter);
-                    } else {
-                        listViewRncMain.setVisibility(View.GONE);
-                        fl.setVisibility(View.VISIBLE);
-                    }
+                    listViewRncMain.setVisibility(View.GONE);
+                    fl.setVisibility(View.VISIBLE);
                 }
                 // Neighbours cell
                 ArrayList<Rnc> arrayNeighCell = tel.getlNeigh();
@@ -129,7 +122,14 @@ public class MonitorFragment extends Fragment {
             } else {
                 listViewRncMain.setVisibility(View.GONE);
                 listViewRncPsc.setVisibility(View.GONE);
-                fl_2g.setVisibility(View.GONE); //// TODO: 21/10/2015  
+                fl_2g.setVisibility(View.GONE); //// TODO: 21/10/2015
+
+                if (tel.getNetworkClass() == 2) {
+                    fl.setVisibility(View.GONE);
+                    fl_2g.setVisibility(View.VISIBLE);
+                    listViewRncMain.setVisibility(View.GONE);
+                    listViewRncPsc.setVisibility(View.GONE);
+                }
             }
             handler.postDelayed(this, 1000);
         }

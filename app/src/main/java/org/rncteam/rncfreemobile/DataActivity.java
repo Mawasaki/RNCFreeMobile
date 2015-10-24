@@ -190,4 +190,11 @@ public class DataActivity extends Activity {
             }
         });
     }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        finish();
+    }
 }

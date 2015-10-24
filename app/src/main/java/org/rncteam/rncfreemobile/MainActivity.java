@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
+        rncmobile.setMainActivity(this);
+
         displayView(0);
 
         stopMonitorService();

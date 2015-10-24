@@ -112,15 +112,22 @@ public class ListLogsMainAdapter extends BaseAdapter {
         ImageButton btnMenu = (ImageButton) convertView.findViewById(R.id.logs_btn_menu);
 
         // Sync
-        // If rncIdentified, dismiss imageview
-        if(rncLog.isRncIdentified()) holder.imvSync.setVisibility(View.GONE);
-        else  holder.imvSync.setVisibility(View.VISIBLE);
-        // Set good sync img
-        if(rncLog.get_sync() != 0) {
-            holder.imvSync.setImageResource(R.drawable.ic_done_black);
-        } else {
-            holder.imvSync.setImageResource(R.drawable.ic_autorenew_black);
+        // If rnc come from 20815, dismiss imageview
+        /* FOR TESTS mettre !=
+        if(rncLog.isRncIdentified() && rncLog.get_sync() == 0) {
+            holder.imvSync.setVisibility(View.GONE);
         }
+        else {
+        */
+            holder.imvSync.setVisibility(View.VISIBLE);
+
+            // Set good sync img
+            if(rncLog.get_sync() > 1) {
+                holder.imvSync.setImageResource(R.drawable.ic_done_black);
+            } else {
+                holder.imvSync.setImageResource(R.drawable.ic_autorenew_black);
+            }
+        //}
 
         final View f_view = convertView;
 

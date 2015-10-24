@@ -63,7 +63,7 @@ public class ListMonitorPscAdapter extends BaseAdapter {
 
         String psc_cid = String.valueOf(rnc.get_psc());
 
-        if(!rnc.NOT_IDENTIFIED) {
+        if(!rnc.NOT_IDENTIFIED && !rnc.get_txt().equals("-")) {
             psc_cid += "  " + String.valueOf(rnc.get_rnc());
             psc_cid += ":" + String.valueOf(rnc.get_cid());
         }
