@@ -5,7 +5,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,10 +29,21 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private Toolbar mToolbar;
     private SharedPreferences sp;
 
+    private ViewPager mPager;
+    private PagerAdapter mPagerAdapter;
+
+    private static final int NUM_PAGES = 4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        rncmobile.setMainActivity(this);
+
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(mPagerAdapter);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -45,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-
-        rncmobile.setMainActivity(this);
 
         displayView(0);
 
@@ -147,10 +159,12 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         displayView(position);
     }
 
-    public void displayView(int position) {
+    public Fragment displayView(int position) {
         Fragment fragment = null;
         String title = getString(R.string.app_name);
+
         switch (position) {
+            /*
             case 0:
                 fragment = new MonitorFragment();
                 title = getString(R.string.title_monitor);
@@ -167,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 fragment = new MapsFragment();
                 title = getString(R.string.title_maps);
                 break;
+                */
             case 4:
                 Intent intentDA = new Intent(rncmobile.getAppContext(), DataActivity.class);
                 startActivity(intentDA);
@@ -178,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 break;
         }
 
+/*
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -187,5 +203,49 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             // set the toolbar title
             getSupportActionBar().setTitle(title);
         }
+        */
+        mPager.setCurrentItem(position);
+        return fragment;
     }
+
+    /**
+     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+     * sequence.
+     */
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment = null;
+            String title = getString(R.string.app_name);
+            switch (position) {
+                case 0:
+                    fragment = new MonitorFragment();
+                    title = getString(R.string.title_monitor);
+                    break;
+                case 1:
+                    fragment = new LogsFragment();
+                    title = getString(R.string.title_logs);
+                    break;
+                case 2:
+                    fragment = new InfosFragment();
+                    title = getString(R.string.title_infos);
+                    break;
+                case 3:
+                    fragment = new MapsFragment();
+                    title = getString(R.string.title_maps);
+                    break;
+            }
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
+    }
+
 }

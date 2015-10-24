@@ -244,7 +244,7 @@ public class Telephony {
 
                 }
             }
-        } else setLoggedRnc(null);
+        }// else setLoggedRnc(null);
 
         // Start PSC/PCI management if cell is know
         lNeigh.clear();

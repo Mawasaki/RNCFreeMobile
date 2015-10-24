@@ -98,9 +98,10 @@ public class MonitorFragment extends Fragment {
             fl.setVisibility(View.GONE);
             fl_2g.setVisibility(View.GONE);
 
-            if(tel.getLoggedRnc() != null) {
-                lRncs.clear();
-                lRncs.add(tel.getLoggedRnc());
+            lRncs.clear();
+            lRncs.add(tel.getLoggedRnc());
+
+            if(lRncs.get(0) != null && (tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4)) {
 
                 if (lRncs.get(0).get_tech() == 3) {
                     ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(rncmobile.getAppContext(), lRncs);
@@ -123,6 +124,7 @@ public class MonitorFragment extends Fragment {
                 listViewRncMain.setVisibility(View.GONE);
                 listViewRncPsc.setVisibility(View.GONE);
                 fl_2g.setVisibility(View.GONE); //// TODO: 21/10/2015
+                fl.setVisibility(View.VISIBLE);
 
                 if (tel.getNetworkClass() == 2) {
                     fl.setVisibility(View.GONE);

@@ -67,8 +67,10 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
         postParams.put("lon_ne", Double.toString(ne.longitude));
 
         // Loader
-        lytPbLoading = (RelativeLayout) rncmobile.getMainActivity().findViewById(R.id.loadingPanel);
-        lytPbLoading.setVisibility(View.VISIBLE);
+        if (rncmobile.getMainActivity() != null) {
+            lytPbLoading = (RelativeLayout) rncmobile.getMainActivity().findViewById(R.id.loadingPanel);
+            lytPbLoading.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

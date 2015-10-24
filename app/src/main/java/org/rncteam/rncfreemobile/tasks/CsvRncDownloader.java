@@ -63,7 +63,7 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-            conn.setConnectTimeout(5000);
+            conn.setConnectTimeout(10000);
             conn.setReadTimeout(20000);
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -147,9 +147,7 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
         mWakeLock.release();
         mProgressDialog.dismiss();
 
-        if (result != null)
-            Toast.makeText(context, "Download error: " + result, Toast.LENGTH_LONG).show();
-        else {
+        if (result != null) {
             // Parse Csv file
             mProgressDialog.setMessage("Importing in database...");
             mProgressDialog.setIndeterminate(true);
