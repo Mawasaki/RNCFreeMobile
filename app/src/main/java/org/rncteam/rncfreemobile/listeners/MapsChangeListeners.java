@@ -32,8 +32,8 @@ public class MapsChangeListeners implements OnCameraChangeListener {
     @Override
     public void onCameraChange(CameraPosition position) {
 
-        this.maps.setLastPosLat(position.target.latitude);
-        this.maps.setLastPosLon(position.target.longitude);
+        //this.maps.setLastPosLat(position.target.latitude);
+        //this.maps.setLastPosLon(position.target.longitude);
         this.maps.setLastZoom(position.zoom);
 
         if (position.zoom > 9) {

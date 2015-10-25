@@ -99,6 +99,18 @@ public class Telephony {
         rnc.set_rnc(rnc.getRnc());
         rnc.setNetworkName(getNetworkName());
 
+        // Signal Strength
+        if(signalStrength != null) {
+            rnc.setSignalStrength(signalStrength);
+            if(rnc.get_tech() == 3)
+                rnc.setUmtsRscp((2 * signalStrength.getGsmSignalStrength()) - 113);
+
+            if(rnc.get_tech() == 4) {
+                rnc.setLteSignals();
+                rnc.setLteRssi(17 + rnc.getLteRsrp() + rnc.getLteRsrq());
+            }
+        }
+
         // Get some info of new API
         List<CellInfo> lAci = getTelephonyManager().getAllCellInfo();
         int psc = -1;
@@ -106,30 +118,26 @@ public class Telephony {
             for (CellInfo cellInfo : lAci) {
                 if (cellInfo != null && cellInfo instanceof CellInfoWcdma) {
                     CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfo;
-                    if (cellInfoWcdma.isRegistered())
+                    if (cellInfoWcdma.isRegistered()) {
                         psc = cellInfoWcdma.getCellIdentity().getPsc();
+                        int signal = cellInfoWcdma.getCellSignalStrength().getDbm();
+                        rnc.setUmtsRscp(signal);
+                    }
                 }
                 if (cellInfo != null && cellInfo instanceof CellInfoLte) {
                     CellInfoLte cellInfoLte = (CellInfoLte) cellInfo;
-                    if (cellInfoLte.isRegistered())
+                    if (cellInfoLte.isRegistered()) {
                         psc = cellInfoLte.getCellIdentity().getPci();
+                        int signal = cellInfoLte.getCellSignalStrength().getDbm();
+                        rnc.setLteRssi(signal);
+                        int timingAdvance = cellInfoLte.getCellSignalStrength().getTimingAdvance();
+                        rnc.setLteTA(timingAdvance);
+                    }
                 }
             }
-            rnc.set_psc(psc);
+            rnc.set_psc((psc == 0) ? -1 : psc);
         } else {
             rnc.set_psc(gsmCellLocation.getPsc());
-        }
-
-        // Signal Strength
-        if(signalStrength != null) {
-            rnc.setSignalStrength(signalStrength);
-            if(rnc.get_tech() == 3)
-                rnc.setUmtsRscp(signalStrength.getGsmSignalStrength());
-
-            if(rnc.get_tech() == 4) {
-                rnc.setLteSignals();
-                rnc.setLteRssi(17 + rnc.getLteRsrp() + rnc.getLteRsrq());
-            }
         }
 
         // Log in roaming
@@ -218,7 +226,9 @@ public class Telephony {
 
                         // Switch icon map
                         Maps maps = rncmobile.getMaps();
-                        maps.switchMarkerIcon(rnc);
+                        if(maps != null) maps.switchMarkerIcon(rnc);
+                        // Textbox on map
+                        if(maps.isMapInitilized()) maps.setExtInfoBox();
 
                         // Autolog
                         /* Comm for tests
@@ -231,6 +241,7 @@ public class Telephony {
                             AutoExportTask aet = new AutoExportTask(rnc);
                             aet.execute();
                         }
+
                     } else {
                         // No cell change
                         Rnc iRnc = getLoggedRnc();

@@ -1,7 +1,9 @@
 package org.rncteam.rncfreemobile.classes;
 
 import android.app.Activity;
+import android.view.View;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,6 +17,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.rncteam.rncfreemobile.MapsFragment;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
 import org.rncteam.rncfreemobile.listeners.MapsLocationListeners;
@@ -33,6 +36,9 @@ public class Maps {
     private float lastZoom;
     private double lastPosLat;
     private double lastPosLon;
+    private double lastAlt;
+    private float lastAccu;
+    private MapsFragment activity;
 
     private Map<Marker, AnfrInfos> markers;
 
@@ -40,13 +46,15 @@ public class Maps {
         lastZoom = 0;
         lastPosLat = 0.0;
         lastPosLon = 0.0;
+        lastAlt = 0.0;
+        lastAccu = 0;
 
         markers = new HashMap<Marker, AnfrInfos>();
 
         this.mMap = null;
     }
 
-    public void initializeMap(Activity activity) {
+    public void initializeMap(MapsFragment activity) {
         if (lastZoom == 0 && lastPosLat == 0.0 && lastPosLon == 0.0) {
             Telephony tel = rncmobile.getTelephony();
 
@@ -76,8 +84,10 @@ public class Maps {
         setMapMyLocationEnabled(true);
 
         setCameraListener();
-        setLocationListener(activity);
-        setMarkerClickListener(activity);
+        setLocationListener();
+        setMarkerClickListener();
+
+        this.activity = activity;
     }
 
     public void setMapMyLocationEnabled(boolean enabled) {
@@ -89,13 +99,13 @@ public class Maps {
         mMap.setOnCameraChangeListener(mapListener);
     }
 
-    public void setLocationListener(Activity activity) {
-        MapsLocationListeners mapListener = new MapsLocationListeners(activity);
+    public void setLocationListener() {
+        MapsLocationListeners mapListener = new MapsLocationListeners();
         mMap.setOnMyLocationChangeListener(mapListener);
     }
 
-    public void setMarkerClickListener(Activity activity) {
-        MapsMarkerClickListeners mapMarkerListener = new MapsMarkerClickListeners(activity);
+    public void setMarkerClickListener() {
+        MapsMarkerClickListeners mapMarkerListener = new MapsMarkerClickListeners();
         mMap.setOnMarkerClickListener(mapMarkerListener);
     }
 
@@ -104,9 +114,40 @@ public class Maps {
             this.lastPosLat = latitude;
     }
 
+    public double getLastPosLat() {
+        return lastPosLat;
+    }
+
+    public double getLastPosLon() {
+        return lastPosLon;
+    }
+
+    public double getLastAlt() {
+        return lastAlt;
+    }
+
+    public float getLastAccu() {
+        return lastAccu;
+    }
+
     public void setLastPosLon(double longitude) {
         if(mMap.isMyLocationEnabled())
             this.lastPosLon = longitude;
+    }
+
+    public void setLastAlt(double lastAlt) {
+        if(mMap.isMyLocationEnabled())
+            this.lastAlt = lastAlt;
+    }
+
+    public void setLastAccu(float lastAccu) {
+        if(mMap.isMyLocationEnabled())
+            this.lastAccu = lastAccu;
+    }
+
+    public boolean isMapInitilized() {
+        if(mMap != null) return true;
+        else return false;
     }
 
     public AnfrInfos getAnfrInfoMarkers(Marker marker) {
@@ -186,5 +227,38 @@ public class Maps {
                 .icon(BitmapDescriptorFactory.fromResource(icon))),anfrInfos);
 
     }
+
+    public void setExtInfoBox() {
+        Utils utils = new Utils();
+        Telephony tel = rncmobile.getTelephony();
+
+        float accurency = lastAccu;
+
+        activity.mapExtInfo.setVisibility(View.VISIBLE);
+        activity.txtMapExtInfosRnc.setText("RNC: " + tel.getLoggedRnc().get_rnc());
+        activity.txtMapExtInfosCid.setText("CID: " + tel.getLoggedRnc().get_cid());
+        activity.txtMapExtInfosAltitude.setText("Altitude: " + String.valueOf(lastAlt));
+        activity.txtMapExtInfosTxt.setText(tel.getLoggedRnc().get_txt());
+
+        LatLng myLoc = new LatLng(lastPosLat, lastPosLon);
+        LatLng btsLoc = new LatLng(tel.getLoggedRnc().get_lat(), tel.getLoggedRnc().get_lon());
+
+        Double distance = utils.calculationByDistance(myLoc, btsLoc);
+        DecimalFormat kmFormat = new DecimalFormat("#.##");
+        DecimalFormat mFormat = new DecimalFormat("##");
+
+        double km = distance / 1;
+        double meter = distance * 1000;
+
+        if (tel.getLoggedRnc().NOT_IDENTIFIED) {
+            activity.txtMapExtInfosDistance.setText("BTS: -");
+        } else {
+            if (km > 1)
+                activity.txtMapExtInfosDistance.setText("BTS: " + kmFormat.format(km) + "km");
+            else
+                activity.txtMapExtInfosDistance.setText("BTS: " + mFormat.format(meter) + "m");
+        }
+    }
+
 
 }

@@ -63,7 +63,7 @@ public class rncmobile extends Application {
         rncDataCharged = false;
 
         // Crash report
-        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
+       Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);

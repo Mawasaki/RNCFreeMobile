@@ -61,6 +61,9 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
             holder.txtRsrp = (TextView) convertView.findViewById(R.id.txt_rsrp);
             holder.txtRsrq = (TextView) convertView.findViewById(R.id.txt_rsrq);
             holder.txtSnr = (TextView) convertView.findViewById(R.id.txt_snr);
+            holder.txtAsu = (TextView) convertView.findViewById(R.id.txt_asu);
+            holder.txtCqi = (TextView) convertView.findViewById(R.id.txt_cqi);
+            holder.txtTA = (TextView) convertView.findViewById(R.id.txt_ta);
             holder.txtData = (TextView) convertView.findViewById(R.id.txt_data);
             holder.txrFreq = (TextView) convertView.findViewById(R.id.txt_freq_sect);
 
@@ -80,6 +83,9 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         holder.txtRsrp.setText(String.valueOf(rnc.getLteRsrp()) + " dBm");
         holder.txtRsrq.setText(String.valueOf(rnc.getLteRsrq()) + " dB");
         holder.txtSnr.setText(String.valueOf((rnc.getLteRssnr() / 10) + " dB"));
+        holder.txtAsu.setText(String.valueOf(rnc.getLteAsu()));
+        holder.txtCqi.setText(String.valueOf(rnc.getLteCqi()));
+        holder.txtTA.setText(String.valueOf(rnc.getLteTA()));
         holder.txtData.setText(rnc.get_txt());
 
         holder.txrFreq.setText(rnc.getFreqTxt() + ((rnc.getSectText().equals("-")) ? "" : " / " + rnc.getSectText()));
@@ -97,6 +103,9 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         TextView txtRsrp;
         TextView txtRsrq;
         TextView txtSnr;
+        TextView txtAsu;
+        TextView txtCqi;
+        TextView txtTA;
         TextView txtData;
         TextView txrFreq;
     }

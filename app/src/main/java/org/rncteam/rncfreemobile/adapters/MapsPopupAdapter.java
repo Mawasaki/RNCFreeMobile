@@ -164,7 +164,17 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         // Write potential futur RNC
         Telephony tel = rncmobile.getTelephony();
 
-        Rnc newRnc = tel.getLoggedRnc();
+        Rnc logRnc = tel.getLoggedRnc();
+        Rnc newRnc = new Rnc();
+        newRnc.set_id(logRnc.get_id());
+        newRnc.set_tech(logRnc.get_tech());
+        newRnc.set_mcc(logRnc.get_mcc());
+        newRnc.set_mnc(logRnc.get_mcc());
+        newRnc.set_lcid(logRnc.get_lcid());
+        newRnc.set_cid(logRnc.get_cid());
+        newRnc.set_rnc(logRnc.get_rnc());
+        newRnc.set_lac(logRnc.get_lac());
+        newRnc.set_psc(logRnc.get_psc());
 
         // Button
         if(newRnc != null) {

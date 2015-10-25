@@ -22,58 +22,27 @@ import java.text.DecimalFormat;
  */
 public class MapsLocationListeners implements GoogleMap.OnMyLocationChangeListener {
 
-    private Telephony tel;
     private Maps maps;
-    private Activity activity;
-    private Utils utils;
 
-    // UI Attributes
-    private RelativeLayout mapExtInfo;
-    private TextView txtMapExtInfosRnc;
-    private TextView txtMapExtInfosCid;
-    private TextView txtMapExtInfosDistance;
-    private TextView txtMapExtInfosTxt;
 
-    public MapsLocationListeners(Activity activity) {
-        tel = rncmobile.getTelephony();
-        this.activity = activity;
-        utils = new Utils();
-
-        // Init UI elements
-        mapExtInfo = (RelativeLayout) this.activity.findViewById(R.id.map_ext_infos);
-        txtMapExtInfosRnc = (TextView) this.activity.findViewById(R.id.map_ext_infos_rnc);
-        txtMapExtInfosCid = (TextView) this.activity.findViewById(R.id.map_ext_infos_cid);
-        txtMapExtInfosDistance = (TextView) this.activity.findViewById(R.id.map_ext_infos_distance);
-        txtMapExtInfosTxt = (TextView) this.activity.findViewById(R.id.map_ext_infos_txt);
-
+    public MapsLocationListeners() {
+        this.maps = rncmobile.getMaps();
     }
 
     @Override
     public void onMyLocationChange(Location location) {
-        mapExtInfo.setVisibility(View.VISIBLE);
-        txtMapExtInfosRnc.setText("RNC: " + tel.getLoggedRnc().get_rnc());
-        txtMapExtInfosCid.setText("CID: " + tel.getLoggedRnc().get_cid());
-        txtMapExtInfosTxt.setText(tel.getLoggedRnc().get_txt());
+        if(location != null) {
+            maps.setLastPosLat(location.getLatitude());
+            maps.setLastPosLon(location.getLongitude());
+            maps.setLastAlt(location.getAltitude());
+            maps.setLastAccu(location.getAccuracy());
 
-        LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-
-        LatLng myLoc = new LatLng(location.getLatitude(), location.getLongitude());
-        LatLng btsLoc = new LatLng(tel.getLoggedRnc().get_lat(), tel.getLoggedRnc().get_lon());
-
-        Double distance = utils.calculationByDistance(myLoc, btsLoc);
-        DecimalFormat kmFormat = new DecimalFormat("#.##");
-        DecimalFormat mFormat = new DecimalFormat("##");
-
-        double km = distance / 1;
-        double meter = distance * 1000;
-
-        if (tel.getLoggedRnc().NOT_IDENTIFIED) {
-            txtMapExtInfosDistance.setText("BTS: -");
+            maps.setExtInfoBox();
         } else {
-            if (km > 1)
-                txtMapExtInfosDistance.setText("BTS: " + kmFormat.format(km) + "km");
-            else
-                txtMapExtInfosDistance.setText("BTS: " + mFormat.format(meter) + "m");
+            maps.setLastPosLat(0.0);
+            maps.setLastPosLon(0.0);
+            maps.setLastAlt(0.0);
+            maps.setLastAccu(0);
         }
     }
 

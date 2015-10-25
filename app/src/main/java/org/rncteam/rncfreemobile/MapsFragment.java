@@ -18,11 +18,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by cedricf_25 on 14/07/2015.
@@ -35,8 +39,17 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     private Telephony tel;
     private View view;
 
+    // UI Attributes
     private ImageButton btnActionProfile;
     private RelativeLayout lytMapExtProfile;
+    public RelativeLayout mapExtInfo;
+    public RelativeLayout loadingPanelChart;
+    public TextView txtMapExtInfosRnc;
+    public TextView txtMapExtInfosCid;
+    public TextView txtMapExtInfosDistance;
+    public TextView txtMapExtInfosAltitude;
+    public TextView txtMapExtInfosTxt;
+
     private boolean btnOpen = false;
 
     private Handler handler;
@@ -53,6 +66,13 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         // Retrieve UI
         btnActionProfile = (ImageButton) v.findViewById(R.id.btn_action_profile);
         lytMapExtProfile = (RelativeLayout) v.findViewById(R.id.map_ext_profile);
+        mapExtInfo = (RelativeLayout) v.findViewById(R.id.map_ext_infos);
+        txtMapExtInfosRnc = (TextView) v.findViewById(R.id.map_ext_infos_rnc);
+        txtMapExtInfosCid = (TextView) v.findViewById(R.id.map_ext_infos_cid);
+        txtMapExtInfosDistance = (TextView) v.findViewById(R.id.map_ext_infos_distance);
+        txtMapExtInfosAltitude = (TextView) v.findViewById(R.id.map_ext_infos_alt);
+        txtMapExtInfosTxt = (TextView) v.findViewById(R.id.map_ext_infos_txt);
+        loadingPanelChart = (RelativeLayout) v.findViewById(R.id.loadingPanelChart);
 
         setUpMapIfNeeded();
 
@@ -64,22 +84,29 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
             public void onClick(View view) {
                 if(btnOpen) {
                     lytMapExtProfile.setVisibility(View.GONE);
+                    loadingPanelChart.setVisibility(View.GONE);
                     btnOpen = false;
                 }
                 else {
-                    lytMapExtProfile.setVisibility(View.VISIBLE);
-                    btnOpen = true;
-
                     // draw profile chart
-                    if(!tel.getLoggedRnc().NOT_IDENTIFIED
-                            && tel.getLoggedRnc().get_lat() != 0.0
-                            && tel.getLoggedRnc().get_lon() != 0.0) {
-                        Elevation elevation = new Elevation(getActivity());
-                        elevation.initChart();
-                        elevation.getData(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude(),
-                                tel.getLoggedRnc().get_lat(), tel.getLoggedRnc().get_lon());
-                    } else Toast.makeText(rncmobile.getAppContext(),
-                            "Pas de profil: antenne non identifiée", Toast.LENGTH_SHORT).show();
+                    if((maps.getLastPosLat() == 0.0) && (maps.getLastPosLon() == 0.0)) {
+                        Toast.makeText(rncmobile.getAppContext(),
+                                "Pas de profil: GPS désactivé", Toast.LENGTH_SHORT).show();
+                    } else {
+                        lytMapExtProfile.setVisibility(View.VISIBLE);
+                        loadingPanelChart.setVisibility(View.VISIBLE);
+                        btnOpen = true;
+
+                        if(!tel.getLoggedRnc().NOT_IDENTIFIED
+                                && tel.getLoggedRnc().get_lat() != 0.0
+                                && tel.getLoggedRnc().get_lon() != 0.0) {
+                            Elevation elevation = new Elevation(getActivity());
+                            elevation.initChart();
+                            elevation.getData(maps.getLastPosLat(), maps.getLastPosLon(),
+                                    tel.getLoggedRnc().get_lat(), tel.getLoggedRnc().get_lon());
+                        } else Toast.makeText(rncmobile.getAppContext(),
+                                "Pas de profil: antenne non identifiée", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -118,9 +145,10 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
             }
         }
         maps.setMap(mMap);
-        maps.initializeMap(getActivity());
+        maps.initializeMap(this);
         rncmobile.setMaps(maps);
     }
+
 
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override

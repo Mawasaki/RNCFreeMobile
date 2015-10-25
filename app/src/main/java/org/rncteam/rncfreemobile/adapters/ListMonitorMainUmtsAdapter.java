@@ -77,7 +77,7 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         holder.txtLac.setText(String.valueOf(rnc.get_lac()));
         holder.txtRnc.setText(String.valueOf(rnc.getRnc()));
         holder.txtPsc.setText(String.valueOf(rnc.get_psc()));
-        holder.txtRscp.setText(String.valueOf((2 * rnc.getUmtsRscp()) - 113) +" dBm");
+        holder.txtRscp.setText(String.valueOf(rnc.getUmtsRscp()) +" dBm");
         holder.txtData.setText(rnc.get_txt());
 
         // Roaming

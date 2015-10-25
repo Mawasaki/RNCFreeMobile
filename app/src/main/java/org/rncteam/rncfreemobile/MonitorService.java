@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import org.rncteam.rncfreemobile.classes.Telephony;
+import org.rncteam.rncfreemobile.models.Rnc;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -34,12 +35,17 @@ public class MonitorService extends Service {
 
     private Handler handler;
 
+    private Telephony tel;
+    private boolean tempPass;
+
     private Notification notification;
     private NotificationManager mNotificationManager;
 
     MonitorServiceReceiver monitorServiceReceiver;
 
     final Service thisService = this;
+
+    private Rnc oldRnc;
 
     Bitmap logoBitmap = null;
     BufferedInputStream buf = null;
@@ -48,7 +54,7 @@ public class MonitorService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service started");
-        showNotification();
+        //showNotification();
 
         this.monitorServiceReceiver = new MonitorServiceReceiver();
 
@@ -62,6 +68,9 @@ public class MonitorService extends Service {
                 }
             }
         });
+
+        tel = rncmobile.getTelephony();
+        tempPass = true;
 
         handler = new Handler();
         taskMonitor.run();
@@ -92,57 +101,61 @@ public class MonitorService extends Service {
 
     private Runnable taskMonitor = new Runnable() {
         public void run() {
-            Telephony tel = rncmobile.getTelephony();
 
-            // Main intent
-            PendingIntent contentIntent = PendingIntent.getActivity(thisService, 0, new Intent(thisService, MainActivity.class), 0);
+            if (tempPass || oldRnc.get_id() != tel.getLoggedRnc().get_id()) {
 
-            // Cancel intent
-            Intent cancelReceive = new Intent();
-            cancelReceive.setAction(ACTION);
-            PendingIntent pendingIntentCancel = PendingIntent.getBroadcast(thisService, 12345, cancelReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+                // Main intent
+                PendingIntent contentIntent = PendingIntent.getActivity(thisService, 0, new Intent(thisService, MainActivity.class), 0);
 
-            if(tel.getLoggedRnc() != null) {
+                // Cancel intent
+                Intent cancelReceive = new Intent();
+                cancelReceive.setAction(ACTION);
+                PendingIntent pendingIntentCancel = PendingIntent.getBroadcast(thisService, 12345, cancelReceive, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                if (tel.getNetworkClass() == 2) {
-                    notification = new Notification.Builder(thisService)
-                            .setContentTitle(String.valueOf("RNC Free mobile"))
-                            .setContentText("Edge is not implemented")
-                            .setSmallIcon(R.drawable.ic_notif_small_icon)
-                            .setLargeIcon(logoBitmap)
-                            .setAutoCancel(true)
-                            .setContentIntent(contentIntent).build();
-                } else if (tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4) {
-                    notification = new Notification.Builder(thisService)
-                            .setContentTitle(String.valueOf(tel.getLoggedRnc().getNetworkName()
-                                    + " (" + ((tel.getLoggedRnc().get_tech() == 3) ? "3G" : "4G") + ") ")
-                                    + (tel.getLoggedRnc().get_rnc() + ":")
-                                    + (tel.getLoggedRnc().get_cid() + " | ")
-                                    + ((tel.getLoggedRnc().get_tech() == 3 ? (2 * tel.getLoggedRnc().getUmtsRscp() - 113) + " dBm" : ""))
-                                    + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRssi() + " dBm" : "")))
-                                    .setContentText(tel.getLoggedRnc().get_txt())
-                                    .setSmallIcon(R.drawable.ic_notif_small_icon)
-                                    .setLargeIcon(logoBitmap)
-                                    .setAutoCancel(true)
-                                    .addAction(R.drawable.ic_clear_black, "Cancel Monitoring", pendingIntentCancel)
-                                    .setContentIntent(contentIntent).build();
-                } else {
-                    notification = new Notification.Builder(thisService)
-                            .setContentTitle(String.valueOf("RNC Free mobile"))
-                            .setContentText("No connection")
-                            .setSmallIcon(R.drawable.ic_notif_small_icon)
-                            .setLargeIcon(logoBitmap)
-                            .setContentIntent(contentIntent).build();
+                if (tel.getLoggedRnc() != null) {
+
+                    if (tel.getNetworkClass() == 2) {
+                        notification = new Notification.Builder(thisService)
+                                .setContentTitle(String.valueOf("RNC Free mobile"))
+                                .setContentText("Edge is not implemented")
+                                .setSmallIcon(R.drawable.ic_notif_small_icon)
+                                .setLargeIcon(logoBitmap)
+                                .setAutoCancel(true)
+                                .setContentIntent(contentIntent).build();
+                    } else if (tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4) {
+                        notification = new Notification.Builder(thisService)
+                                .setContentTitle(String.valueOf(tel.getLoggedRnc().getNetworkName()
+                                        + " (" + ((tel.getLoggedRnc().get_tech() == 3) ? "3G" : "4G") + ") ")
+                                        + (tel.getLoggedRnc().get_rnc() + ":")
+                                        + (tel.getLoggedRnc().get_cid() + " | ")
+                                        + ((tel.getLoggedRnc().get_tech() == 3 ? (2 * tel.getLoggedRnc().getUmtsRscp() - 113) + " dBm" : ""))
+                                        + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRssi() + " dBm" : "")))
+                                .setContentText(tel.getLoggedRnc().get_txt())
+                                .setSmallIcon(R.drawable.ic_notif_small_icon)
+                                .setLargeIcon(logoBitmap)
+                                .setAutoCancel(true)
+                                .addAction(R.drawable.ic_clear_black, "Cancel Monitoring", pendingIntentCancel)
+                                .setContentIntent(contentIntent).build();
+                    } else {
+                        notification = new Notification.Builder(thisService)
+                                .setContentTitle(String.valueOf("RNC Free mobile"))
+                                .setContentText("No connection")
+                                .setSmallIcon(R.drawable.ic_notif_small_icon)
+                                .setLargeIcon(logoBitmap)
+                                .setContentIntent(contentIntent).build();
+                    }
+                    mNotificationManager =
+                            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    notification.flags = notification.flags
+                            | Notification.FLAG_ONGOING_EVENT;
+                    notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                    mNotificationManager.notify(0, notification);
+
+                    handler.postDelayed(this, 3000);
                 }
-                mNotificationManager =
-                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                notification.flags = notification.flags
-                        | Notification.FLAG_ONGOING_EVENT;
-                notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-                mNotificationManager.notify(0, notification);
-
-                handler.postDelayed(this, 1000);
+                oldRnc = tel.getLoggedRnc();
+                tempPass = false;
             }
         }
     };

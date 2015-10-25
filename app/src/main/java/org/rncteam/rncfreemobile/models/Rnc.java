@@ -48,6 +48,7 @@ public class Rnc {
     private int lteRsrq;
     private int lteRssnr;
     private int lteCqi;
+    private int lteTA;
 
     private String networkName;
     private SignalStrength signalStrength;
@@ -67,6 +68,7 @@ public class Rnc {
         lteRsrq = -1;
         lteRssnr = -1;
         lteCqi = -1;
+        lteTA = -1;
         signalStrength = null;
         networkName = "err";
     }
@@ -388,6 +390,14 @@ public class Rnc {
 
     public void setLteCqi(int lteCqi) {
         this.lteCqi = lteCqi;
+    }
+
+    public int getLteTA() {
+        return lteTA;
+    }
+
+    public void setLteTA(int lteTA) {
+        this.lteTA = lteTA;
     }
 
     public String getNetworkName() {

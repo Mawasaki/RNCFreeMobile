@@ -14,11 +14,8 @@ import org.rncteam.rncfreemobile.rncmobile;
 public class MapsMarkerClickListeners implements GoogleMap.OnMarkerClickListener {
     private static final String TAG = "MapsMarkerClickListener";
 
-    private Marker lastOpenned = null;
-    private Activity activity;
+    public MapsMarkerClickListeners() {
 
-    public MapsMarkerClickListeners(Activity activity) {
-        this.activity = activity;
     }
 
     @Override

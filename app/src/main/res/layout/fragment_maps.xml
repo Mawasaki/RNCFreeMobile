@@ -84,6 +84,15 @@
                 android:text="CID :"/>
 
             <TextView
+                android:id="@+id/map_ext_infos_alt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:text="Altitude :"
+                android:visibility="gone"/>
+
+            <TextView
                 android:id="@+id/map_ext_infos_distance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -122,7 +131,8 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:visibility="gone">
 
             <ProgressBar
                 android:layout_width="wrap_content"

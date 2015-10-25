@@ -68,7 +68,7 @@ public class CellNeighbours {
                         rnc.set_psc(cellInfoLte.getCellIdentity().getPci());
                         rnc.set_lcid(cellInfoLte.getCellIdentity().getCi());
 
-                        rnc.setLteRssi(cellInfoLte.getCellSignalStrength().getDbm()/10);
+                        rnc.setLteRssi(cellInfoLte.getCellSignalStrength().getDbm());
 
                         // How the new API is tunneling LTE Neigh ?
                         if (!cellInfoLte.isRegistered() && tel.getNetworkClass() == 4) {
