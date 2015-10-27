@@ -23,13 +23,13 @@ import android.widget.Toast;
 
 public class JSONParser {
     private static final String TAG = "JSONParser";
+    private HttpURLConnection conn;
 
     public JSONParser() {
     }
 
     public JSONObject getJSONFromUrl(String sUrl, HashMap<String, String> params) {
         // Making HTTP request
-        HttpURLConnection conn;
         JSONObject jArray = null;
         try {
             URL url = new URL(sUrl);

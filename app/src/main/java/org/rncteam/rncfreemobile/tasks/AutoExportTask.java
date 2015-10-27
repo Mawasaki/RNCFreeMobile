@@ -2,6 +2,7 @@ package org.rncteam.rncfreemobile.tasks;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -45,6 +46,7 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
     Telephony tel;
     Rnc rnc;
     String httpResponse;
+    private  HttpURLConnection conn;
 
     public AutoExportTask(Rnc rnc) {
         this.rnc = rnc;
@@ -64,7 +66,9 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... nothing) {
         try {
             // Prepare some informations
-            String nickname = rncmobile.getPreferences().getString("nickname", "Unknown");
+            SharedPreferences sp = rncmobile.getPreferences();
+            String nickname = "Unknown";
+            if(sp != null) nickname = sp.getString("nickname", "Unknown");
 
             DataOutputStream dos = null;
             String lineEnd = "\r\n";
@@ -72,11 +76,11 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
             String boundary = "---------------------------";
 
             URL url = new URL(S_URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
 
             conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
+            conn.setReadTimeout(8000);
 
             conn.setDoInput(true);
             conn.setDoOutput(true);
@@ -211,6 +215,7 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
             //close the streams //
             dos.flush();
             dos.close();
+            if(conn != null) conn.disconnect();
 
             return httpResponse;
 

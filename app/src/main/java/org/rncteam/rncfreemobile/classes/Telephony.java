@@ -52,8 +52,9 @@ public class Telephony {
 
     private ArrayList<Rnc> lNeigh;
 
-    public Telephony(Context context) {
+    public Telephony() {
         // Initialize Telephony attributes
+        Context context = rncmobile.getAppContext();
         telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         cellLocation = telephonyManager.getCellLocation();
         gsmCellLocation = (GsmCellLocation) telephonyManager.getCellLocation();
@@ -137,7 +138,7 @@ public class Telephony {
             }
             rnc.set_psc((psc == 0) ? -1 : psc);
         } else {
-            rnc.set_psc(gsmCellLocation.getPsc());
+            rnc.set_psc((gsmCellLocation.getPsc() == 0) ? -1 : psc);
         }
 
         // Log in roaming
@@ -228,7 +229,7 @@ public class Telephony {
                         Maps maps = rncmobile.getMaps();
                         if(maps != null) maps.switchMarkerIcon(rnc);
                         // Textbox on map
-                        if(maps.isMapInitilized()) maps.setExtInfoBox();
+                        if(maps != null && maps.isMapInitilized()) maps.setExtInfoBox();
 
                         // Autolog
                         /* Comm for tests

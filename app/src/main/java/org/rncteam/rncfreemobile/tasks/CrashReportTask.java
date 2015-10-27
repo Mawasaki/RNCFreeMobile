@@ -24,14 +24,20 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
 
     private static final String S_URL = "http://rfm.dataremix.fr/crash.php";
 
-    private Activity activity;
     private Context context;
+    Activity activity;
     private Throwable err;
+    private String thread;
+    private  HttpURLConnection conn;
 
-    public CrashReportTask(Activity activity, Context contex, Throwable err) {
-        this.activity = activity;
+    public CrashReportTask(Context contex, Throwable err, String thread) {
         this.context = contex;
         this.err = err;
+        this.thread = thread;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
     @Override
@@ -43,8 +49,8 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
         try {
 
             URL url = new URL(S_URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
+            conn = (HttpURLConnection) url.openConnection();
+
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestMethod("POST");
 
@@ -52,18 +58,43 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
             conn.setDoOutput(true);
 
             conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
 
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Cache-Control", "no-cache");
             conn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8") ;
+
+            StackTraceElement[] arr = err.getStackTrace();
+
+
+            String report = err.toString() + "\n";
+
+            report += "--------- Stack trace ---------\n" + this.thread;
+
+            for(int i=0;i<arr.length;i++) {
+                report += "    " + arr[i].toString()+"\n";
+            }
+
+            report += "-------------------------------\n";
+
+            report += "--------- Cause ---------\n\n";
+            Throwable cause = err.getCause();
+
+            if(cause != null) {
+                report += cause.toString() + "\n\n";
+                arr = cause.getStackTrace();
+                for (int i=0; i<arr.length; i++)
+                {
+                    report += "    "+arr[i].toString()+"\n";
+                }
+            }
+            report += "-------------------------------\n\n";
 
             OutputStreamWriter request = new OutputStreamWriter(conn.getOutputStream());
 
             String parameters = "phone=" + android.os.Build.MODEL +
                                 "&v_android=" + android.os.Build.VERSION.RELEASE +
                                 "&class=" + err.getStackTrace().getClass().getName() +
-                                "&crash=" + err.toString();
+                                "&crash=" + report;
                                 //" |3 " + err.get;
 
 
@@ -88,7 +119,9 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
             isr.close();
             reader.close();
 
-            return "";
+            conn.disconnect();
+
+            return "ok";
 
         } catch (SocketTimeoutException e) {
             Log.d(TAG, "TimeOut: " + e.toString());
@@ -103,9 +136,9 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(rncmobile.getAppContext(), "Report envoyé", Toast.LENGTH_LONG).show();
+        //Toast.makeText(activity, "Report RNC mobile envoyé", Toast.LENGTH_LONG).show();
 
-        activity.finish();
+        System.exit(1); // kill off the crashed app
     }
 
 }

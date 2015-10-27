@@ -20,7 +20,7 @@ public class CsvRncReader {
         String csvFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/20815.csv";
         BufferedReader reader = null;
 
-        List<Rnc> lCell = new ArrayList<Rnc>();
+        List<Rnc> lCell = new ArrayList<>();
 
         try {
             String line;
@@ -40,7 +40,7 @@ public class CsvRncReader {
                 reader.close();
             }
             catch (IOException e) {
-                // handle exception
+
             }
         }
         return lCell;

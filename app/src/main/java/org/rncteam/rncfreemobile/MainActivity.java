@@ -1,5 +1,6 @@
 package org.rncteam.rncfreemobile;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,10 +13,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+
+import org.rncteam.rncfreemobile.classes.Maps;
+import org.rncteam.rncfreemobile.classes.Telephony;
 
 
 /**
@@ -46,6 +52,11 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         mPager.setAdapter(mPagerAdapter);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // Init main classes
+        rncmobile.setTel(new Telephony());
+        // Initialize specific class
+        rncmobile.setMaps(new Maps());
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -136,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         // Service
 
         launchMonitorService();
+        finish();
     }
 
     public void launchMonitorService() {
@@ -193,17 +205,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 break;
         }
 
-/*
-        if (fragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_body, fragment);
-            fragmentTransaction.commit();
-
-            // set the toolbar title
-            getSupportActionBar().setTitle(title);
-        }
-        */
         mPager.setCurrentItem(position);
         return fragment;
     }

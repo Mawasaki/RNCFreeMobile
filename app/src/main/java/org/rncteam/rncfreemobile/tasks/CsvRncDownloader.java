@@ -43,6 +43,7 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
     private Context context;
     private ProgressDialog mProgressDialog;
     private PowerManager.WakeLock mWakeLock;
+    private HttpURLConnection conn;
 
     public CsvRncDownloader(Context context) {
         this.context = context;
@@ -52,7 +53,7 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
     protected String doInBackground(String... sUrl) {
         InputStream input = null;
         OutputStream output = null;
-        HttpURLConnection conn = null;
+        conn = null;
 
         try {
 

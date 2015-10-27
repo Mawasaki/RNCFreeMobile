@@ -6,6 +6,7 @@ package org.rncteam.rncfreemobile;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.classes.Telephony;
+import org.rncteam.rncfreemobile.tasks.CrashReportTask;
 
 import android.app.Activity;
 import android.app.Application;
@@ -28,8 +29,6 @@ public class rncmobile extends Application {
     private static Telephony tel;
     private static Maps maps;
 
-    public static boolean isAppStart;
-
     public static Activity mainActivity;
 
     public static boolean markerClicked;
@@ -45,25 +44,16 @@ public class rncmobile extends Application {
     public void onCreate(){
         super.onCreate();
 
+        // Crash report
+        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
+
         rncmobile.context = getApplicationContext();
-
-        // Init main classes
-        tel = new Telephony(getAppContext());
-
-        // Initialize specific class
-        maps = new Maps();
 
         // Get preferences
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        // Application start
-        isAppStart = true;
-
         // Data of 20815.csv charged
         rncDataCharged = false;
-
-        // Crash report
-       Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
 
         preferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -76,6 +66,10 @@ public class rncmobile extends Application {
 
     public static Telephony getTelephony() {
         return tel;
+    }
+
+    public static void setTel(Telephony tel) {
+        rncmobile.tel = tel;
     }
 
     public static Maps getMaps() {
@@ -124,15 +118,14 @@ public class rncmobile extends Application {
             new Thread.UncaughtExceptionHandler() {
                 @Override
                 public void uncaughtException(Thread thread, Throwable ex) {
-                    Log.e("errorRNC1", ex.toString());
-
                     LayoutInflater li = (LayoutInflater) rncmobile.getAppContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     Intent intentCA = new Intent(li.getContext(), CrashActivity.class);
-                    intentCA.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
+                    intentCA.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
                     intentCA.putExtra("crashObject", ex);
+                    intentCA.putExtra("crashThread", thread.toString());
                     startActivity(intentCA);
 
-                    System.exit(0); // kill off the crashed app
+                    System.exit(0);
                 }
             };
 

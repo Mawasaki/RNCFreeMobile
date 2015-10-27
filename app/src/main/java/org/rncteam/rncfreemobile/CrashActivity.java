@@ -20,13 +20,13 @@ public class CrashActivity extends Activity {
     Button btn_crash;
 
     Throwable crash;
+    String thread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_crash);
-        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash2);
 
         // Get UI
         txtPhone = (TextView)findViewById(R.id.txt_crash_info1);
@@ -34,6 +34,7 @@ public class CrashActivity extends Activity {
         btn_crash = (Button)findViewById(R.id.btn_crash);
 
         crash = (Throwable) getIntent().getSerializableExtra("crashObject");
+        thread = (String) getIntent().getSerializableExtra("crashThread");
 
         txtPhone.setText("Phone: " + android.os.Build.MODEL);
         txtVersionAndroid.setText("Android Version: " + android.os.Build.VERSION.RELEASE);
@@ -43,20 +44,12 @@ public class CrashActivity extends Activity {
         btn_crash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CrashReportTask crt = new CrashReportTask(f_activity ,rncmobile.getAppContext(), crash);
+                CrashReportTask crt = new CrashReportTask(rncmobile.getAppContext(), crash, thread.toString());
+                crt.setActivity(f_activity);
                 crt.execute();
             }
         });
     }
-    private Thread.UncaughtExceptionHandler handleAppCrash2 =
-            new Thread.UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(Thread thread, Throwable ex) {
-                    Log.e("errorRNC2", ex.toString());
-
-                    System.exit(1);
-                }
-            };
 
     @Override
     protected void onUserLeaveHint() {

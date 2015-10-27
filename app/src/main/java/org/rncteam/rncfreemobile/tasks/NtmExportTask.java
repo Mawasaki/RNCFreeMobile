@@ -26,6 +26,7 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 import java.io.File;
@@ -48,6 +49,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
     private ExportLogsActivity activity;
     private Telephony tel;
+    private HttpURLConnection conn;
 
     // Parameters to pass
     private String nickname;
@@ -89,7 +91,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             String boundary = "---------------------------";
 
             URL url = new URL(S_URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
 
             conn.setConnectTimeout(5000);
@@ -204,11 +206,17 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             //close the streams //
             dos.flush();
             dos.close();
+            conn.disconnect();
 
             return httpResponse;
 
+        } catch (SocketTimeoutException e) {
+            Log.d(TAG, "TimeOut: " + e.toString());
+            conn.disconnect();
+            return null;
         } catch (Exception e) {
             Log.d(TAG, "Error send file: " + e.toString());
+            conn.disconnect();
             return null;
         }
     }
