@@ -1,17 +1,15 @@
 package org.rncteam.rncfreemobile.tasks;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.classes.CsvRncReader;
+import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
-import org.rncteam.rncfreemobile.database.Database;
 import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
@@ -19,10 +17,9 @@ import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -38,96 +35,28 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
 
     private static final String TAG = "Downloader";
 
-    String csvFileUrl = "http://rncmobile.free.fr/20815.csv";
+    //String csvFileUrl = "http://rncmobile.free.fr/20815.csv";
+    private final String csvFileUrl = "http://rfm.dataremix.fr/20815.csv";
 
-    private Context context;
+    private Activity activity;
     private ProgressDialog mProgressDialog;
-    private PowerManager.WakeLock mWakeLock;
-    private HttpURLConnection conn;
 
-    public CsvRncDownloader(Context context) {
-        this.context = context;
+    private List<Rnc> lRnc = null;
+
+    public CsvRncDownloader() {
     }
 
-    @Override
-    protected String doInBackground(String... sUrl) {
-        InputStream input = null;
-        OutputStream output = null;
-        conn = null;
-
-        try {
-
-            URL url = new URL(csvFileUrl);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.connect();
-
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(20000);
-
-            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                return "Server returned HTTP " + conn.getResponseCode()
-                        + " " + conn.getResponseMessage();
-            }
-
-            int fileLength = conn.getContentLength();
-
-            input = conn.getInputStream();
-            output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/20815.csv");
-
-            byte data[] = new byte[4096];
-            long total = 0;
-            int count;
-
-            while ((count = input.read(data)) != -1) {
-                if (isCancelled()) {
-                    input.close();
-                    return null;
-                }
-                total += count;
-                // publishing the progress....
-                if (fileLength > 0)
-                    publishProgress(("" + total * 100 / fileLength));
-                output.write(data, 0, count);
-            }
-        } catch (SocketTimeoutException e) {
-            Log.d(TAG, "TimeOut: " + e.toString());
-            return null;
-
-        } catch (Exception e) {
-            return e.toString();
-
-        } finally {
-            try {
-                if (output != null)
-                    output.close();
-                if (input != null)
-                    input.close();
-            } catch (IOException ignored) {
-            }
-
-            if (conn != null)
-                conn.disconnect();
-        }
-        return null;
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
 
-        mProgressDialog = new ProgressDialog(context);
+        mProgressDialog = new ProgressDialog(activity);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setCancelable(true);
-
-        // take CPU lock to prevent CPU from going off if the user
-        // presses the power button during download
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                getClass().getName());
-        mWakeLock.acquire();
 
         mProgressDialog.setMessage("Download 20815.csv file...");
         mProgressDialog.setIndeterminate(true);
@@ -144,26 +73,56 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
     }
 
     @Override
+    protected String doInBackground(String... sUrl) {
+        HttpURLConnection conn = null;
+
+        try {
+            URL url = new URL(csvFileUrl);
+            conn = (HttpURLConnection) url.openConnection();
+
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Reader isr = new InputStreamReader(conn.getInputStream(), "UTF-8");
+                BufferedReader rd = new BufferedReader(isr);
+
+                // Parse Csv file
+                mProgressDialog.setMessage("Importation en masse dans la base...");
+                mProgressDialog.setIndeterminate(true);
+                mProgressDialog.show();
+
+                CsvRncReader crr = new CsvRncReader();
+                lRnc = crr.run(rd);
+                rd.close();
+
+                return "ok";
+            }
+            return "nok";
+
+        } catch (SocketTimeoutException e) {
+            String msg = "Timeout";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
+            Toast.makeText(rncmobile.getAppContext(), msg, Toast.LENGTH_LONG).show();
+            return null;
+
+        } catch (Exception e) {
+            String msg = "Erreur lors de la récupération de 20815.csv";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
+            Toast.makeText(rncmobile.getAppContext(), msg, Toast.LENGTH_LONG).show();
+            return e.toString();
+        } finally {
+            assert conn != null;
+            conn.disconnect();
+        }
+    }
+
+    @Override
     protected void onPostExecute(String result) {
-        mWakeLock.release();
-        mProgressDialog.dismiss();
+        try {
+            if (result.equals("ok")) {
 
-        if (result != null) {
-            // Parse Csv file
-            mProgressDialog.setMessage("Importing in database...");
-            mProgressDialog.setIndeterminate(true);
-            mProgressDialog.show();
-
-            final Handler handler = new Handler();
-
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    CsvRncReader crr = new CsvRncReader();
-                    List<Rnc> lRnc = crr.run();
-
-                    // Add CVS to database
+                // Add CVS to database
+                if (lRnc != null && lRnc.size() > 0) {
                     DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
                     DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
                     dbr.open();
@@ -178,14 +137,14 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     dbr.addMassiveRnc(lRnc);
 
                     // Reaffects logs
-                    for(int i=0;i<lRncLogs.size();i++) {
+                    for (int i = 0; i < lRncLogs.size(); i++) {
                         RncLogs rncLogs = lRncLogs.get(i);
                         Rnc rnc = dbr.findRncByRncCid(
                                 String.valueOf(rncLogs.get_rnc()),
                                 String.valueOf(rncLogs.get_cid()));
 
-                        if(rnc != null) {
-                                rncLogs.set_rnc_id(rnc.get_id());
+                        if (rnc != null) {
+                            rncLogs.set_rnc_id(rnc.get_id());
                         }
                         dbl.addLog(rncLogs);
                     }
@@ -194,7 +153,7 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     DatabaseInfo dbi = new DatabaseInfo(rncmobile.getAppContext());
                     dbi.open();
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                     dbi.updateInfo("rncBaseUpdate", sdf.format(new Date()), "-");
 
@@ -208,7 +167,18 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
 
                     mProgressDialog.dismiss();
                 }
-            }, 1000);
+            } else {
+                mProgressDialog.dismiss();
+                Log.d(TAG, "Erreur lors du chargement 20815.csv:" + result);
+                Toast.makeText(rncmobile.getAppContext(), "Erreur s'est produite", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            String msg = "Une erreur s'est produite lors de l'importation en masse";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
+            Toast.makeText(rncmobile.getAppContext(), msg, Toast.LENGTH_SHORT).show();
+        } finally {
+            activity.finish();
         }
     }
 }

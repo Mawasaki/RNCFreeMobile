@@ -104,10 +104,10 @@ public class MonitorFragment extends Fragment {
             if(lRncs.get(0) != null && (tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4)) {
 
                 if (lRncs.get(0).get_tech() == 3) {
-                    ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(rncmobile.getAppContext(), lRncs);
+                    ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(lRncs);
                     listViewRncMain.setAdapter(adapter);
                 } else if (lRncs.get(0).get_tech() == 4) {
-                    ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(rncmobile.getAppContext(), lRncs);
+                    ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(lRncs);
                     listViewRncMain.setAdapter(adapter);
                 } else {
                     listViewRncMain.setVisibility(View.GONE);
@@ -116,7 +116,7 @@ public class MonitorFragment extends Fragment {
                 // Neighbours cell
                 ArrayList<Rnc> arrayNeighCell = tel.getlNeigh();
                 if(arrayNeighCell != null && arrayNeighCell.size() > 0) {
-                    ListMonitorPscAdapter adapterPsc = new ListMonitorPscAdapter(rncmobile.getAppContext(), arrayNeighCell);
+                    ListMonitorPscAdapter adapterPsc = new ListMonitorPscAdapter(arrayNeighCell);
                     listViewRncPsc.setAdapter(adapterPsc);
                 } else listViewRncPsc.setVisibility(View.GONE);
 

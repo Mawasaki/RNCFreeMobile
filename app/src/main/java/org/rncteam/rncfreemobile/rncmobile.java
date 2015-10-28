@@ -24,6 +24,7 @@ public class rncmobile extends Application {
     private static final String TAG = "rncmobile";
 
     private static Context context;
+    private static Context baseContext;
 
     // Class Objects
     private static Telephony tel;
@@ -43,9 +44,6 @@ public class rncmobile extends Application {
 
     public void onCreate(){
         super.onCreate();
-
-        // Crash report
-        Thread.setDefaultUncaughtExceptionHandler(handleAppCrash);
 
         rncmobile.context = getApplicationContext();
 
@@ -87,6 +85,14 @@ public class rncmobile extends Application {
         return mainActivity;
     }
 
+    public static Context getAppBaseContext() {
+        return mainActivity.getBaseContext();
+    }
+
+    public static void setBaseContext(Context baseContext) {
+        rncmobile.baseContext = baseContext;
+    }
+
     public static SharedPreferences getPreferences() {
         return preferences;
     }
@@ -113,20 +119,5 @@ public class rncmobile extends Application {
             return e.toString();
         }
     }
-
-    private Thread.UncaughtExceptionHandler handleAppCrash =
-            new Thread.UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(Thread thread, Throwable ex) {
-                    LayoutInflater li = (LayoutInflater) rncmobile.getAppContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    Intent intentCA = new Intent(li.getContext(), CrashActivity.class);
-                    intentCA.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
-                    intentCA.putExtra("crashObject", ex);
-                    intentCA.putExtra("crashThread", thread.toString());
-                    startActivity(intentCA);
-
-                    System.exit(0);
-                }
-            };
 
 }

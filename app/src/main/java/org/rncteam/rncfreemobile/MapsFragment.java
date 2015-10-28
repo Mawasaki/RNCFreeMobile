@@ -8,7 +8,6 @@ import org.rncteam.rncfreemobile.classes.Telephony;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 
 import android.support.v4.app.Fragment;
@@ -23,10 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-
-import java.text.DecimalFormat;
 
 /**
  * Created by cedricf_25 on 14/07/2015.
@@ -37,13 +33,10 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     private GoogleMap mMap;
     private Maps maps;
     private Telephony tel;
-    private View view;
 
-    // UI Attributes
-    private ImageButton btnActionProfile;
     private RelativeLayout lytMapExtProfile;
     public RelativeLayout mapExtInfo;
-    public RelativeLayout loadingPanelChart;
+    private RelativeLayout loadingPanelChart;
     public TextView txtMapExtInfosRnc;
     public TextView txtMapExtInfosCid;
     public TextView txtMapExtInfosDistance;
@@ -52,19 +45,16 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
     private boolean btnOpen = false;
 
-    private Handler handler;
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =inflater.inflate(R.layout.fragment_maps,container,false);
-        view = v;
 
         // Retrive main classes
         maps = rncmobile.getMaps();
         tel = rncmobile.getTelephony();
 
         // Retrieve UI
-        btnActionProfile = (ImageButton) v.findViewById(R.id.btn_action_profile);
+        ImageButton btnActionProfile = (ImageButton) v.findViewById(R.id.btn_action_profile);
         lytMapExtProfile = (RelativeLayout) v.findViewById(R.id.map_ext_profile);
         mapExtInfo = (RelativeLayout) v.findViewById(R.id.map_ext_infos);
         txtMapExtInfosRnc = (TextView) v.findViewById(R.id.map_ext_infos_rnc);
@@ -76,20 +66,19 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
 
         setUpMapIfNeeded();
 
-        mMap.setInfoWindowAdapter(new MapsPopupAdapter(getActivity().getLayoutInflater()));
+        mMap.setInfoWindowAdapter(new MapsPopupAdapter(container));
         mMap.setOnInfoWindowClickListener(this);
 
         btnActionProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(btnOpen) {
+                if (btnOpen) {
                     lytMapExtProfile.setVisibility(View.GONE);
                     loadingPanelChart.setVisibility(View.GONE);
                     btnOpen = false;
-                }
-                else {
+                } else {
                     // draw profile chart
-                    if((maps.getLastPosLat() == 0.0) && (maps.getLastPosLon() == 0.0)) {
+                    if ((maps.getLastPosLat() == 0.0) && (maps.getLastPosLon() == 0.0)) {
                         Toast.makeText(rncmobile.getAppContext(),
                                 "Pas de profil: GPS désactivé", Toast.LENGTH_SHORT).show();
                     } else {
@@ -97,7 +86,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
                         loadingPanelChart.setVisibility(View.VISIBLE);
                         btnOpen = true;
 
-                        if(!tel.getLoggedRnc().NOT_IDENTIFIED
+                        if (!tel.getLoggedRnc().NOT_IDENTIFIED
                                 && tel.getLoggedRnc().get_lat() != 0.0
                                 && tel.getLoggedRnc().get_lon() != 0.0) {
                             Elevation elevation = new Elevation(getActivity());
@@ -140,17 +129,13 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         if (mMap == null) {
             mMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
                     .getMap();
-            if (mMap != null) {
-
-            }
         }
         maps.setMap(mMap);
         maps.initializeMap(this);
-        rncmobile.setMaps(maps);
     }
 
 
-    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which){

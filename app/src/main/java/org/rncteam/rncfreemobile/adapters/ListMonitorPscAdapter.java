@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.models.Rnc;
+import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.List;
 
@@ -16,18 +17,12 @@ import java.util.List;
  * Created by cedricf_25 on 21/07/2015.
  */
 public class ListMonitorPscAdapter extends BaseAdapter {
-
     private static final String TAG = "ListMonitorPscAdapter";
 
-    Context context;
+    protected final List<Rnc> lCell;
 
-    protected List<Rnc> lCell;
-    LayoutInflater inflater;
-
-    public ListMonitorPscAdapter(Context context, List<Rnc> listCell) {
+    public ListMonitorPscAdapter(List<Rnc> listCell) {
         this.lCell = listCell;
-        this.inflater = LayoutInflater.from(context);
-        this.context = context;
     }
 
     public int getCount() {
@@ -47,7 +42,9 @@ public class ListMonitorPscAdapter extends BaseAdapter {
         if (convertView == null) {
 
             holder = new ViewHolder();
-            convertView = this.inflater.inflate(R.layout.listview_monitor_psc,
+            LayoutInflater li = (LayoutInflater) rncmobile.getAppContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = li.inflate(R.layout.listview_monitor_psc,
                     parent, false);
 
             holder.txtPsc = (TextView) convertView.findViewById(R.id.txt_psc_psc);

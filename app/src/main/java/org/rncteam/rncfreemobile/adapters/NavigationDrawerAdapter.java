@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.NavDrawerItem;
+import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,12 +19,8 @@ import java.util.List;
  */
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.MyViewHolder> {
     List<NavDrawerItem> data = Collections.emptyList();
-    private LayoutInflater inflater;
-    private Context context;
 
-    public NavigationDrawerAdapter(Context context, List<NavDrawerItem> data) {
-        this.context = context;
-        inflater = LayoutInflater.from(context);
+    public NavigationDrawerAdapter(List<NavDrawerItem> data) {
         this.data = data;
     }
 
@@ -34,9 +31,11 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.nav_drawer_row, parent, false);
-        MyViewHolder holder = new MyViewHolder(view);
-        return holder;
+        LayoutInflater li = (LayoutInflater) rncmobile.getAppBaseContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = li.inflate(R.layout.nav_drawer_row, parent, false);
+
+        return new MyViewHolder(view);
     }
 
     @Override

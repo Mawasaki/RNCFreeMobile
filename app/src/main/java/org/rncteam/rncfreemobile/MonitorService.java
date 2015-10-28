@@ -14,10 +14,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Rnc;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -38,71 +38,38 @@ public class MonitorService extends Service {
     private Telephony tel;
     private boolean tempPass;
 
-    private Notification notification;
-    private NotificationManager mNotificationManager;
+    private MonitorServiceReceiver monitorServiceReceiver;
 
-    MonitorServiceReceiver monitorServiceReceiver;
-
-    final Service thisService = this;
+    private final Service thisService = this;
 
     private Rnc oldRnc;
 
-    Bitmap logoBitmap = null;
-    BufferedInputStream buf = null;
+    private Bitmap logoBitmap = null;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service started");
-        //showNotification();
 
         this.monitorServiceReceiver = new MonitorServiceReceiver();
-
-        Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    logoBitmap = getBitmapFromURL("http://rfm.dataremix.fr/logo.png");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
         tel = rncmobile.getTelephony();
         tempPass = true;
 
         handler = new Handler();
         taskMonitor.run();
+
+        //logoBitmap = getBitmapFromURL("http://rfm.dataremix.fr/logo.png");
     }
 
     /**
      * Display a notification in the notification bar.
      */
-    private void showNotification() {
-
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-        notification = new Notification.Builder(this)
-                .setContentTitle("RNC Free Mobile Service")
-                .setContentText("RNC Free mobile Service Text")
-                .setSmallIcon(R.drawable.ic_notif_small_icon)
-                .setLargeIcon(logoBitmap)
-                .setAutoCancel(true)
-                .setContentIntent(contentIntent).build();
-        mNotificationManager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notification.flags = notification.flags
-                | Notification.FLAG_ONGOING_EVENT;
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-        mNotificationManager.notify(0, notification);
-
-    }
-
-    private Runnable taskMonitor = new Runnable() {
+    private final Runnable taskMonitor = new Runnable() {
         public void run() {
-
-            if (tempPass || oldRnc.get_id() != tel.getLoggedRnc().get_id()) {
+            try {
+            if (tel.getLoggedRnc() != null &&
+                    (tempPass || oldRnc.get_id() != tel.getLoggedRnc().get_id())) {
 
                 // Main intent
                 PendingIntent contentIntent = PendingIntent.getActivity(thisService, 0, new Intent(thisService, MainActivity.class), 0);
@@ -114,6 +81,7 @@ public class MonitorService extends Service {
 
                 if (tel.getLoggedRnc() != null) {
 
+                    Notification notification;
                     if (tel.getNetworkClass() == 2) {
                         notification = new Notification.Builder(thisService)
                                 .setContentTitle(String.valueOf("RNC Free mobile"))
@@ -128,7 +96,7 @@ public class MonitorService extends Service {
                                         + " (" + ((tel.getLoggedRnc().get_tech() == 3) ? "3G" : "4G") + ") ")
                                         + (tel.getLoggedRnc().get_rnc() + ":")
                                         + (tel.getLoggedRnc().get_cid() + " | ")
-                                        + ((tel.getLoggedRnc().get_tech() == 3 ? (2 * tel.getLoggedRnc().getUmtsRscp() - 113) + " dBm" : ""))
+                                        + ((tel.getLoggedRnc().get_tech() == 3 ? tel.getLoggedRnc().getUmtsRscp() + " dBm" : ""))
                                         + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRssi() + " dBm" : "")))
                                 .setContentText(tel.getLoggedRnc().get_txt())
                                 .setSmallIcon(R.drawable.ic_notif_small_icon)
@@ -144,8 +112,7 @@ public class MonitorService extends Service {
                                 .setLargeIcon(logoBitmap)
                                 .setContentIntent(contentIntent).build();
                     }
-                    mNotificationManager =
-                            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     notification.flags = notification.flags
                             | Notification.FLAG_ONGOING_EVENT;
                     notification.flags |= Notification.FLAG_AUTO_CANCEL;
@@ -157,7 +124,18 @@ public class MonitorService extends Service {
                 oldRnc = tel.getLoggedRnc();
                 tempPass = false;
             }
+        } catch (Exception e) {
+                String msg = "Erreur dans monitorService";
+                HttpLog.send(TAG, e, msg);
+                Log.d(TAG, msg + e.toString());
+                Intent intent = new Intent();
+                intent.setAction(MonitorService.ACTION);
+                intent.putExtra(MonitorService.STOP_SERVICE_BROADCAST_KEY,
+                        MonitorService.RQS_STOP_SERVICE);
+                sendBroadcast(intent);
+            }
         }
+
     };
 
     @Override
@@ -191,8 +169,7 @@ public class MonitorService extends Service {
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            return BitmapFactory.decodeStream(input);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

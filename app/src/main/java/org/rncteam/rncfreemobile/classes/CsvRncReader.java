@@ -1,11 +1,11 @@
 package org.rncteam.rncfreemobile.classes;
 
-import android.os.Environment;
+import android.os.NetworkOnMainThreadException;
+import android.util.Log;
 
 import org.rncteam.rncfreemobile.models.Rnc;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,34 +14,27 @@ import java.util.List;
  * Created by cedric on 15/07/2015.
  */
 public class CsvRncReader {
+    private static final String TAG = "CsvRncReader";
 
-    public List<Rnc> run() {
-
-        String csvFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/20815.csv";
-        BufferedReader reader = null;
+    public List<Rnc> run(BufferedReader rd) {
 
         List<Rnc> lCell = new ArrayList<>();
 
         try {
             String line;
-            reader = new BufferedReader(new FileReader(csvFile));
 
-            while ((line = reader.readLine()) != null) {
-                String[] RowData = line.split(";");
-
-                lCell.add(lToRnc(RowData));
+            while ((line = rd.readLine()) != null) {
+                if (line.contains(";")) {
+                    String[] RowData = line.split(";");
+                    lCell.add(lToRnc(RowData));
+                }
             }
+        }
+        catch (NetworkOnMainThreadException ex) {
+            Log.d(TAG, "Erreur site 20815.csv");
         }
         catch (IOException ex) {
             // handle exception
-        }
-        finally {
-            try {
-                reader.close();
-            }
-            catch (IOException e) {
-
-            }
         }
         return lCell;
     }
@@ -62,4 +55,5 @@ public class CsvRncReader {
 
         return rnc;
     }
+
 }

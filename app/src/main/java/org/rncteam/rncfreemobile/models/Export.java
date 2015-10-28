@@ -1,15 +1,5 @@
 package org.rncteam.rncfreemobile.models;
 
-import android.util.Log;
-
-import org.rncteam.rncfreemobile.rncmobile;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
 /**
  * Created by cedric_f25 on 04/10/2015.
  */

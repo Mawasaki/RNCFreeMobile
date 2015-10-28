@@ -7,7 +7,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteStatement;
 
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.models.RncLogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,6 @@ public class DatabaseRnc extends Database {
     private static final String TAG = "DatabaseRnc";
 
     private static final String TABLE_RNCS = "rncs";
-
-    private final String UNIDENTIFIED_CELL_TEXT = "-";
 
     public DatabaseRnc(Context context) {
         super(context);
@@ -123,16 +120,15 @@ public class DatabaseRnc extends Database {
     }
 
     public Integer countAllCid() {
-        List<Rnc> lRnc = new ArrayList<>();
-
         String query = "SELECT count( " + COL_RNC_ID + ") AS nb_rnc FROM " + TABLE_RNCS;
 
         Cursor c = mdb.rawQuery(query, null);
         c.moveToFirst();
 
-        int nc_rnc = c.getInt(0);
+        Integer value = c.getInt(0);
+        c.close();
 
-        return nc_rnc;
+        return value;
     }
 
     public Integer countUMTSRnc() {
@@ -144,9 +140,10 @@ public class DatabaseRnc extends Database {
         Cursor c = mdb.rawQuery(query, null);
         c.moveToFirst();
 
-        int nc_rnc = c.getInt(0);
+        Integer value = c.getInt(0);
+        c.close();
 
-        return nc_rnc;
+        return value;
     }
 
     public Integer countLTERnc() {
@@ -158,9 +155,10 @@ public class DatabaseRnc extends Database {
         Cursor c = mdb.rawQuery(query, null);
         c.moveToFirst();
 
-        int nc_rnc = c.getInt(0);
+        Integer value = c.getInt(0);
+        c.close();
 
-        return nc_rnc;
+        return value;
     }
 
     public Rnc findRncByRncCid(String rncName, String cid) {
@@ -186,13 +184,12 @@ public class DatabaseRnc extends Database {
     public ArrayList<Rnc> findRncByRnc(String rncName) {
         ArrayList<Rnc> lRnc = new ArrayList<>();
 
-        String rncUmts = rncName;
         String rncLte = "40" + rncName;
 
         String query = "SELECT * FROM " + TABLE_RNCS + " WHERE "
                 + COL_RNCS_RNC + " = ? OR " + COL_RNCS_RNC + " = ?;";
 
-        Cursor c = mdb.rawQuery(query, new String[]{rncUmts,rncLte});
+        Cursor c = mdb.rawQuery(query, new String[]{rncName,rncLte});
         c.moveToFirst();
 
         while(!c.isAfterLast()) {

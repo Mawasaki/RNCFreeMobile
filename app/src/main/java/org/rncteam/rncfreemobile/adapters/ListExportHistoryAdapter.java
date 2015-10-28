@@ -1,13 +1,11 @@
 package org.rncteam.rncfreemobile.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -16,10 +14,8 @@ import android.widget.Toast;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.Utils;
 import org.rncteam.rncfreemobile.models.Export;
-import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,16 +24,10 @@ import java.util.List;
 public class ListExportHistoryAdapter extends BaseAdapter {
     private static final String TAG = "ListLogsMainAdapter";
 
-    private Context context;
-    private Activity activity;
-    private LayoutInflater inflater;
-    private List<Export> lExportHistory;
+    private final List<Export> lExportHistory;
 
-    public ListExportHistoryAdapter(Activity activity, Context context, List<Export> lExportHistory) {
-        this.activity = activity;
+    public ListExportHistoryAdapter(List<Export> lExportHistory) {
         this.lExportHistory = lExportHistory;
-        this.context = context;
-        this.inflater = LayoutInflater.from(context);
     }
 
     public int getCount() {
@@ -52,6 +42,7 @@ public class ListExportHistoryAdapter extends BaseAdapter {
         return lExportHistory.get(position).get_id();
     }
 
+    @SuppressWarnings("UnusedAssignment")
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
@@ -59,8 +50,9 @@ public class ListExportHistoryAdapter extends BaseAdapter {
             holder = new ViewHolder();
 
             // Get UI Elements
-            convertView = this.inflater.inflate(R.layout.listview_export_history,
-                    parent, false);
+            LayoutInflater li = (LayoutInflater) rncmobile.getAppContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = li.inflate(R.layout.listview_export_history, parent, false);
 
             // TextView
             holder.txtMainInfo = (TextView) convertView.findViewById(R.id.txt_export_history_infos);
@@ -84,9 +76,7 @@ public class ListExportHistoryAdapter extends BaseAdapter {
                 + export.get_user_nick();
 
         // Date
-        // Date
-        String lDate = ""; String fDate = "";
-        Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000L);
+        String fDate = "";
 
         fDate = Utils.get_formated_date_abbrev(export.get_date());
 
@@ -133,7 +123,6 @@ public class ListExportHistoryAdapter extends BaseAdapter {
         TextView txtMainInfo;
         TextView txtDate;
         TextView txtNbTotal;
-        TextView txtNbDetailed;
         TextView txtType;
         TextView txtTel;
         TextView txtVersion;

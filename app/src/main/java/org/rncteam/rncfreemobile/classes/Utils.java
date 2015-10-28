@@ -1,16 +1,20 @@
 package org.rncteam.rncfreemobile.classes;
 
+import android.content.SharedPreferences;
 import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -94,5 +98,41 @@ final public class Utils {
         double c = 2 * Math.asin(Math.sqrt(a));
 
         return Radius * c;
+    }
+
+    public static void storeLastPos(String lastPosLat, String lastPosLon, String lastZoom) {
+        DatabaseInfo dbi = new DatabaseInfo(rncmobile.getAppContext());
+        dbi.open();
+
+        dbi.updateInfo("lastPosLat", "0", lastPosLat);
+        dbi.updateInfo("lastPosLon", "0", lastPosLon);
+        dbi.updateInfo("lastZoom", "0", lastZoom);
+
+        dbi.close();
+    }
+
+    public static ArrayList<String> getLastPos() {
+        DatabaseInfo dbi = new DatabaseInfo(rncmobile.getAppContext());
+        dbi.open();
+
+        ArrayList<String> lastPos = new ArrayList<>();
+
+        try {
+            lastPos.add(0, dbi.getInfo("lastPosLat").get(2).toString());
+            lastPos.add(1, dbi.getInfo("lastPosLon").get(2).toString());
+            lastPos.add(2, dbi.getInfo("lastZoom").get(2).toString());
+        } catch (IndexOutOfBoundsException e) {
+            String msg = "Erreur, recréaton des valeurs par défauts";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
+
+            lastPos.add(0, "46.71109");
+            lastPos.add(1, "1.7191036");
+            lastPos.add(2, "5.0f");
+        }
+
+        dbi.close();
+
+        return lastPos;
     }
 }

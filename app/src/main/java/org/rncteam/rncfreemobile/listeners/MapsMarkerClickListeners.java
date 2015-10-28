@@ -1,11 +1,8 @@
 package org.rncteam.rncfreemobile.listeners;
 
-import android.app.Activity;
-import android.util.Log;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
-import org.rncteam.rncfreemobile.classes.Elevation;
 import org.rncteam.rncfreemobile.rncmobile;
 
 /**

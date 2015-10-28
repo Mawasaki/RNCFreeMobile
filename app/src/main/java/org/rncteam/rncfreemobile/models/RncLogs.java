@@ -1,16 +1,6 @@
 package org.rncteam.rncfreemobile.models;
 
-import android.text.format.DateUtils;
-import android.util.Log;
-
-import org.rncteam.rncfreemobile.rncmobile;
-
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Created by cedricf_25 on 21/07/2015.
@@ -37,8 +27,7 @@ public class RncLogs implements Serializable {
     }
 
     public boolean isRncIdentified() {
-        if(get_txt().equals("-") && get_lat() == 0.0 && get_lon() == 0.0) return false;
-        else return true;
+        return !(get_txt().equals("-") && get_lat() == 0.0 && get_lon() == 0.0);
     }
 
     // Getter & setter

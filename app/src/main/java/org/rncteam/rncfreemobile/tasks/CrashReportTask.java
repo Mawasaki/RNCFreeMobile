@@ -1,15 +1,11 @@
 package org.rncteam.rncfreemobile.tasks;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -24,20 +20,14 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
 
     private static final String S_URL = "http://rfm.dataremix.fr/crash.php";
 
-    private Context context;
-    Activity activity;
-    private Throwable err;
-    private String thread;
-    private  HttpURLConnection conn;
+    private final Throwable err;
+    private final String thread;
+    private final String sTAG;
 
-    public CrashReportTask(Context contex, Throwable err, String thread) {
-        this.context = contex;
+    public CrashReportTask(String sTAG, Throwable err, String thread) {
         this.err = err;
         this.thread = thread;
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
+        this.sTAG = sTAG;
     }
 
     @Override
@@ -49,7 +39,7 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
         try {
 
             URL url = new URL(S_URL);
-            conn = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestMethod("POST");
@@ -68,10 +58,10 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
 
             String report = err.toString() + "\n";
 
-            report += "--------- Stack trace ---------\n" + this.thread;
+            report += "--------- Stack trace ---------\n";
 
-            for(int i=0;i<arr.length;i++) {
-                report += "    " + arr[i].toString()+"\n";
+            for (StackTraceElement anArr : arr) {
+                report += "    " + anArr.toString() + "\n";
             }
 
             report += "-------------------------------\n";
@@ -82,9 +72,8 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
             if(cause != null) {
                 report += cause.toString() + "\n\n";
                 arr = cause.getStackTrace();
-                for (int i=0; i<arr.length; i++)
-                {
-                    report += "    "+arr[i].toString()+"\n";
+                for (StackTraceElement anArr : arr) {
+                    report += "    " + anArr.toString() + "\n";
                 }
             }
             report += "-------------------------------\n\n";
@@ -93,25 +82,24 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
 
             String parameters = "phone=" + android.os.Build.MODEL +
                                 "&v_android=" + android.os.Build.VERSION.RELEASE +
-                                "&class=" + err.getStackTrace().getClass().getName() +
+                                "&v_app=" + rncmobile.appVersion() +
+                                "&msg=" + sTAG + ":" + thread +
                                 "&crash=" + report;
-                                //" |3 " + err.get;
-
 
             request.write(parameters);
 
             request.flush();
             request.close();
 
-            String line = "";
-            String response = null;
+            String line;
+            String response;
             InputStreamReader isr = new InputStreamReader(conn.getInputStream());
             BufferedReader reader = new BufferedReader(isr);
             StringBuilder sb = new StringBuilder();
 
             while ((line = reader.readLine()) != null)
             {
-                sb.append(line + "\n");
+                sb.append(line).append("\n");
             }
 
             response = sb.toString();
@@ -129,16 +117,13 @@ public class CrashReportTask extends AsyncTask<Void, Void, String> {
 
         } catch (Exception e) {
             Log.d(TAG, "Error send file: " + e.toString());
-            Toast.makeText(rncmobile.getAppContext(), "Erreur. Vérifier la connexion", Toast.LENGTH_LONG).show();
             return null;
         }
     }
 
     @Override
     protected void onPostExecute(String result) {
-        //Toast.makeText(activity, "Report RNC mobile envoyé", Toast.LENGTH_LONG).show();
 
-        System.exit(1); // kill off the crashed app
     }
 
 }

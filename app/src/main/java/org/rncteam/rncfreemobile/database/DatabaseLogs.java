@@ -6,10 +6,8 @@ import android.database.Cursor;
 
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
-import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by cedricf_25 on 21/07/2015.
@@ -70,7 +68,7 @@ public class DatabaseLogs extends Database {
     }
 
     public ArrayList<RncLogs> findAllRncLogs() {
-        ArrayList<RncLogs> lRncLogs = new ArrayList<RncLogs>();
+        ArrayList<RncLogs> lRncLogs = new ArrayList<>();
 
         String query = "SELECT r._id as rid, l._id as lid, * "
                 + " FROM " + TABLE_RNCS + " AS r"
@@ -92,8 +90,6 @@ public class DatabaseLogs extends Database {
     }
 
     public RncLogs findOneRncLogs(int rncId) {
-        RncLogs rncLogs = new RncLogs();
-
         String query = "SELECT * FROM " + TABLE_LOGS + " WHERE "
                 + COL_LOGS_RNC_ID + " = ?;";
 

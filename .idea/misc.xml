@@ -6,6 +6,7 @@
       <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.MonitorFragment TAG" />
       <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.listeners.MapsChangeListeners TAG" />
       <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.tasks.AnfrData TAG" />
+      <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.tasks.ProfileTask TAG" />
     </entry_points>
   </component>
   <component name="NullableNotNullManager">

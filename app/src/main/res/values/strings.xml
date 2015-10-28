@@ -34,4 +34,8 @@
     <string name="title_maps">Maps</string>
     <string name="title_data">Import/Export</string>
     <string name="title_preference">Settings</string>
+
+    <string name="lastPosLat">46.71109</string>
+    <string name="lastPosLon">1.7191036</string>
+    <string name="lastZoom">5.0f</string>
 </resources>

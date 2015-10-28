@@ -2,13 +2,16 @@ package org.rncteam.rncfreemobile.models;
 
 import android.telephony.SignalStrength;
 
-import org.rncteam.rncfreemobile.database.Database;
+import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by cedric_f25 on 15/07/2015.
@@ -23,6 +26,8 @@ public class Rnc {
 
     public boolean NOT_IDENTIFIED;
     public boolean AUTOLOG;
+
+    private final int RSSI_CONSTANT = 17;
 
     // Database attributes
     private int _id;
@@ -93,11 +98,11 @@ public class Rnc {
         }
     }
 
-    public int getStdCid() {
+    private int getStdCid() {
         return get_lcid() & 0xffff;
     }
 
-    public int getExtCid() {
+    private int getExtCid() {
         return get_lcid() & 0xfff;
     }
 
@@ -125,12 +130,15 @@ public class Rnc {
                     return (int)mthd.invoke(signalStrength);
                 }
                 //else return -1;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         return -1;
+    }
+
+    public int computeRssi() {
+        if(getLteRsrp() != -1 || getLteRsrq() != -1) return RSSI_CONSTANT + getLteRsrp() - getLteRsrq();
+        else return -1;
     }
 
     public String get_real_rnc() {
@@ -169,16 +177,14 @@ public class Rnc {
         for(int i=0;i<lRnc.size();i++) {
             if(lRnc.get(i).get_cid() == rnc.getCid()) {
                 Rnc rRnc = lRnc.get(i);
-                if(rRnc.get_lat() == 0.0 && rRnc.get_lon() == 0.0 && rRnc.get_txt().equals("-")) {
-                    rRnc.NOT_IDENTIFIED = true;
-                } else rRnc.NOT_IDENTIFIED = false;
+                rRnc.NOT_IDENTIFIED = rRnc.get_lat() == 0.0 && rRnc.get_lon() == 0.0 && rRnc.get_txt().equals("-");
                 return rRnc;
             }
         }
         return null;
     }
 
-    public Rnc getAnIdentifiedRnc(ArrayList<Rnc> lRnc) {
+    private Rnc getAnIdentifiedRnc(ArrayList<Rnc> lRnc) {
         for(int i=0;i<lRnc.size();i++) {
             if(!lRnc.get(i).get_txt().equals("-")
                     && lRnc.get(i).get_lat() != 0.0 && lRnc.get(i).get_lon() != 0.0) {
@@ -202,31 +208,70 @@ public class Rnc {
         return rnc;
     }
 
-    public void updateFamilyUnknowRnc(ArrayList<Rnc> lRnc, Rnc rnc) {
-
-        for(int i=0;i<lRnc.size();i++) {
-            if(lRnc.get(i).get_txt().equals("-")
-                    && lRnc.get(i).get_lat() == 0.0 && lRnc.get(i).get_lon() == 0.0) {
-                Rnc rncToUpdate = lRnc.get(i);
-                rncToUpdate.set_lat(rnc.get_lat());
-                rncToUpdate.set_lon(rnc.get_lon());
-                rncToUpdate.set_txt(rnc.get_txt());
-
-                DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
-                dbr.open();
-                dbr.updateRnc(rncToUpdate);
-                dbr.close();
-            }
-        }
-
-    }
-
     // Redifine txt of a new RNC from 20815.csv
     private String getFormattedString(String rncName) {
         // Pos of [
         int pos = rncName.indexOf("[");
         if(pos == -1) return rncName;
         else return rncName.substring(0, pos - 1);
+    }
+
+    public Rnc setRoamingCid(Rnc rnc) {
+        DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
+        dbr.open();
+        DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
+        dbl.open();
+
+        long lastInsertId = -1;
+
+        // Get all entries of this RNC
+        ArrayList<Rnc> lRncDb = dbr.findRncByRnc(rnc.get_real_rnc());
+        // Check if we know RNC and is identified or not
+        Rnc iRnc = rnc.getThisRnc(lRncDb, rnc);
+
+        // If RNC is know
+        if(iRnc != null) {
+            // if RNC is already identified
+            if(iRnc.NOT_IDENTIFIED) {
+                dbr.updateRnc(rnc);
+            }
+            rnc.set_id(iRnc.get_id());
+        } else {
+            // Recopy the name of cell and gps if exists
+            lastInsertId = dbr.addRnc(rnc);
+            rnc.set_id((int) lastInsertId);
+        }
+
+        // For log, we prepare infos
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+        RncLogs rncLogs = new RncLogs();
+        rncLogs.set_date(sdf.format(new Date()));
+
+        // if we detect an insertion, add in log
+        if(lastInsertId > 0) {
+            rncLogs.set_rnc_id((int)lastInsertId);
+            dbl.addLog(rncLogs);
+        } else {
+            // Check if present in rnc database and we have already set this cid
+            if(iRnc != null) {
+                RncLogs iRncLogs = dbl.findOneRncLogs(iRnc.get_id());
+                // If we find a log, just update it
+                if(iRncLogs != null) {
+                    iRncLogs.set_date(sdf.format(new Date()));
+                    dbl.updateLogs(iRncLogs);
+                } else {
+                    // Else add log
+                    rncLogs.set_rnc_id(iRnc.get_id());
+                    dbl.addLog(rncLogs);
+                }
+            }
+        }
+        rncmobile.notifyListLogsHasChanged = true;
+
+        dbl.close();
+        dbr.close();
+
+        return rnc;
     }
 
     // Getter & Setter Database
@@ -356,7 +401,7 @@ public class Rnc {
         return lteAsu;
     }
 
-    public void setLteAsu(int lteAsu) {
+    private void setLteAsu(int lteAsu) {
         this.lteAsu = lteAsu;
     }
 
@@ -364,7 +409,7 @@ public class Rnc {
         return lteRsrp;
     }
 
-    public void setLteRsrp(int lteRsrp) {
+    private void setLteRsrp(int lteRsrp) {
         this.lteRsrp = lteRsrp;
     }
 
@@ -372,7 +417,7 @@ public class Rnc {
         return lteRsrq;
     }
 
-    public void setLteRsrq(int lteRsrq) {
+    private void setLteRsrq(int lteRsrq) {
         this.lteRsrq = lteRsrq;
     }
 
@@ -380,7 +425,7 @@ public class Rnc {
         return lteRssnr;
     }
 
-    public void setLteRssnr(int lteRssnr) {
+    private void setLteRssnr(int lteRssnr) {
         this.lteRssnr = lteRssnr;
     }
 
@@ -388,7 +433,7 @@ public class Rnc {
         return lteCqi;
     }
 
-    public void setLteCqi(int lteCqi) {
+    private void setLteCqi(int lteCqi) {
         this.lteCqi = lteCqi;
     }
 

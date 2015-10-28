@@ -7,7 +7,6 @@ import android.database.Cursor;
 import org.rncteam.rncfreemobile.models.Export;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by cedricf_25 on 04/10/2015.

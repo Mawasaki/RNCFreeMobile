@@ -10,7 +10,6 @@ public class NavDrawerItem {
     private String title;
 
     public NavDrawerItem() {
-
     }
 
     public NavDrawerItem(boolean showNotify, String title) {

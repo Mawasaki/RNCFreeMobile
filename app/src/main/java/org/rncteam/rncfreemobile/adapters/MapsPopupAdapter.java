@@ -1,13 +1,15 @@
 package org.rncteam.rncfreemobile.adapters;
 
-import android.annotation.SuppressLint;
-import android.graphics.Color;
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
@@ -16,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.AnfrInfos;
+import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.classes.Telephony;
@@ -27,13 +30,11 @@ import org.rncteam.rncfreemobile.rncmobile;
 public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
     private static final String TAG = "MapsPopupAdapter";
 
-    private View popup=null;
-    private LayoutInflater inflater=null;
+    private View popup = null;
+    private ViewGroup vg;
 
-    private Marker marker;
-
-    public MapsPopupAdapter(LayoutInflater inflater) {
-        this.inflater=inflater;
+    public MapsPopupAdapter(ViewGroup container) {
+        this.vg = container;
     }
 
     @Override
@@ -41,14 +42,13 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         return(null);
     }
 
-    @SuppressLint("InflateParams")
     @Override
     public View getInfoContents(Marker marker) {
         if (popup == null) {
-            popup=inflater.inflate(R.layout.marker_popup, null);
+            LayoutInflater li = (LayoutInflater) rncmobile.getAppBaseContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            popup=li.inflate( R.layout.marker_popup, vg, false);
         }
-
-        this.marker = marker;
 
         Maps maps = rncmobile.getMaps();
         AnfrInfos anfrInfos = maps.getAnfrInfoMarkers(marker);
@@ -67,15 +67,12 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         TextView txt51 = (TextView) popup.findViewById(R.id.txt51);
         TextView txt6 = (TextView) popup.findViewById(R.id.txt6);
 
-        TextView umts = (TextView) popup.findViewById(R.id.umts);
-        TextView lte = (TextView) popup.findViewById(R.id.lte);
-
         Button bt1 = (Button) popup.findViewById(R.id.bt1);
 
         /* Title */
         title.setText("");
 
-        rnc.setText("RNC : " + ((anfrInfos.getRnc().NOT_IDENTIFIED == true) ? "-" : anfrInfos.getRnc().get_real_rnc()));
+        rnc.setText("RNC : " + ((anfrInfos.getRnc().NOT_IDENTIFIED) ? "-" : anfrInfos.getRnc().get_real_rnc()));
 
         String fullAddress = (!anfrInfos.getAdd1().equals("")) ? anfrInfos.getAdd1() + " " : "";
         fullAddress += (!anfrInfos.getAdd2().equals("")) ? anfrInfos.getAdd2() + " " : "";
@@ -89,19 +86,15 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         //txt2.setText(anfrInfos.getCp() + " " + anfrInfos.getCommune());
         txt2.setVisibility(View.GONE);
 
-        txt3.setText("Implantation : " + (anfrInfos.getImplantation() != "null" ? anfrInfos.getImplantation() : ""));
-        txt31.setText(" / Modification : " + ((anfrInfos.getModification() != "null") ? anfrInfos.getModification() : "-"));
+        txt3.setText("Implantation : " + (anfrInfos.getImplantation().equals("null") ? anfrInfos.getImplantation() : ""));
+        txt31.setText(" / Modification : " + (anfrInfos.getModification().equals("null") ? anfrInfos.getModification() : "-"));
 
-        txt4.setText("Activation : " + ((anfrInfos.getActivation() != "null") ? anfrInfos.getActivation() : "-"));
-        txt41.setText(" / Hauteur : " + ((anfrInfos.getHauteur() != "null") ? anfrInfos.getHauteur() + "m" : "-"));
+        txt4.setText("Activation : " + (anfrInfos.getActivation().equals("null") ? anfrInfos.getActivation() : "-"));
+        txt41.setText(" / Hauteur : " + (anfrInfos.getHauteur().equals("null") ? anfrInfos.getHauteur() + "m" : "-"));
 
-        txt51.setText(" / Propriétaire : " + ((anfrInfos.getProprietaire() != "") ? anfrInfos.getProprietaire() : "-"));
+        txt51.setText(" / Propriétaire : " + (anfrInfos.getProprietaire().equals("") ? anfrInfos.getProprietaire() : "-"));
 
         txt6.setText("Support : " + anfrInfos.getTypeSupport());
-
-        // Tech
-        //umts.setTextColor((anfrInfos.getRnc().get_tech() == 3) ? Color.parseColor("#000000") : Color.parseColor("#DDDDDD"));
-        //lte.setTextColor((anfrInfos.getRnc().get_tech() == 4) ? Color.parseColor("#000000") : Color.parseColor("#DDDDDD"));
 
         // Antenna Image
         JSONArray secteurs = anfrInfos.getAzimuts();
@@ -115,45 +108,45 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         int countFH = 0;
 
         for(int i=0;i<secteurs.length();i++) {
+            try {
+                // Azimut
+                ImageView ant = new ImageView(rncmobile.getAppContext());
+                ant.setImageResource(R.drawable.blines);
 
-            if(secteurs != null) {
-                try {
-                    // Azimut
-                    ImageView ant = new ImageView(rncmobile.getAppContext());
-                    ant.setImageResource(R.drawable.blines);
+                // FH
+                ImageView fh = new ImageView(rncmobile.getAppContext());
+                fh.setImageResource(R.drawable.blines_b);
 
-                    // FH
-                    ImageView fh = new ImageView(rncmobile.getAppContext());
-                    fh.setImageResource(R.drawable.blines_b);
+                // BLR
+                ImageView blr = new ImageView(rncmobile.getAppContext());
+                blr.setImageResource(R.drawable.blines_v);
 
-                    // BLR
-                    ImageView blr = new ImageView(rncmobile.getAppContext());
-                    blr.setImageResource(R.drawable.blines_v);
+                ant.setPivotX(0); fh.setPivotX(1); blr.setPivotX(1);
+                ant.setPivotY(1); fh.setPivotY(1); blr.setPivotY(1);
 
-                    ant.setPivotX(0); fh.setPivotX(1); blr.setPivotX(1);
-                    ant.setPivotY(1); fh.setPivotY(1); blr.setPivotY(1);
+                double d_azimut = (Double.parseDouble(secteurs.getJSONObject(i).getString("AER_NB_AZIMUT")));
+                float azimut = ((float) d_azimut - 180);
 
-                    double d_azimut = (Double.parseDouble(secteurs.getJSONObject(i).getString("AER_NB_AZIMUT")));
-                    float azimut = ((float) d_azimut - 180);
-
-                    if(secteurs.getJSONObject(i).getString("EMR_LB_SYSTEME").equals("FH")) {
-                        fh.setRotation(azimut);
-                        rl.addView(fh);
-                        countFH++;
-                    }
-                    else if(secteurs.getJSONObject(i).getString("EMR_LB_SYSTEME").equals("BLR 3 GHZ")) {
-                        blr.setRotation(azimut);
-                        rl.addView(blr);
-                        countBlr++;
-                    }
-                    else {
-                        ant.setRotation(azimut);
-                        rl.addView(ant);
-                        countAnt++;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if(secteurs.getJSONObject(i).getString("EMR_LB_SYSTEME").equals("FH")) {
+                    fh.setRotation(azimut);
+                    rl.addView(fh);
+                    countFH++;
                 }
+                else if(secteurs.getJSONObject(i).getString("EMR_LB_SYSTEME").equals("BLR 3 GHZ")) {
+                    blr.setRotation(azimut);
+                    rl.addView(blr);
+                    countBlr++;
+                }
+                else {
+                    ant.setRotation(azimut);
+                    rl.addView(ant);
+                    countAnt++;
+                }
+            } catch (JSONException e) {
+                String msg = "Erreur lors de la génération de l'image des secteurs";
+                HttpLog.send(TAG, e, msg);
+                Log.d(TAG, msg + e.toString());
+                Toast.makeText(rncmobile.getAppContext(), msg, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -176,25 +169,20 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         newRnc.set_lac(logRnc.get_lac());
         newRnc.set_psc(logRnc.get_psc());
 
-        // Button
-        if(newRnc != null) {
-            if (anfrInfos.getRnc().NOT_IDENTIFIED == true/* && newRnc.get_mnc() == 15*/) {
-                bt1.setText("Attribuer le RNC " + newRnc.get_real_rnc() + " à cette addresse");
+        // Button text
+        if (anfrInfos.getRnc().NOT_IDENTIFIED/* && newRnc.get_mnc() == 15*/) {
+            bt1.setText("Attribuer le RNC " + newRnc.get_real_rnc() + " à cette addresse");
 
-                newRnc.set_lat(Double.valueOf(anfrInfos.getLat()));
-                newRnc.set_lon(Double.valueOf(anfrInfos.getLon()));
-                newRnc.set_txt(fullAddress.toUpperCase());
+            newRnc.set_lat(Double.valueOf(anfrInfos.getLat()));
+            newRnc.set_lon(Double.valueOf(anfrInfos.getLon()));
+            newRnc.set_txt(fullAddress.toUpperCase());
 
-                tel.setMarkedRnc(newRnc);
-            } else if(newRnc.get_mnc() != 15) {
-                bt1.setText("Impossible d'attribuer un RNC Orange");
-                marker.setTitle("green");
-            } else {
-                bt1.setText("Antenne déja identifiée");
-                marker.setTitle("green");
-            }
+            tel.setMarkedRnc(newRnc);
+        } else if(newRnc.get_mnc() != 15) {
+            bt1.setText("Impossible d'attribuer un RNC Orange");
+            marker.setTitle("green");
         } else {
-            bt1.setText("Non connecté");
+            bt1.setText("Antenne déja identifiée");
             marker.setTitle("green");
         }
 

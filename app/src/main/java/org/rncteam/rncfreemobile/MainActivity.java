@@ -1,20 +1,16 @@
 package org.rncteam.rncfreemobile;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +18,7 @@ import android.view.WindowManager;
 
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
+import org.rncteam.rncfreemobile.classes.Utils;
 
 
 /**
@@ -31,12 +28,9 @@ import org.rncteam.rncfreemobile.classes.Telephony;
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
     private static final String TAG = "MainActivity";
 
-    // Declaring Your View and Variables
-    private Toolbar mToolbar;
     private SharedPreferences sp;
 
     private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
 
     private static final int NUM_PAGES = 4;
 
@@ -48,10 +42,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         // Init main classes
         rncmobile.setTel(new Telephony());
@@ -72,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         }
 
         displayView(0);
-
-        stopMonitorService();
     }
 
     @Override
@@ -81,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         super.onDestroy();
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        Telephony tel = rncmobile.getTelephony();
+        tel.stopListenManager();
     }
 
     @Override
@@ -99,6 +94,12 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     public void onPause() {
         super.onPause();
+
+        // Store pos in prefs
+        Maps maps = rncmobile.getMaps();
+        Utils.storeLastPos(String.valueOf(maps.getLastPosLat()),
+                String.valueOf(maps.getLastPosLon()),
+                String.valueOf(maps.getLastZoom()));
     }
 
     public void onStop() {
@@ -107,8 +108,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        //MenuItem logToggle = menu.findItem(R.id.action_delete);
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -120,7 +119,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        stopMonitorService();
+        launchMonitorService();
+        rncmobile.setMainActivity(this);
+        displayView(0);
     }
 
     @Override
@@ -135,22 +136,13 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         if(id == R.id.action_quit) {
             finish();
+            stopMonitorService();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-
-        // Service
-
-        launchMonitorService();
-        finish();
-    }
-
-    public void launchMonitorService() {
+    private void launchMonitorService() {
         if(sp.getBoolean("background_service", true)) {
             Intent i = new Intent(this, MonitorService.class);
             i.putExtra("foo", "bar");
@@ -158,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         }
     }
 
-    public void stopMonitorService() {
+    private void stopMonitorService() {
         Intent intent = new Intent();
         intent.setAction(MonitorService.ACTION);
         intent.putExtra(MonitorService.STOP_SERVICE_BROADCAST_KEY,
@@ -171,9 +163,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         displayView(position);
     }
 
-    public Fragment displayView(int position) {
-        Fragment fragment = null;
-        String title = getString(R.string.app_name);
+    public void displayView(int position) {
 
         switch (position) {
             /*
@@ -206,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         }
 
         mPager.setCurrentItem(position);
-        return fragment;
     }
 
     /**
@@ -221,23 +210,18 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         @Override
         public Fragment getItem(int position) {
             Fragment fragment = null;
-            String title = getString(R.string.app_name);
             switch (position) {
                 case 0:
                     fragment = new MonitorFragment();
-                    title = getString(R.string.title_monitor);
                     break;
                 case 1:
                     fragment = new LogsFragment();
-                    title = getString(R.string.title_logs);
                     break;
                 case 2:
                     fragment = new InfosFragment();
-                    title = getString(R.string.title_infos);
                     break;
                 case 3:
                     fragment = new MapsFragment();
-                    title = getString(R.string.title_maps);
                     break;
             }
             return fragment;

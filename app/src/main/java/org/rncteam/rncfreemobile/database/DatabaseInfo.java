@@ -47,6 +47,9 @@ public class DatabaseInfo extends Database {
         if (c.getCount() > 0) {
             c.moveToFirst();
             lInfo = cToType(c);
+        } else {
+            // create pos
+            setDefaultInfos();
         }
 
         c.close();
@@ -58,23 +61,8 @@ public class DatabaseInfo extends Database {
         mdb.delete(TABLE_INFOS, null, null);
     }
 
-    public ArrayList findInfoByType(String type) {
-        ArrayList info = null;
-
-        String query = "SELECT * FROM " + TABLE_INFOS + " WHERE " + COL_INFO_TYPE + " = ?; ";
-        Cursor c = mdb.rawQuery(query, new String[]{type});
-
-        if (c.getCount() > 0) {
-            c.moveToFirst();
-            info = cToType(c);
-        }
-        c.close();
-
-        return info;
-    }
-
     private ArrayList cToType(Cursor c) {
-        ArrayList<String> lInfo = new ArrayList();
+        ArrayList<String> lInfo = new ArrayList<>();
 
         //cell.set_id(c.getInt(0));
         lInfo.add(0, c.getString(1));

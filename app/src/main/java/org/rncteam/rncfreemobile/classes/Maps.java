@@ -1,11 +1,10 @@
 package org.rncteam.rncfreemobile.classes;
 
-import android.app.Activity;
 import android.view.View;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,21 +39,24 @@ public class Maps {
     private float lastAccu;
     private MapsFragment activity;
 
-    private Map<Marker, AnfrInfos> markers;
+    private final Map<Marker, AnfrInfos> markers;
 
     public Maps() {
-        lastZoom = 0;
-        lastPosLat = 0.0;
-        lastPosLon = 0.0;
+        ArrayList<String> lastPos = Utils.getLastPos();
+        setLastPosLat(Double.valueOf(lastPos.get(0)));
+        setLastPosLon(Double.valueOf(lastPos.get(1)));
+        setLastZoom(Float.valueOf(lastPos.get(2)));
+
         lastAlt = 0.0;
         lastAccu = 0;
 
-        markers = new HashMap<Marker, AnfrInfos>();
+        markers = new HashMap<>();
 
         this.mMap = null;
     }
 
     public void initializeMap(MapsFragment activity) {
+
         if (lastZoom == 0 && lastPosLat == 0.0 && lastPosLon == 0.0) {
             Telephony tel = rncmobile.getTelephony();
 
@@ -69,11 +71,11 @@ public class Maps {
                     this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 } else {
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                            new LatLng(46.71109, 1.7191036), 5.0f));
+                            new LatLng(lastPosLat, lastPosLon), lastZoom));
                 }
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(46.71109, 1.7191036), 5.0f));
+                        new LatLng(lastPosLat, lastPosLon), lastZoom));
             }
 
         } else {
@@ -81,7 +83,7 @@ public class Maps {
                     new LatLng(lastPosLat, lastPosLon), lastZoom));
         }
 
-        setMapMyLocationEnabled(true);
+        setMapMyLocationEnabled();
 
         setCameraListener();
         setLocationListener();
@@ -90,8 +92,8 @@ public class Maps {
         this.activity = activity;
     }
 
-    public void setMapMyLocationEnabled(boolean enabled) {
-        mMap.setMyLocationEnabled(enabled);
+    public void setMapMyLocationEnabled() {
+        mMap.setMyLocationEnabled(true);
     }
 
     public void setCameraListener() {
@@ -109,17 +111,16 @@ public class Maps {
         mMap.setOnMarkerClickListener(mapMarkerListener);
     }
 
-    public void setLastPosLat(double latitude) {
-        if(mMap.isMyLocationEnabled())
-            this.lastPosLat = latitude;
-    }
-
     public double getLastPosLat() {
         return lastPosLat;
     }
 
     public double getLastPosLon() {
         return lastPosLon;
+    }
+
+    public double getLastZoom() {
+        return lastZoom;
     }
 
     public double getLastAlt() {
@@ -130,9 +131,12 @@ public class Maps {
         return lastAccu;
     }
 
+    public void setLastPosLat(double latitude) {
+        this.lastPosLat = latitude;
+    }
+
     public void setLastPosLon(double longitude) {
-        if(mMap.isMyLocationEnabled())
-            this.lastPosLon = longitude;
+        this.lastPosLon = longitude;
     }
 
     public void setLastAlt(double lastAlt) {
@@ -146,8 +150,7 @@ public class Maps {
     }
 
     public boolean isMapInitilized() {
-        if(mMap != null) return true;
-        else return false;
+        return mMap != null;
     }
 
     public AnfrInfos getAnfrInfoMarkers(Marker marker) {
@@ -155,9 +158,8 @@ public class Maps {
     }
 
     public void removeMarkers() {
-        Iterator it = markers.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
+        for (Object o : markers.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
             Marker m = (Marker) pair.getKey();
             m.remove();
         }
@@ -187,10 +189,9 @@ public class Maps {
     public void switchMarkerIcon(Rnc newRnc) {
         Marker oldMarker = null;
         Marker newMarker = null;
-        if(markers != null && markers.size() > 0) {
-            Iterator it = markers.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
+        if(markers.size() > 0) {
+            for (Object o : markers.entrySet()) {
+                Map.Entry pair = (Map.Entry) o;
                 Marker m = (Marker) pair.getKey();
                 AnfrInfos anfrInfos = (AnfrInfos) pair.getValue();
 
@@ -231,8 +232,6 @@ public class Maps {
     public void setExtInfoBox() {
         Utils utils = new Utils();
         Telephony tel = rncmobile.getTelephony();
-
-        float accurency = lastAccu;
 
         activity.mapExtInfo.setVisibility(View.VISIBLE);
         activity.txtMapExtInfosRnc.setText("RNC: " + tel.getLoggedRnc().get_rnc());

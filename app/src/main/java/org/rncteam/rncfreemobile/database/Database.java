@@ -5,11 +5,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
-
-import org.rncteam.rncfreemobile.rncmobile;
-
-import java.sql.SQLException;
 
 /**
  * Created by cedricf_25 on 19/07/2015.
@@ -67,7 +62,7 @@ public class Database  extends SQLiteOpenHelper {
             + ");";
 
     /* Table Logs declaration */
-    protected static final String TABLE_LOGS = "logs";
+    private static final String TABLE_LOGS = "logs";
 
     protected static final String COL_LOGS_ID = "_id";
     protected static final String COL_LOGS_RNC_ID   = "_rnc_id";
@@ -82,9 +77,9 @@ public class Database  extends SQLiteOpenHelper {
             + ");";
 
     /* Table Export declaration */
-    protected static final String TABLE_EXPORT = "export";
+    private static final String TABLE_EXPORT = "export";
 
-    protected static final String COL_EXPORT_ID        = "_id";
+    private static final String COL_EXPORT_ID        = "_id";
     protected static final String COL_EXPORT_USER_ID   = "_user_id";
     protected static final String COL_EXPORT_USER_NICK = "_user_nick";
     protected static final String COL_EXPORT_USER_PWD  = "_user_pwd";
@@ -133,7 +128,27 @@ public class Database  extends SQLiteOpenHelper {
         values.put(COL_INFO_TYPE, "rncBaseUpdate");
         values.put(COL_INFO_DATE, "0");
         values.put(COL_INFO_TEXT, "-");
+        db.insert(TABLE_INFOS, null, values);
 
+        // Lat
+        values = new ContentValues();
+        values.put(COL_INFO_TYPE, "lastPosLat");
+        values.put(COL_INFO_DATE, "0");
+        values.put(COL_INFO_TEXT, "46.71109");
+        db.insert(TABLE_INFOS, null, values);
+
+        // Lon
+        values = new ContentValues();
+        values.put(COL_INFO_TYPE, "lastPosLon");
+        values.put(COL_INFO_DATE, "0");
+        values.put(COL_INFO_TEXT, "1.7191036");
+        db.insert(TABLE_INFOS, null, values);
+
+        // Zoom
+        values = new ContentValues();
+        values.put(COL_INFO_TYPE, "lastZoom");
+        values.put(COL_INFO_DATE, "0");
+        values.put(COL_INFO_TEXT, "5.0f");
         db.insert(TABLE_INFOS, null, values);
     }
 
@@ -160,5 +175,28 @@ public class Database  extends SQLiteOpenHelper {
 
     public void close(){
         mdb.close();
+    }
+
+    protected void setDefaultInfos() {
+        // Lat
+        ContentValues values = new ContentValues();
+        values.put(COL_INFO_TYPE, "lastPosLat");
+        values.put(COL_INFO_DATE, "0");
+        values.put(COL_INFO_TEXT, "46.71109");
+        mdb.insert(TABLE_INFOS, null, values);
+
+        // Lon
+        values = new ContentValues();
+        values.put(COL_INFO_TYPE, "lastPosLon");
+        values.put(COL_INFO_DATE, "0");
+        values.put(COL_INFO_TEXT, "1.7191036");
+        mdb.insert(TABLE_INFOS, null, values);
+
+        // Zoom
+        values = new ContentValues();
+        values.put(COL_INFO_TYPE, "lastZoom");
+        values.put(COL_INFO_DATE, "0");
+        values.put(COL_INFO_TEXT, "5.0f");
+        mdb.insert(TABLE_INFOS, null, values);
     }
 }

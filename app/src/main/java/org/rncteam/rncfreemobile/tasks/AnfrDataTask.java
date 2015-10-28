@@ -1,10 +1,10 @@
 package org.rncteam.rncfreemobile.tasks;
 
-import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.AnfrInfos;
+import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
@@ -34,7 +35,7 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
     private final Maps maps;
 
     // UI
-    RelativeLayout lytPbLoading;
+    private RelativeLayout lytPbLoading;
 
     private ArrayList<Rnc> lRnc;
 
@@ -178,7 +179,10 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                String msg = "Erreur lors de la récupération des données ANFR";
+                HttpLog.send(TAG, e, msg);
+                Log.d(TAG, msg + e.toString());
+                Toast.makeText(rncmobile.getAppContext(), msg, Toast.LENGTH_SHORT).show();
             }
         }
     }

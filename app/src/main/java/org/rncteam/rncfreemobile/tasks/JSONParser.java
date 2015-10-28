@@ -16,14 +16,12 @@ import java.util.HashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.classes.HttpLog;
 
 import android.util.Log;
-import android.widget.Toast;
 
 public class JSONParser {
     private static final String TAG = "JSONParser";
-    private HttpURLConnection conn;
 
     public JSONParser() {
     }
@@ -33,7 +31,7 @@ public class JSONParser {
         JSONObject jArray = null;
         try {
             URL url = new URL(sUrl);
-            conn = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
 
             conn.setDoInput(true);
@@ -61,7 +59,7 @@ public class JSONParser {
                 writer.flush();
 
                 // Get response
-                String json = "";
+                String json;
 
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(conn.getInputStream(), "iso-8859-1"), 8);
@@ -79,16 +77,24 @@ public class JSONParser {
             return jArray;
 
         } catch (SocketTimeoutException e) {
-            Log.d(TAG, "TimeOut: " + e.toString());
+            String msg = "Timeout JSONParser";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
             return null;
         } catch (IOException e) {
-            Log.d("Buffer Error", "Error converting result " + e.toString());
+            String msg = "IO Erreur";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
             return null;
         } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
+            String msg = "JSON Exception";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
             return null;
         } catch (Exception e) {
-            Log.d(TAG, "Error: " + e.toString());
+            String msg = "Exception";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
             return null;
         }
     }

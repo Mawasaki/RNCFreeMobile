@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.classes.Telephony;
-import org.rncteam.rncfreemobile.database.Database;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.Rnc;
@@ -23,12 +22,9 @@ public class LogsDetailsActivity extends Activity {
 
     private RncLogs rnclogs;
 
-    // UI
-    Button btnDetailRestore;
-    Button btnDetailDelete;
-    EditText txtDetailText;
-    EditText txtDetailLat;
-    EditText txtDetailLon;
+    private EditText txtDetailText;
+    private EditText txtDetailLat;
+    private EditText txtDetailLon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +35,7 @@ public class LogsDetailsActivity extends Activity {
 
         setUIDetailsInfos();
 
-        this.btnDetailRestore = (Button) findViewById(R.id.btn_detail_restore);
+        Button btnDetailRestore = (Button) findViewById(R.id.btn_detail_restore);
         btnDetailRestore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,7 +43,7 @@ public class LogsDetailsActivity extends Activity {
             }
         });
 
-        this.btnDetailDelete = (Button) findViewById(R.id.btn_detail_delete);
+        Button btnDetailDelete = (Button) findViewById(R.id.btn_detail_delete);
         btnDetailDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,7 +68,7 @@ public class LogsDetailsActivity extends Activity {
         }
 
         Telephony tel = rncmobile.getTelephony();
-        tel.setCellChange(true);
+        tel.dispatchCellInfo();
 
         rncmobile.notifyListLogsHasChanged = true;
 

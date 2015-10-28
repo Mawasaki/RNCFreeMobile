@@ -1,6 +1,6 @@
 package org.rncteam.rncfreemobile.tasks;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.rncmobile;
 
@@ -22,16 +23,13 @@ import java.util.HashMap;
 public class StatsTask extends AsyncTask<String, String, JSONObject> {
     private static final String TAG = "ProfileTask";
 
-    Context context;
-    View v;
-    JSONObject jData;
+    private final View v;
 
-    HashMap<String, String> postParams;
+    private HashMap<String, String> postParams;
 
-    private String url = "http://rfm.dataremix.fr/stats.php";
+    private final String url = "http://rfm.dataremix.fr/stats.php";
 
-    public StatsTask(Context context, View view) {
-        this.context = context;
+    public StatsTask(View view) {
         this.v = view;
     }
 
@@ -46,24 +44,25 @@ public class StatsTask extends AsyncTask<String, String, JSONObject> {
     @Override
     protected JSONObject doInBackground(String... args) {
         JSONParser jParser = new JSONParser();
-        JSONObject json = jParser.getJSONFromUrl(url, postParams);
-        return json;
+        return jParser.getJSONFromUrl(url, postParams);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onPostExecute(JSONObject jArray) {
         if(jArray != null) {
             try {
                 if(jArray.getString("return").equals("STATS")) {
-                    Log.d(TAG, jArray.getString("DATA").toString());
+                    Log.d(TAG, jArray.getString("DATA"));
 
-                    jData = jArray.getJSONObject("DATA");
+                    JSONObject jData = jArray.getJSONObject("DATA");
 
                     // Get number of RNC
                     DatabaseRnc dbr = new DatabaseRnc(rncmobile.getAppContext());
                     dbr.open();
                     double nb_rnc_umts = dbr.countUMTSRnc();
                     double nb_rnc_lte = dbr.countLTERnc();
+                    dbr.close();
 
                     // Get Total anfr Antennas
                     Double nbActAnt = jData.getDouble("nb_service");
@@ -88,7 +87,9 @@ public class StatsTask extends AsyncTask<String, String, JSONObject> {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                String msg = "Exception Stats";
+                HttpLog.send(TAG, e, msg);
+                Log.d(TAG, msg + e.toString());
             }
         }
     }

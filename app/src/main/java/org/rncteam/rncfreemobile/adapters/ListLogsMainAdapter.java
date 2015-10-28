@@ -1,7 +1,5 @@
 package org.rncteam.rncfreemobile.adapters;
 
-import android.app.Activity;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,17 +33,10 @@ import java.util.Date;
 public class ListLogsMainAdapter extends BaseAdapter {
     private static final String TAG = "ListLogsMainAdapter";
 
-    private Context context;
-    private Activity activity;
+    private ArrayList<RncLogs> lCell;
 
-    protected ArrayList<RncLogs> lCell;
-    LayoutInflater inflater;
-
-    public ListLogsMainAdapter(Activity activity, Context context, ArrayList<RncLogs> listCell) {
+    public ListLogsMainAdapter(ArrayList<RncLogs> listCell) {
         this.lCell = listCell;
-        this.inflater = LayoutInflater.from(context);
-        this.context = context;
-        this.activity = activity;
     }
 
     public int getCount() {
@@ -66,7 +57,10 @@ public class ListLogsMainAdapter extends BaseAdapter {
         if (convertView == null) {
 
             holder = new ViewHolder();
-            convertView = this.inflater.inflate(R.layout.listview_logs_main,
+
+            LayoutInflater li = (LayoutInflater) rncmobile.getAppContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = li.inflate(R.layout.listview_logs_main,
                     parent, false);
 
             holder.txtMainInfo = (TextView) convertView.findViewById(R.id.txt_logs_main_infos);
@@ -90,7 +84,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
                 + String.valueOf(rncLog.get_psc()) + " ";
 
         // Date
-        String lDate = ""; String fDate = "";
+        String lDate; String fDate;
         Date date = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000L);
 
         if(Utils.get_date_obj(rncLog.get_date()).after(date)) lDate = Utils.get_time(rncLog.get_date());
@@ -129,7 +123,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
             }
         //}
 
-        final View f_view = convertView;
+        final ViewGroup f_parent = parent;
 
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,24 +142,24 @@ public class ListLogsMainAdapter extends BaseAdapter {
                             case R.id.action_logs_listview_details:
                                 Intent intentLDA = new Intent(li.getContext(), LogsDetailsActivity.class);
                                 intentLDA.putExtra("logsInfosObject", rncLog);
-                                activity.startActivity(intentLDA);
+                                rncmobile.getMainActivity().startActivity(intentLDA);
                                 return true;
 
                             case R.id.action_logs_listview_maps:
-                                MainActivity mainActivity1 = (MainActivity) activity;
+                                MainActivity mainActivity1 = (MainActivity) rncmobile.getMainActivity();
                                 mainActivity1.displayView(3);
                                 return true;
 
                             case R.id.action_logs_listview_set_coo:
-                                MainActivity mainActivity2 = (MainActivity) activity;
+                                MainActivity mainActivity2 = (MainActivity) rncmobile.getMainActivity();
                                 mainActivity2.displayView(3);
                                 return true;
 
                             case R.id.action_logs_listview_edit:
-                                View popSwitchView = li.inflate(R.layout.popup_logs_edit, null);
+                                View popSwitchView = li.inflate(R.layout.popup_logs_edit, f_parent, false);
 
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                                        activity);
+                                        rncmobile.getMainActivity());
                                 alertDialogBuilder.setView(popSwitchView);
 
                                 // set dialog message

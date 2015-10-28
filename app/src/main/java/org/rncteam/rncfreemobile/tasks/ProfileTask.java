@@ -1,11 +1,12 @@
 package org.rncteam.rncfreemobile.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.classes.Elevation;
+import org.rncteam.rncfreemobile.classes.HttpLog;
 
 import java.util.HashMap;
 
@@ -15,18 +16,16 @@ import java.util.HashMap;
 public class ProfileTask extends AsyncTask<String, String, JSONObject> {
     private static final String TAG = "ProfileTask";
 
-    private Double myLat;
-    private Double myLon;
-    private Double rncLat;
-    private Double rncLon;
+    private final Double myLat;
+    private final Double myLon;
+    private final Double rncLat;
+    private final Double rncLon;
 
-    private String url = "http://rfm.dataremix.fr/elevation.php";
+    private final String url = "http://rfm.dataremix.fr/elevation.php";
 
-    JSONArray jData;
+    private HashMap<String, String> postParams;
 
-    HashMap<String, String> postParams;
-
-    Elevation elevation;
+    private final Elevation elevation;
 
     public ProfileTask(Double myLat, Double myLon, Double rncLat, Double rncLon, Elevation elevation) {
         this.myLat = myLat;
@@ -34,10 +33,6 @@ public class ProfileTask extends AsyncTask<String, String, JSONObject> {
         this.rncLat = rncLat;
         this.rncLon = rncLon;
         this.elevation = elevation;
-    }
-
-    public JSONArray getResult() {
-        return this.jData;
     }
 
     @Override
@@ -55,19 +50,20 @@ public class ProfileTask extends AsyncTask<String, String, JSONObject> {
     @Override
     protected JSONObject doInBackground(String... args) {
         JSONParser jParser = new JSONParser();
-        JSONObject json = jParser.getJSONFromUrl(url, postParams);
-        return json;
+        return jParser.getJSONFromUrl(url, postParams);
     }
 
     @Override
     protected void onPostExecute(JSONObject jArray) {
         if(jArray != null) {
             try {
-                this.elevation.jData = jArray.getJSONArray("results");
-                this.elevation.dataOk = true;
+                this.elevation.setData(jArray.getJSONArray("results"));
+                this.elevation.updateGraph();
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                String msg = "Exception graph elevation";
+                HttpLog.send(TAG, e, msg);
+                Log.d(TAG, msg + e.toString());
             }
         }
     }

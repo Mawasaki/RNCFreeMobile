@@ -1,19 +1,16 @@
 package org.rncteam.rncfreemobile.tasks;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.ExportLogsActivity;
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.database.DatabaseExport;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
@@ -23,15 +20,12 @@ import org.rncteam.rncfreemobile.rncmobile;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-import java.io.File;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,14 +41,14 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
     private final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
 
-    private ExportLogsActivity activity;
-    private Telephony tel;
+    private final ExportLogsActivity activity;
+    private final Telephony tel;
     private HttpURLConnection conn;
 
     // Parameters to pass
-    private String nickname;
-    TextView txtResponse;
-    String httpResponse;
+    private final String nickname;
+    private final TextView txtResponse;
+    private String httpResponse;
 
     private ArrayList<RncLogs> lRncLogs;
 
@@ -85,7 +79,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... unsued) {
         try {
             // Prepare some informations
-            DataOutputStream dos = null;
+            DataOutputStream dos;
             String lineEnd = "\r\n";
             String twoHyphens = "--";
             String boundary = "---------------------------";
@@ -187,7 +181,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
                 InputStream is = conn.getInputStream();
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 
-                String inputLine = "";
+                String inputLine;
                 String resp = "";
                 while((inputLine = rd.readLine()) != null) {
                     resp += inputLine;
@@ -211,11 +205,15 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             return httpResponse;
 
         } catch (SocketTimeoutException e) {
-            Log.d(TAG, "TimeOut: " + e.toString());
+            String msg = "Timeout Export";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
             conn.disconnect();
             return null;
         } catch (Exception e) {
-            Log.d(TAG, "Error send file: " + e.toString());
+            String msg = "Exception Export";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
             conn.disconnect();
             return null;
         }

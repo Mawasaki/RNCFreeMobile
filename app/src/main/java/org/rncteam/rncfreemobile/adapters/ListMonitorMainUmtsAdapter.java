@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.models.Rnc;
+import org.rncteam.rncfreemobile.rncmobile;
 
 import java.util.List;
 
@@ -21,15 +22,10 @@ import java.util.List;
 public class ListMonitorMainUmtsAdapter extends BaseAdapter {
     private static final String TAG = "ListMonitorMainUmtsAdapter";
 
-    Context context;
+    private final List<Rnc> lCell;
 
-    protected List<Rnc> lCell;
-    LayoutInflater inflater;
-
-    public ListMonitorMainUmtsAdapter(Context context, List<Rnc> listCell) {
+    public ListMonitorMainUmtsAdapter(List<Rnc> listCell) {
         this.lCell = listCell;
-        this.inflater = LayoutInflater.from(context);
-        this.context = context;
     }
 
     public int getCount() {
@@ -49,7 +45,9 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         if (convertView == null) {
 
             holder = new ViewHolder();
-            convertView = this.inflater.inflate(R.layout.listview_monitor_main_umts,
+            LayoutInflater li = (LayoutInflater) rncmobile.getAppContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = li.inflate(R.layout.listview_monitor_main_umts,
                     parent, false);
 
             holder.txtOpe = (TextView) convertView.findViewById(R.id.txt_operator);
@@ -77,7 +75,7 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         holder.txtLac.setText(String.valueOf(rnc.get_lac()));
         holder.txtRnc.setText(String.valueOf(rnc.getRnc()));
         holder.txtPsc.setText(String.valueOf(rnc.get_psc()));
-        holder.txtRscp.setText(String.valueOf(rnc.getUmtsRscp()) +" dBm");
+        holder.txtRscp.setText(String.valueOf(rnc.getUmtsRscp()) + " dBm");
         holder.txtData.setText(rnc.get_txt());
 
         // Roaming

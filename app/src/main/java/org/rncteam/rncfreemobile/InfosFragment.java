@@ -1,6 +1,5 @@
 package org.rncteam.rncfreemobile;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
-import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
 
 import java.util.ArrayList;
@@ -24,26 +22,19 @@ import java.util.List;
 public class InfosFragment extends Fragment {
     private static final String TAG = "InfosFragment";
 
-    Context context;
-
     // UI
-    TextView txtInfoVersion1;
-    TextView txtInfoVersion2;
-    TextView txtRncUpdate;
-    TextView txtRncUpdate2;
-    TextView txtRncUpdate3;
-    TextView txtLogsNbTotal;
-    TextView txtLogsNbUmts;
-    TextView txtLogsNbLte;
-
-    private View v;
+    private TextView txtInfoVersion1;
+    private TextView txtInfoVersion2;
+    private TextView txtRncUpdate;
+    private TextView txtRncUpdate2;
+    private TextView txtRncUpdate3;
+    private TextView txtLogsNbTotal;
+    private TextView txtLogsNbUmts;
+    private TextView txtLogsNbLte;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =inflater.inflate(R.layout.fragment_info,container,false);
-        this.v = v;
-
-        context = rncmobile.getAppContext();
 
         // Version
         txtInfoVersion1 = (TextView) v.findViewById(R.id.txt_info_version1);

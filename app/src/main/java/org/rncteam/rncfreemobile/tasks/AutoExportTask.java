@@ -1,36 +1,22 @@
 package org.rncteam.rncfreemobile.tasks;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.text.Html;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
-import org.rncteam.rncfreemobile.database.DatabaseExport;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
-import org.rncteam.rncfreemobile.models.Export;
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * Created by cedricf_25 on 19/10/2015.
@@ -43,10 +29,8 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
     private final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
 
     // Parameters to pass
-    Telephony tel;
-    Rnc rnc;
-    String httpResponse;
-    private  HttpURLConnection conn;
+    private Telephony tel;
+    private final Rnc rnc;
 
     public AutoExportTask(Rnc rnc) {
         this.rnc = rnc;
@@ -70,13 +54,13 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
             String nickname = "Unknown";
             if(sp != null) nickname = sp.getString("nickname", "Unknown");
 
-            DataOutputStream dos = null;
+            DataOutputStream dos;
             String lineEnd = "\r\n";
             String twoHyphens = "--";
             String boundary = "---------------------------";
 
             URL url = new URL(S_URL);
-            conn = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
 
             conn.setConnectTimeout(10000);
@@ -92,11 +76,6 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
             conn.setRequestProperty("Content-Type", "multipart/form-data;charset=utf-8;boundary=" + boundary);
 
             dos = new DataOutputStream(conn.getOutputStream());
-
-            // Prepare some variables
-            String delimiter = ";";
-            String crlf = "\r\n";
-            String exportData = "";
 
             // xG
             dos.writeBytes(twoHyphens + boundary + lineEnd);
@@ -189,11 +168,12 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
             String serverResponseMessage = conn.getResponseMessage();
 
             Log.i("uploadFile", "HTTP Response is : " + serverResponseMessage + ": " + serverResponseCode);
+            String httpResponse;
             if (serverResponseCode == 200) {
                 InputStream is = conn.getInputStream();
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 
-                String inputLine = "";
+                String inputLine;
                 String resp = "";
                 while ((inputLine = rd.readLine()) != null) {
                     resp += inputLine;
@@ -215,15 +195,19 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
             //close the streams //
             dos.flush();
             dos.close();
-            if(conn != null) conn.disconnect();
+            conn.disconnect();
 
             return httpResponse;
 
         } catch (SocketTimeoutException e) {
-            Log.d(TAG, "TimeOut: " + e.toString());
+            String msg = "Timeout AutoExportTask";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
             return null;
         } catch (Exception e) {
-            Log.d(TAG, "Error send file: " + e.toString());
+            String msg = "Erreur AutoExportTask";
+            HttpLog.send(TAG, e, msg);
+            Log.d(TAG, msg + e.toString());
             return null;
         }
     }
