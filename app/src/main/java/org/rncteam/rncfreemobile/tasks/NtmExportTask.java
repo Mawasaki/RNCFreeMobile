@@ -200,7 +200,6 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             //close the streams //
             dos.flush();
             dos.close();
-            conn.disconnect();
 
             return httpResponse;
 
@@ -208,14 +207,15 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
             String msg = "Timeout Export";
             HttpLog.send(TAG, e, msg);
             Log.d(TAG, msg + e.toString());
-            conn.disconnect();
             return null;
         } catch (Exception e) {
             String msg = "Exception Export";
             HttpLog.send(TAG, e, msg);
             Log.d(TAG, msg + e.toString());
-            conn.disconnect();
             return null;
+        } finally {
+            conn.disconnect();
+
         }
     }
 

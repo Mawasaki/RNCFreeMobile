@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         }
 
         displayView(0);
+        stopMonitorService();
     }
 
     @Override
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        launchMonitorService();
+        stopMonitorService();
         rncmobile.setMainActivity(this);
         displayView(0);
     }
@@ -148,6 +149,14 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             i.putExtra("foo", "bar");
             startService(i);
         }
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        // Service
+        launchMonitorService();
     }
 
     private void stopMonitorService() {

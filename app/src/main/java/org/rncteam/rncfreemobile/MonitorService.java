@@ -68,7 +68,7 @@ public class MonitorService extends Service {
     private final Runnable taskMonitor = new Runnable() {
         public void run() {
             try {
-            if (tel.getLoggedRnc() != null &&
+            if (tel != null && tel.getLoggedRnc() != null &&
                     (tempPass || oldRnc.get_id() != tel.getLoggedRnc().get_id())) {
 
                 // Main intent
@@ -97,7 +97,7 @@ public class MonitorService extends Service {
                                         + (tel.getLoggedRnc().get_rnc() + ":")
                                         + (tel.getLoggedRnc().get_cid() + " | ")
                                         + ((tel.getLoggedRnc().get_tech() == 3 ? tel.getLoggedRnc().getUmtsRscp() + " dBm" : ""))
-                                        + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRssi() + " dBm" : "")))
+                                        + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRsrq() + " dBm" : "")))
                                 .setContentText(tel.getLoggedRnc().get_txt())
                                 .setSmallIcon(R.drawable.ic_notif_small_icon)
                                 .setLargeIcon(logoBitmap)

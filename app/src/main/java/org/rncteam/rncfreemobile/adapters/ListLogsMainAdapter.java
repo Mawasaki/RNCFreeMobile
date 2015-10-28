@@ -97,16 +97,18 @@ public class ListLogsMainAdapter extends BaseAdapter {
         holder.txtTxt.setText(String.valueOf(rncLog.get_txt()));
         holder.txtOperator.setText(lDate);
 
-        // Roaming operator
-        if(rncLog.get_mnc() != 15)
-            holder.fm_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
-        else
-            holder.fm_background.setBackgroundColor(Color.parseColor("#FFFFFF"));
         // Popup
         ImageButton btnMenu = (ImageButton) convertView.findViewById(R.id.logs_btn_menu);
 
-        // Sync
-        // If rnc come from 20815, dismiss imageview
+        // Roaming operator
+        if(rncLog.get_mnc() != 15) {
+            holder.fm_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
+            holder.imvSync.setVisibility(View.GONE);
+        } else {
+            holder.fm_background.setBackgroundColor(Color.parseColor("#FFFFFF"));
+
+            // Sync
+            // If rnc come from 20815, dismiss imageview
         /* FOR TESTS mettre !=
         if(rncLog.isRncIdentified() && rncLog.get_sync() == 0) {
             holder.imvSync.setVisibility(View.GONE);
@@ -116,13 +118,13 @@ public class ListLogsMainAdapter extends BaseAdapter {
             holder.imvSync.setVisibility(View.VISIBLE);
 
             // Set good sync img
-            if(rncLog.get_sync() > 1) {
+            if (rncLog.get_sync() > 1) {
                 holder.imvSync.setImageResource(R.drawable.ic_done_black);
             } else {
                 holder.imvSync.setImageResource(R.drawable.ic_autorenew_black);
             }
-        //}
-
+            //}
+        }
         final ViewGroup f_parent = parent;
 
         btnMenu.setOnClickListener(new View.OnClickListener() {

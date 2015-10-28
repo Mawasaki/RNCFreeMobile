@@ -212,12 +212,13 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
             // Title chart
             txtTitleChart.setText("Elevation profile - Me -> RNC " + tel.getLoggedRnc().get_real_rnc());
 
-            loadingChart.setVisibility(View.GONE);
 
         } catch (Exception e) {
             String msg = "Erreur lors de la récupération des données profile";
             HttpLog.send(TAG, e, msg);
             Log.d(TAG, msg + e.toString());
+        } finally {
+            loadingChart.setVisibility(View.GONE);
         }
     }
 

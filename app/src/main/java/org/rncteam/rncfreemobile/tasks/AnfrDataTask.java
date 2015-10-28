@@ -145,7 +145,6 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                             }
                         }
 
-
                         anfrInfos.setLieu(jData.getJSONObject(i).getString("ADR_LB_LIEU"));
                         anfrInfos.setAdd1(jData.getJSONObject(i).getString("ADR_LB_ADD1"));
                         anfrInfos.setAdd2(jData.getJSONObject(i).getString("ADR_LB_ADD2"));
@@ -168,6 +167,9 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
 
                         anfrInfos.setRnc(rnc);
 
+                        Telephony tel = rncmobile.getTelephony();
+                        tel.setAnfrInfos(anfrInfos);
+
                         maps.setAnfrAntennasMarkers(
                                 Double.parseDouble(jData.getJSONObject(i).getString("lat")),
                                 Double.parseDouble(jData.getJSONObject(i).getString("lon")),
@@ -182,7 +184,6 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                 String msg = "Erreur lors de la récupération des données ANFR";
                 HttpLog.send(TAG, e, msg);
                 Log.d(TAG, msg + e.toString());
-                Toast.makeText(rncmobile.getAppContext(), msg, Toast.LENGTH_SHORT).show();
             }
         }
     }

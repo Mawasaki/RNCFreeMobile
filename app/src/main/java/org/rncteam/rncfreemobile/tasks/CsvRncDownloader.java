@@ -5,8 +5,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.CsvRncReader;
 import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
@@ -35,8 +37,8 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
 
     private static final String TAG = "Downloader";
 
-    //String csvFileUrl = "http://rncmobile.free.fr/20815.csv";
-    private final String csvFileUrl = "http://rfm.dataremix.fr/20815.csv";
+    private final String csvFileUrl = "http://rncmobile.free.fr/20815.csv";
+    //private final String csvFileUrl = "http://rfm.dataremix.fr/20815.csv";
 
     private Activity activity;
     private ProgressDialog mProgressDialog;
@@ -61,6 +63,10 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
         mProgressDialog.setMessage("Download 20815.csv file...");
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.show();
+
+        // Desactivate layout
+        LinearLayout lytDataDownload = (LinearLayout) activity.findViewById(R.id.lyt_data_download);
+        lytDataDownload.setClickable(false);
     }
 
     @Override
@@ -84,11 +90,6 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                 Reader isr = new InputStreamReader(conn.getInputStream(), "UTF-8");
                 BufferedReader rd = new BufferedReader(isr);
 
-                // Parse Csv file
-                mProgressDialog.setMessage("Importation en masse dans la base...");
-                mProgressDialog.setIndeterminate(true);
-                mProgressDialog.show();
-
                 CsvRncReader crr = new CsvRncReader();
                 lRnc = crr.run(rd);
                 rd.close();
@@ -108,7 +109,6 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
             String msg = "Erreur lors de la récupération de 20815.csv";
             HttpLog.send(TAG, e, msg);
             Log.d(TAG, msg + e.toString());
-            Toast.makeText(rncmobile.getAppContext(), msg, Toast.LENGTH_LONG).show();
             return e.toString();
         } finally {
             assert conn != null;
@@ -120,6 +120,10 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result) {
         try {
             if (result.equals("ok")) {
+                // Parse Csv file
+                mProgressDialog.setMessage("Importation en masse dans la base...");
+                mProgressDialog.setIndeterminate(true);
+                mProgressDialog.show();
 
                 // Add CVS to database
                 if (lRnc != null && lRnc.size() > 0) {
@@ -170,14 +174,15 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
             } else {
                 mProgressDialog.dismiss();
                 Log.d(TAG, "Erreur lors du chargement 20815.csv:" + result);
-                Toast.makeText(rncmobile.getAppContext(), "Erreur s'est produite", Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             String msg = "Une erreur s'est produite lors de l'importation en masse";
             HttpLog.send(TAG, e, msg);
             Log.d(TAG, msg + e.toString());
-            Toast.makeText(rncmobile.getAppContext(), msg, Toast.LENGTH_SHORT).show();
         } finally {
+            // Reactivate layout
+            LinearLayout lytDataDownload = (LinearLayout) activity.findViewById(R.id.lyt_data_download);
+            lytDataDownload.setClickable(true);
             activity.finish();
         }
     }

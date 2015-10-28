@@ -259,7 +259,8 @@ public class Telephony {
             if (sp != null && sp.getBoolean("map_center", true)) {
                 Maps maps = rncmobile.getMaps();
 
-                if (maps != null && maps.getMap() != null && !loggedRnc.NOT_IDENTIFIED && cellChange) {
+                if (maps != null && maps.getMap() != null &&
+                        loggedRnc != null && !loggedRnc.NOT_IDENTIFIED && cellChange) {
                     maps.setLastZoom(12.0f);
                     maps.setCenterCamera(loggedRnc.get_lat(),
                             loggedRnc.get_lon());

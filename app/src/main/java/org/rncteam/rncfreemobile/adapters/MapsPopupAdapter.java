@@ -86,13 +86,13 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         //txt2.setText(anfrInfos.getCp() + " " + anfrInfos.getCommune());
         txt2.setVisibility(View.GONE);
 
-        txt3.setText("Implantation : " + (anfrInfos.getImplantation().equals("null") ? anfrInfos.getImplantation() : ""));
-        txt31.setText(" / Modification : " + (anfrInfos.getModification().equals("null") ? anfrInfos.getModification() : "-"));
+        txt3.setText("Implantation : " + (!anfrInfos.getImplantation().equals("null") ? anfrInfos.getImplantation() : ""));
+        txt31.setText(" / Modification : " + (!anfrInfos.getModification().equals("null") ? anfrInfos.getModification() : "-"));
 
-        txt4.setText("Activation : " + (anfrInfos.getActivation().equals("null") ? anfrInfos.getActivation() : "-"));
-        txt41.setText(" / Hauteur : " + (anfrInfos.getHauteur().equals("null") ? anfrInfos.getHauteur() + "m" : "-"));
+        txt4.setText("Activation : " + (!anfrInfos.getActivation().equals("null") ? anfrInfos.getActivation() : "-"));
+        txt41.setText(" / Hauteur : " + (!anfrInfos.getHauteur().equals("null") ? anfrInfos.getHauteur() + "m" : "-"));
 
-        txt51.setText(" / Propriétaire : " + (anfrInfos.getProprietaire().equals("") ? anfrInfos.getProprietaire() : "-"));
+        txt51.setText(" / Propriétaire : " + (!anfrInfos.getProprietaire().equals("null") ? anfrInfos.getProprietaire() : "-"));
 
         txt6.setText("Support : " + anfrInfos.getTypeSupport());
 
@@ -162,7 +162,7 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         newRnc.set_id(logRnc.get_id());
         newRnc.set_tech(logRnc.get_tech());
         newRnc.set_mcc(logRnc.get_mcc());
-        newRnc.set_mnc(logRnc.get_mcc());
+        newRnc.set_mnc(logRnc.get_mnc());
         newRnc.set_lcid(logRnc.get_lcid());
         newRnc.set_cid(logRnc.get_cid());
         newRnc.set_rnc(logRnc.get_rnc());
@@ -170,7 +170,7 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
         newRnc.set_psc(logRnc.get_psc());
 
         // Button text
-        if (anfrInfos.getRnc().NOT_IDENTIFIED/* && newRnc.get_mnc() == 15*/) {
+        if (anfrInfos.getRnc().NOT_IDENTIFIED && newRnc.get_mnc() == 15) {
             bt1.setText("Attribuer le RNC " + newRnc.get_real_rnc() + " à cette addresse");
 
             newRnc.set_lat(Double.valueOf(anfrInfos.getLat()));
@@ -178,7 +178,7 @@ public class MapsPopupAdapter implements GoogleMap.InfoWindowAdapter {
             newRnc.set_txt(fullAddress.toUpperCase());
 
             tel.setMarkedRnc(newRnc);
-        } else if(newRnc.get_mnc() != 15) {
+        } else if(newRnc.get_mnc() == 1) {
             bt1.setText("Impossible d'attribuer un RNC Orange");
             marker.setTitle("green");
         } else {
