@@ -51,20 +51,21 @@
     <RelativeLayout
         android:id="@+id/map_ext_infos"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"
-        android:background="#BBFFFFFF"
+        android:background="#CCFFFFFF"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="8dp"
         android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -72,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:text="RNC :"/>
 
             <TextView
@@ -81,7 +82,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textSize="14sp"
-                android:text="CID :"/>
+                android:text="CID :"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/map_ext_infos_alt"
@@ -97,15 +99,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
-                android:textSize="14sp"
-                android:text="TO BTS :"/>
+                android:textSize="15sp"
+                android:text="TO BTS :"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/map_ext_infos_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="italic"
                 android:text="txt :"/>
 

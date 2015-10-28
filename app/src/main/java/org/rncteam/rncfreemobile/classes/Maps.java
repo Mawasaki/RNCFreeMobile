@@ -233,12 +233,6 @@ public class Maps {
         Utils utils = new Utils();
         Telephony tel = rncmobile.getTelephony();
 
-        activity.mapExtInfo.setVisibility(View.VISIBLE);
-        activity.txtMapExtInfosRnc.setText("RNC: " + tel.getLoggedRnc().get_rnc());
-        activity.txtMapExtInfosCid.setText("CID: " + tel.getLoggedRnc().get_cid());
-        activity.txtMapExtInfosAltitude.setText("Altitude: " + String.valueOf(lastAlt));
-        activity.txtMapExtInfosTxt.setText(tel.getLoggedRnc().get_txt());
-
         LatLng myLoc = new LatLng(lastPosLat, lastPosLon);
         LatLng btsLoc = new LatLng(tel.getLoggedRnc().get_lat(), tel.getLoggedRnc().get_lon());
 
@@ -249,14 +243,25 @@ public class Maps {
         double km = distance / 1;
         double meter = distance * 1000;
 
+        String meToBts;
+
         if (tel.getLoggedRnc().NOT_IDENTIFIED) {
-            activity.txtMapExtInfosDistance.setText("BTS: -");
+            meToBts = "-";
         } else {
             if (km > 1)
-                activity.txtMapExtInfosDistance.setText("BTS: " + kmFormat.format(km) + "km");
+                meToBts = kmFormat.format(km) + "km";
             else
-                activity.txtMapExtInfosDistance.setText("BTS: " + mFormat.format(meter) + "m");
+                meToBts = mFormat.format(meter) + "m";
         }
+
+        Rnc rnc = tel.getLoggedRnc();
+
+        activity.mapExtInfo.setVisibility(View.VISIBLE);
+        activity.txtMapExtInfosRnc.setText(rnc.get_rnc() + ":"
+                + rnc.get_cid() + " | "
+                + meToBts + " | "
+                + String.valueOf((rnc.get_tech() == 3) ? rnc.getUmtsRscp() : rnc.getLteRsrp()) + " dBm");
+        activity.txtMapExtInfosTxt.setText(tel.getLoggedRnc().get_txt());
     }
 
 

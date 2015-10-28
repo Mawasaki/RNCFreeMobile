@@ -104,24 +104,23 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                         double anfr_lat = Double.valueOf(jData.getJSONObject(i).getString("lat"));
                         double anfr_lon = Double.valueOf(jData.getJSONObject(i).getString("lon"));
 
-                        if (!jData.getJSONObject(i).getString("Dte_En_Service").equals("null")) {
+                        if (lRnc.size() > 0) {
+                            for (int j = 0; j < lRnc.size(); j++) {
+                                double rnc_lat1 = lRnc.get(j).get_lat() + 0.005;
+                                double rnc_lon1 = lRnc.get(j).get_lon() + 0.005;
+                                double rnc_lat2 = lRnc.get(j).get_lat() - 0.005;
+                                double rnc_lon2 = lRnc.get(j).get_lon() - 0.005;
 
-                            if (lRnc.size() > 0) {
-                                for (int j = 0; j < lRnc.size(); j++) {
-                                    double rnc_lat1 = lRnc.get(j).get_lat() + 0.005;
-                                    double rnc_lon1 = lRnc.get(j).get_lon() + 0.005;
-                                    double rnc_lat2 = lRnc.get(j).get_lat() - 0.005;
-                                    double rnc_lon2 = lRnc.get(j).get_lon() - 0.005;
-
-                                    if (rnc_lat1 >= anfr_lat && rnc_lat2 <= anfr_lat
-                                            && rnc_lon1 >= anfr_lon && rnc_lon2 <= anfr_lon) {
-                                        rnc = lRnc.get(j);
-                                        rnc.NOT_IDENTIFIED = false;
-                                        break;
-                                    }
+                                if (rnc_lat1 >= anfr_lat && rnc_lat2 <= anfr_lat
+                                        && rnc_lon1 >= anfr_lon && rnc_lon2 <= anfr_lon) {
+                                    rnc = lRnc.get(j);
+                                    rnc.NOT_IDENTIFIED = false;
+                                    break;
                                 }
                             }
+                        }
 
+                        if (!jData.getJSONObject(i).getString("Dte_En_Service").equals("null")) {
                             Telephony tel = rncmobile.getTelephony();
 
                             if (tel != null && tel.getLoggedRnc() != null && !rnc.NOT_IDENTIFIED) {
@@ -140,8 +139,13 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                             }
                         } else {
                             if(tel != null) {
-                                icon = R.drawable.circle_red;
-                                markerTitle = "red";
+                                if(rnc.NOT_IDENTIFIED) {
+                                    icon = R.drawable.circle_red;
+                                    markerTitle = "red";
+                                } else {
+                                    icon = R.drawable.circle_green;
+                                    markerTitle = "green";
+                                }
                             }
                         }
 

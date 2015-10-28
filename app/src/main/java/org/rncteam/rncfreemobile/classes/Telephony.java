@@ -45,6 +45,8 @@ public class Telephony {
     private SignalStrength signalStrength = null;
 
     // Specials
+    private final Handler handler;
+    private boolean signalChange;
     private boolean cellChange;
     private Rnc loggedRnc;
     private Rnc markedRnc;
@@ -68,7 +70,13 @@ public class Telephony {
         lNeigh = new ArrayList<>();
 
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+        signalChange = true;
         cellChange = true;
+
+        // Initialize timer
+        handler = new Handler();
+
+        //dispatchCI.run();
     }
 
     public void dispatchCellInfo() {
@@ -145,8 +153,8 @@ public class Telephony {
             // Manage only 3G/4G
             if (getNetworkClass() == 3 || getNetworkClass() == 4) {
                 if (rnc.get_mnc() == 15 && rnc.get_cid() > 0) {
-                    if ((Integer.valueOf(rnc.get_real_rnc()) > 999) &&
-                            (Integer.valueOf(rnc.get_real_rnc()) < 8000)) {
+                    /*if ((Integer.valueOf(rnc.get_real_rnc()) > 999) &&
+                            (Integer.valueOf(rnc.get_real_rnc()) < 8000)) {*/
 
                         // Start RNC management just if cell change
                         if (cellChange) {
@@ -245,7 +253,7 @@ public class Telephony {
                             rnc.NOT_IDENTIFIED = iRnc.NOT_IDENTIFIED;
                         }
                         setLoggedRnc(rnc);
-                    }
+                    //}
                 }
             }
 
@@ -259,8 +267,7 @@ public class Telephony {
             if (sp != null && sp.getBoolean("map_center", true)) {
                 Maps maps = rncmobile.getMaps();
 
-                if (maps != null && maps.getMap() != null &&
-                        loggedRnc != null && !loggedRnc.NOT_IDENTIFIED && cellChange) {
+                if (maps != null && maps.getMap() != null && !loggedRnc.NOT_IDENTIFIED && cellChange) {
                     maps.setLastZoom(12.0f);
                     maps.setCenterCamera(loggedRnc.get_lat(),
                             loggedRnc.get_lon());
@@ -283,7 +290,8 @@ public class Telephony {
             super.onSignalStrengthsChanged(signalStrength);
 
             setSignalStrength(signalStrength);
-            dispatchCellInfo();
+            signalChange = true;
+            handler.postDelayed(dispatchCI, 500);
         }
 
         public void onCellLocationChanged(final CellLocation location) {
@@ -292,9 +300,18 @@ public class Telephony {
             setCellLocation(location);
             setGsmCellLocation();
             cellChange = true;
-            dispatchCellInfo();
+            handler.postDelayed(dispatchCI, 500);
         }
     }
+
+    Runnable dispatchCI = new Runnable() {
+        public void run() {
+            if ((signalChange || cellChange) && gsmCellLocation != null)
+                dispatchCellInfo();
+            signalChange = false;
+            cellChange = false;
+        }
+    };
 
     // Getters & Setters
     public Rnc getLoggedRnc() {

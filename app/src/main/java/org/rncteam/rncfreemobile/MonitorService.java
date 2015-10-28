@@ -97,7 +97,7 @@ public class MonitorService extends Service {
                                         + (tel.getLoggedRnc().get_rnc() + ":")
                                         + (tel.getLoggedRnc().get_cid() + " | ")
                                         + ((tel.getLoggedRnc().get_tech() == 3 ? tel.getLoggedRnc().getUmtsRscp() + " dBm" : ""))
-                                        + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRsrq() + " dBm" : "")))
+                                        + ((tel.getLoggedRnc().get_tech() == 4 ? tel.getLoggedRnc().getLteRsrp() + " dBm" : "")))
                                 .setContentText(tel.getLoggedRnc().get_txt())
                                 .setSmallIcon(R.drawable.ic_notif_small_icon)
                                 .setLargeIcon(logoBitmap)

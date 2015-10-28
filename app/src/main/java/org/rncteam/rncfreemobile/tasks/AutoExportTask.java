@@ -179,8 +179,6 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
                     resp += inputLine;
                 }
 
-                Log.d(TAG, "Response : " + resp);
-
                 httpResponse = resp;
 
                 // What the good response ?
@@ -214,6 +212,5 @@ public class AutoExportTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        Log.d(TAG, "Auto export OK");
     }
 }
