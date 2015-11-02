@@ -85,6 +85,8 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
     protected void onPostExecute(JSONObject jArray) {
         String markerTitle = "";
         int icon = 0;
+        int iMan = 0;
+        ArrayList<Rnc> manRnc = new ArrayList<>();
 
         rncmobile.getMaps().removeMarkers();
 
@@ -116,6 +118,12 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                                     rnc = lRnc.get(j);
                                     rnc.NOT_IDENTIFIED = false;
                                     break;
+                                } else {
+                                    // It is potential manual markers. Get them in tab
+                                    rnc = lRnc.get(j);
+                                    rnc.NOT_IDENTIFIED = false;
+                                    manRnc.add(iMan,rnc);
+                                    iMan++;
                                 }
                             }
                         }
@@ -182,6 +190,26 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                                 icon);
 
                     }
+                }
+
+                // Set potential man RNC
+                for(int i=0;i<manRnc.size();i++) {
+                    // Fill a anfrInfo object
+                    AnfrInfos anfrInfos = new AnfrInfos();
+                    anfrInfos.setRnc(manRnc.get(i));
+                    anfrInfos.setLat(String.valueOf(manRnc.get(i).get_lat()));
+                    anfrInfos.setLon(String.valueOf(manRnc.get(i).get_lon()));
+                    anfrInfos.setAdd1(((manRnc.get(i).get_txt().equals("-")) ? "-" : manRnc.get(i).get_txt()));
+
+                    markerTitle = "green";
+                    icon = R.drawable.circle_green;
+
+                    maps.setAnfrAntennasMarkers(
+                            manRnc.get(i).get_lat(),
+                            manRnc.get(i).get_lon(),
+                            markerTitle,
+                            anfrInfos,
+                            icon);
                 }
 
             } catch (JSONException e) {

@@ -1,6 +1,7 @@
 package org.rncteam.rncfreemobile.classes;
 
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.rncmobile;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -135,4 +137,5 @@ final public class Utils {
 
         return lastPos;
     }
+
 }

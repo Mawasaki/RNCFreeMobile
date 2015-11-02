@@ -140,17 +140,38 @@ public class CsvRncDownloader extends AsyncTask<String, String, String> {
                     dbl.deleteRncLogs();
                     dbr.addMassiveRnc(lRnc);
 
-                    // Reaffects logs
+                    // Reaffects old Rncs & logs
                     for (int i = 0; i < lRncLogs.size(); i++) {
+                        // Check if RNC exists
+
                         RncLogs rncLogs = lRncLogs.get(i);
                         Rnc rnc = dbr.findRncByRncCid(
                                 String.valueOf(rncLogs.get_rnc()),
                                 String.valueOf(rncLogs.get_cid()));
 
+                        // If we find a defined rnc in database, just update Log
                         if (rnc != null) {
                             rncLogs.set_rnc_id(rnc.get_id());
+                            dbl.addLog(rncLogs);
+                        } else {
+                            Rnc newRnc = new Rnc();
+
+                            newRnc.set_tech(rncLogs.get_tech());
+                            newRnc.set_mcc(rncLogs.get_mcc());
+                            newRnc.set_mnc(rncLogs.get_mnc());
+                            newRnc.set_cid(rncLogs.get_cid());
+                            newRnc.set_lac(rncLogs.get_lac());
+                            newRnc.set_rnc(rncLogs.get_rnc());
+                            newRnc.set_psc(rncLogs.get_psc());
+                            newRnc.set_lat(rncLogs.get_lat());
+                            newRnc.set_lon(rncLogs.get_lon());
+                            newRnc.set_txt(rncLogs.get_txt());
+
+                            long lastId = dbr.addRnc(newRnc);
+
+                            rncLogs.set_rnc_id((int)lastId);
+                            dbl.addLog(rncLogs);
                         }
-                        dbl.addLog(rncLogs);
                     }
 
                     // Mark info

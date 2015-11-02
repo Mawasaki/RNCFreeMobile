@@ -42,6 +42,7 @@
         <activity android:label="Edit RNC" android:name=".LogsDetailsActivity"/>
         <activity android:label="Export Logs" android:name=".ExportLogsActivity"/>
         <activity android:label="ImportExport management" android:name=".DataActivity"/>
+        <activity android:label="Import Data File" android:name=".DataImportActivity"/>
         <activity android:label="Settings" android:name=".SettingsActivity"/>
         <service
             android:name=".MonitorService"

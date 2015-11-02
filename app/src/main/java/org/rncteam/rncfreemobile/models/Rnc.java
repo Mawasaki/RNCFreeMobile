@@ -177,7 +177,10 @@ public class Rnc {
         for(int i=0;i<lRnc.size();i++) {
             if(lRnc.get(i).get_cid() == rnc.getCid()) {
                 Rnc rRnc = lRnc.get(i);
-                rRnc.NOT_IDENTIFIED = rRnc.get_lat() == 0.0 && rRnc.get_lon() == 0.0 && rRnc.get_txt().equals("-");
+                if(!rRnc.get_txt().equals("-")) {
+                    rRnc.NOT_IDENTIFIED = false;
+                    return rRnc;
+                }
                 return rRnc;
             }
         }
@@ -186,8 +189,7 @@ public class Rnc {
 
     private Rnc getAnIdentifiedRnc(ArrayList<Rnc> lRnc) {
         for(int i=0;i<lRnc.size();i++) {
-            if(!lRnc.get(i).get_txt().equals("-")
-                    && lRnc.get(i).get_lat() != 0.0 && lRnc.get(i).get_lon() != 0.0) {
+            if(!lRnc.get(i).get_txt().equals("-")) {
                 return lRnc.get(i);
             }
         }

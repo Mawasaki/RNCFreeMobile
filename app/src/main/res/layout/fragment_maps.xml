@@ -116,6 +116,28 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/map_man_coo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        >
+
+        <Button
+            android:id="@+id/map_bt_man_coo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SET COORDINATES"
+            android:visibility="gone" />
+
+        </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/map_ext_profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

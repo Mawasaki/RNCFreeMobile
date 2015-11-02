@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     public TextView txtMapExtInfosDistance;
     public TextView txtMapExtInfosAltitude;
     public TextView txtMapExtInfosTxt;
+    public Button btnMapManCoo;
 
     private boolean btnOpen = false;
 
@@ -62,6 +64,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         txtMapExtInfosDistance = (TextView) v.findViewById(R.id.map_ext_infos_distance);
         txtMapExtInfosAltitude = (TextView) v.findViewById(R.id.map_ext_infos_alt);
         txtMapExtInfosTxt = (TextView) v.findViewById(R.id.map_ext_infos_txt);
+        btnMapManCoo = (Button) v.findViewById(R.id.map_bt_man_coo);
         loadingPanelChart = (RelativeLayout) v.findViewById(R.id.loadingPanelChart);
 
         setUpMapIfNeeded();

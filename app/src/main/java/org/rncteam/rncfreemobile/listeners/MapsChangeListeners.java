@@ -4,6 +4,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.rncmobile;
@@ -27,8 +29,6 @@ public class MapsChangeListeners implements OnCameraChangeListener {
     @Override
     public void onCameraChange(CameraPosition position) {
 
-        //this.maps.setLastPosLat(position.target.latitude);
-        //this.maps.setLastPosLon(position.target.longitude);
         this.maps.setLastZoom(position.zoom);
 
         if (position.zoom > 9) {

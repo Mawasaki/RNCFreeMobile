@@ -1,6 +1,7 @@
 package org.rncteam.rncfreemobile.classes;
 
 import android.view.View;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -18,8 +19,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.rncteam.rncfreemobile.MapsFragment;
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
 import org.rncteam.rncfreemobile.listeners.MapsLocationListeners;
+import org.rncteam.rncfreemobile.listeners.MapsLongClickListeners;
 import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
@@ -109,6 +112,8 @@ public class Maps {
     public void setMarkerClickListener() {
         MapsMarkerClickListeners mapMarkerListener = new MapsMarkerClickListeners();
         mMap.setOnMarkerClickListener(mapMarkerListener);
+        MapsLongClickListeners mapsLongClickListeners = new MapsLongClickListeners();
+        mMap.setOnMapLongClickListener(mapsLongClickListeners);
     }
 
     public double getLastPosLat() {
@@ -165,6 +170,17 @@ public class Maps {
         }
         markers.clear();
 
+    }
+
+    public void addMarker(Marker marker, AnfrInfos anfrInfos) {
+        markers.put(marker, anfrInfos);
+    }
+
+    public void updateMarker(Marker marker, AnfrInfos anfrInfos) {
+        AnfrInfos anfrInfos1 = getAnfrInfoMarkers(marker);
+        if(anfrInfos1 != null) {
+            markers.put(marker, anfrInfos);
+        }
     }
 
     public LatLngBounds getProjection() {
@@ -263,6 +279,5 @@ public class Maps {
                 + String.valueOf((rnc.get_tech() == 3) ? rnc.getUmtsRscp() : rnc.getLteRsrp()) + " dBm");
         activity.txtMapExtInfosTxt.setText(tel.getLoggedRnc().get_txt());
     }
-
 
 }

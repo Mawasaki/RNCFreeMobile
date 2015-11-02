@@ -16,11 +16,17 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import org.rncteam.rncfreemobile.LogsDetailsActivity;
 import org.rncteam.rncfreemobile.MainActivity;
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.classes.Maps;
+import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.classes.Utils;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
+import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.rncmobile;
 
@@ -130,10 +136,16 @@ public class ListLogsMainAdapter extends BaseAdapter {
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final Maps maps = rncmobile.getMaps();
+                Telephony tel = rncmobile.getTelephony();
+                final Rnc loggedRnc = tel.getLoggedRnc();
+
                 PopupMenu popup = new PopupMenu(rncmobile.getAppContext(), view);
                 popup.getMenuInflater().inflate(R.menu.menu_logs_listview, popup.getMenu());
+
                 if(rncLog.get_lat() == 0.0) popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(false);
                 else popup.getMenu().findItem(R.id.action_logs_listview_maps).setEnabled(true);
+
                 popup.show();
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -150,11 +162,27 @@ public class ListLogsMainAdapter extends BaseAdapter {
                             case R.id.action_logs_listview_maps:
                                 MainActivity mainActivity1 = (MainActivity) rncmobile.getMainActivity();
                                 mainActivity1.displayView(3);
+
+                                // Center on the point defined
+                                if (maps != null && maps.getMap() != null && !loggedRnc.NOT_IDENTIFIED) {
+                                    maps.setLastZoom(13.0f);
+                                    maps.setCenterCamera(loggedRnc.get_lat(),
+                                            loggedRnc.get_lon());
+                                }
+
                                 return true;
 
                             case R.id.action_logs_listview_set_coo:
                                 MainActivity mainActivity2 = (MainActivity) rncmobile.getMainActivity();
                                 mainActivity2.displayView(3);
+
+                                // Center on the point defined
+                                if (maps != null && maps.getMap() != null && !loggedRnc.NOT_IDENTIFIED) {
+                                    maps.setLastZoom(13.0f);
+                                    maps.setCenterCamera(loggedRnc.get_lat(),
+                                            loggedRnc.get_lon());
+                                }
+
                                 return true;
 
                             case R.id.action_logs_listview_edit:

@@ -68,6 +68,7 @@ public class LogsDetailsActivity extends Activity {
         }
 
         Telephony tel = rncmobile.getTelephony();
+        tel.setCellChange(true);
         tel.dispatchCellInfo();
 
         rncmobile.notifyListLogsHasChanged = true;

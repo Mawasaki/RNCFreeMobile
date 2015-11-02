@@ -21,7 +21,7 @@ import java.util.HashMap;
  * Created by cedricf_25 on 19/10/2015.
  */
 public class StatsTask extends AsyncTask<String, String, JSONObject> {
-    private static final String TAG = "ProfileTask";
+    private static final String TAG = "StatsTask";
 
     private final View v;
 
@@ -53,8 +53,6 @@ public class StatsTask extends AsyncTask<String, String, JSONObject> {
         if(jArray != null) {
             try {
                 if(jArray.getString("return").equals("STATS")) {
-                    Log.d(TAG, jArray.getString("DATA"));
-
                     JSONObject jData = jArray.getJSONObject("DATA");
 
                     // Get number of RNC

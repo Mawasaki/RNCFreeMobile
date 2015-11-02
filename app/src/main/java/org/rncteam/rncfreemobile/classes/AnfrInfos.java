@@ -31,6 +31,25 @@ final public class AnfrInfos {
 
     private JSONArray azimuts;
 
+    public AnfrInfos() {
+        lieu = "";
+        add1 = "";
+        add2 = "";
+        add3 = "";
+        cp = "";
+        commune = "";
+        hauteur = "";
+        implantation = "";
+        modification = "";
+        activation = "";
+        typeSupport = "";
+        lat = "0.0";
+        lon = "0.0";
+        proprietaire = "";
+        rnc = null;
+        azimuts = new JSONArray();
+    }
+
     public String getLieu() {
         return lieu;
     }

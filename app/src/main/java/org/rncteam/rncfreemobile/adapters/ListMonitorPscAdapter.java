@@ -66,7 +66,7 @@ public class ListMonitorPscAdapter extends BaseAdapter {
         }
 
         holder.txtPsc.setText(psc_cid);
-        holder.txtRssi.setText(String.valueOf(rnc.getLteRssi() + " dBm"));
+        holder.txtRssi.setText(String.valueOf((rnc.getLteRssi()/10) + " dBm"));
         holder.txtTxt.setText(String.valueOf(rnc.get_txt()));
 
         return convertView;
