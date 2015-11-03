@@ -120,10 +120,11 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                                     break;
                                 } else {
                                     // It is potential manual markers. Get them in tab
-                                    rnc = lRnc.get(j);
-                                    rnc.NOT_IDENTIFIED = false;
-                                    manRnc.add(iMan,rnc);
-                                    iMan++;
+                                    // Performance decrease, we must change it
+                                    // Maybe we must add a column "man" in database
+                                    //lRnc.get(j).NOT_IDENTIFIED = false;
+                                    //manRnc.add(iMan,lRnc.get(j));
+                                    //iMan++;
                                 }
                             }
                         }
@@ -193,6 +194,8 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                 }
 
                 // Set potential man RNC
+                // To implement later
+                /*
                 for(int i=0;i<manRnc.size();i++) {
                     // Fill a anfrInfo object
                     AnfrInfos anfrInfos = new AnfrInfos();
@@ -211,6 +214,7 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
                             anfrInfos,
                             icon);
                 }
+                */
 
             } catch (JSONException e) {
                 String msg = "Erreur lors de la récupération des données ANFR";

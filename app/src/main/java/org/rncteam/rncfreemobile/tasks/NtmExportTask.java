@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,8 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
     private final TextView txtResponse;
     private String httpResponse;
 
+    private LinearLayout lytCelBtn;
+
     private ArrayList<RncLogs> lRncLogs;
 
     private int state;
@@ -64,10 +69,15 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
         txtResponse = (TextView)activity.findViewById(R.id.txt_export_text_result);
         txtResponse.setText("Sending your RNCs...");
+
+        lytCelBtn = (LinearLayout) activity.findViewById(R.id.lyt_cell_btn);
     }
 
     @Override
     protected void onPreExecute() {
+        // Hide button
+        lytCelBtn.setVisibility(View.GONE);
+
         // Prepare export
         DatabaseLogs dbl = new DatabaseLogs(rncmobile.getAppContext());
         dbl.open();
@@ -252,5 +262,7 @@ public class NtmExportTask extends AsyncTask<Void, Void, String> {
 
         txtResponse.setText(Html.fromHtml(httpResponse));
         activity.updateHistoryList();
+
+        lytCelBtn.setVisibility(View.VISIBLE);
     }
 }
