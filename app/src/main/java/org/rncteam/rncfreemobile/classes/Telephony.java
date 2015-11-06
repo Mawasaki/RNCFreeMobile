@@ -229,7 +229,7 @@ public class Telephony {
                             Maps maps = rncmobile.getMaps();
                             if (maps != null) maps.switchMarkerIcon(rnc);
                             // Textbox on map
-                            if (maps != null && maps.isMapInitilized()) maps.setExtInfoBox();
+                            if (maps != null && maps.isMapInitilized() && loggedRnc != null) maps.setExtInfoBox();
 
                             // Autolog
                         /* Comm for tests
@@ -245,12 +245,14 @@ public class Telephony {
 
                         } else {
                             // No cell change
-                            Rnc iRnc = getLoggedRnc();
-                            rnc.set_lat(iRnc.get_lat());
-                            rnc.set_lon(iRnc.get_lon());
-                            rnc.set_txt(iRnc.get_txt());
-                            rnc.set_id(iRnc.get_id());
-                            rnc.NOT_IDENTIFIED = iRnc.NOT_IDENTIFIED;
+                            if(loggedRnc != null) {
+                                Rnc iRnc = getLoggedRnc();
+                                rnc.set_lat(iRnc.get_lat());
+                                rnc.set_lon(iRnc.get_lon());
+                                rnc.set_txt(iRnc.get_txt());
+                                rnc.set_id(iRnc.get_id());
+                                rnc.NOT_IDENTIFIED = iRnc.NOT_IDENTIFIED;
+                            }
                         }
                         setLoggedRnc(rnc);
                     //}

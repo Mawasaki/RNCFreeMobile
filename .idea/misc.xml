@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="EntryPointsManager">
-    <entry_points version="2.0">
-      <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.classes.Telephony TAG" />
-      <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.MonitorFragment TAG" />
-      <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.listeners.MapsChangeListeners TAG" />
-      <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.tasks.AnfrData TAG" />
-      <entry_point TYPE="field" FQNAME="org.rncteam.rncfreemobile.tasks.ProfileTask TAG" />
-    </entry_points>
-  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
     <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />

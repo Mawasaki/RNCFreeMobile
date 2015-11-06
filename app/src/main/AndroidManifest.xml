@@ -38,6 +38,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
         </activity>
         <activity android:label="Edit RNC" android:name=".LogsDetailsActivity"/>
         <activity android:label="Export Logs" android:name=".ExportLogsActivity"/>
@@ -47,6 +48,9 @@
         <service
             android:name=".MonitorService"
             android:exported="false"/>
+
+        <uses-library android:required="false" android:name="com.sec.android.app.multiwindow" />
+        <meta-data android:name="com.sec.android.support.multiwindow" android:value="true" />
 
     </application>
 
