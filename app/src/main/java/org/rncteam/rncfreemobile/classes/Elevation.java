@@ -12,8 +12,10 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -61,7 +63,7 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
         mChart.setDescription("");
 
         // enable value highlighting
-        mChart.setHighlightEnabled(true);
+        //mChart.setHighlightEnabled(true);
 
         mChart.setAutoScaleMinMaxEnabled(true);
 
@@ -187,7 +189,7 @@ public class Elevation implements SeekBar.OnSeekBarChangeListener {
             LineData data = new LineData(xVals, set1);
             data.setDrawValues(false);
 
-            ArrayList<LineDataSet> dataSets = new ArrayList<>();
+            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
             dataSets.add(0,set1);
 
             //
