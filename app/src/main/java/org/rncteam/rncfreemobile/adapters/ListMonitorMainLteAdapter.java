@@ -10,6 +10,7 @@ import android.widget.TextView;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.rncmobile;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -60,7 +61,9 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
             holder.txtSnr = (TextView) convertView.findViewById(R.id.txt_snr);
             holder.txtAsu = (TextView) convertView.findViewById(R.id.txt_asu);
             holder.txtCqi = (TextView) convertView.findViewById(R.id.txt_cqi);
+            holder.lblCqi = (TextView) convertView.findViewById(R.id.lbl_cqi);
             holder.txtTA = (TextView) convertView.findViewById(R.id.txt_ta);
+            holder.lblTA = (TextView) convertView.findViewById(R.id.lbl_ta);
             holder.txtData = (TextView) convertView.findViewById(R.id.txt_data);
             holder.txrFreq = (TextView) convertView.findViewById(R.id.txt_freq_sect);
 
@@ -87,6 +90,20 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
 
         holder.txrFreq.setText(rnc.getFreqTxt() + ((rnc.getSectText().equals("-")) ? "" : " / " + rnc.getSectText()));
 
+        // Suppression de l'affichage TA/CQI sur les mobiles non TA & CQI
+        if(rnc.getLteTA() == Integer.MAX_VALUE || rnc.getLteTA() == -1){
+            holder.txtTA.setVisibility(View.GONE);
+            //holder.txtTA.setMaxHeight(0);
+            holder.lblTA.setVisibility(View.GONE);
+            //holder.lblTA.setMaxHeight(0);
+        }
+        if(rnc.getLteCqi() == Integer.MAX_VALUE || rnc.getLteCqi() == -1){
+            holder.txtCqi.setVisibility(View.GONE);
+            //holder.txtCqi.setMaxHeight(0);
+            holder.lblCqi.setVisibility(View.GONE);
+            //holder.lblCqi.setMaxHeight(0);
+        }
+
         return convertView;
     }
 
@@ -105,6 +122,8 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         TextView txtTA;
         TextView txtData;
         TextView txrFreq;
+        TextView lblTA;
+        TextView lblCqi;
     }
 
 }
