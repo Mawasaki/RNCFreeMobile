@@ -1,8 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
+<<<<<<< HEAD
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
+=======
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
+>>>>>>> origin/master
     defaultConfig {
         applicationId "org.rncteam.rncfreemobile"
         minSdkVersion 19
@@ -72,9 +77,17 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+<<<<<<< HEAD
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     compile 'com.android.support:recyclerview-v7:23.1.0'
+=======
+    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+>>>>>>> origin/master
 }
