@@ -157,7 +157,7 @@ public class Rnc {
         if(get_cid() > 90 && get_cid() < 95) return "900 Mhz";
         if(get_cid() > 20 && get_cid() < 25) return "2100 Mhz";
         if(get_cid() > 60 && get_cid() < 65) return "2600 Mhz";
-        if(get_cid() > 80 && get_cid() < 85) return "2600 Mhz";
+        if(get_cid() > 80 && get_cid() < 85) return "1800 Mhz";
         return "-";
     }
 
@@ -440,7 +440,7 @@ public class Rnc {
     }
 
     public int getLteTA() {
-        return lteTA;
+        return (int) (lteTA * 78.12);
     }
 
     public void setLteTA(int lteTA) {
