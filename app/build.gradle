@@ -37,7 +37,7 @@ android {
 
         defaultConfig {
             versionCode version_Code
-            versionName "RNCFreeMobile-${versionMajor}.${versionMinor}.${versionPatch}-${versionBuild}"
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         }
     } else {
         throw new GradleException("Could not read version.properties!")

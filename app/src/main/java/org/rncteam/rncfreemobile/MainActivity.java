@@ -1,11 +1,16 @@
 package org.rncteam.rncfreemobile;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
@@ -34,39 +40,43 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     private static final int NUM_PAGES = 4;
 
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        rncmobile.setMainActivity(this);
 
-        // Instantiate a ViewPager and a PagerAdapter.
-        mPager = (ViewPager) findViewById(R.id.pager);
-        PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(mPagerAdapter);
+         if(checkPermissions()){
+             setContentView(R.layout.activity_main);
+             rncmobile.setMainActivity(this);
+             // Instantiate a ViewPager and a PagerAdapter.
+             mPager = (ViewPager) findViewById(R.id.pager);
+             PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+             mPager.setAdapter(mPagerAdapter);
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+             Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        // Init main classes
-        rncmobile.setTel(new Telephony());
-        // Initialize specific class
-        rncmobile.setMaps(new Maps());
+             // Init main classes
+             rncmobile.setTel(new Telephony());
+             // Initialize specific class
+             rncmobile.setMaps(new Maps());
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+             setSupportActionBar(mToolbar);
+             getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        rncmobile.fragmentDrawer = (FragmentDrawer)
-                getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        rncmobile.fragmentDrawer.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
-        rncmobile.fragmentDrawer.setDrawerListener(this);
+             rncmobile.fragmentDrawer = (FragmentDrawer)
+                     getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+             rncmobile.fragmentDrawer.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
+             rncmobile.fragmentDrawer.setDrawerListener(this);
 
-        sp = rncmobile.getPreferences();
-        if(sp.getBoolean("screen", true)) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
+             sp = rncmobile.getPreferences();
+             if(sp.getBoolean("screen", true)) {
+                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+             }
 
-        displayView(0);
-        stopMonitorService();
+             displayView(0);
+             stopMonitorService();
+         }
     }
 
     @Override
@@ -207,6 +217,16 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         mPager.setCurrentItem(position);
     }
 
+    public boolean checkPermissions(){
+        if(((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) ||
+                (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) ||
+                (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+        }
+        return true;
+    }
+
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
@@ -215,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
 
         @Override
         public Fragment getItem(int position) {

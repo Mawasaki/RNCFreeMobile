@@ -85,7 +85,7 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         holder.txtSnr.setText(String.valueOf((rnc.getLteRssnr() / 10) + " dB"));
         holder.txtAsu.setText(String.valueOf(rnc.getLteAsu()));
         holder.txtCqi.setText(String.valueOf(rnc.getLteCqi()));
-        holder.txtTA.setText(String.valueOf(rnc.getLteTA()));
+        holder.txtTA.setText(String.valueOf(rnc.getLteTA() * 0.7812) + " km");
         holder.txtData.setText(rnc.get_txt());
 
         holder.txrFreq.setText(rnc.getFreqTxt() + ((rnc.getSectText().equals("-")) ? "" : " / " + rnc.getSectText()));

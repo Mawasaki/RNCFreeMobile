@@ -440,7 +440,7 @@ public class Rnc {
     }
 
     public int getLteTA() {
-        return (int) (lteTA * 78.12);
+        return (int) (lteTA);
     }
 
     public void setLteTA(int lteTA) {
