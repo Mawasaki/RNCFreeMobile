@@ -93,47 +93,50 @@ public class MonitorFragment extends Fragment {
     private final Runnable displayMonitor = new Runnable() {
         public void run() {
 
-            listViewRncMain.setVisibility(View.VISIBLE);
-            listViewRncPsc.setVisibility(View.VISIBLE);
-            fl.setVisibility(View.GONE);
-            fl_2g.setVisibility(View.GONE);
+            if (rncmobile.accessCoarseLocation) {
+                listViewRncMain.setVisibility(View.VISIBLE);
+                listViewRncPsc.setVisibility(View.VISIBLE);
+                fl.setVisibility(View.GONE);
+                fl_2g.setVisibility(View.GONE);
 
-            lRncs.clear();
-            lRncs.add(tel.getLoggedRnc());
+                lRncs.clear();
+                lRncs.add(tel.getLoggedRnc());
 
-            if(lRncs.get(0) != null && (tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4)) {
+                if (lRncs.get(0) != null &&
+                        (tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4)) {
 
-                if (lRncs.get(0).get_tech() == 3) {
-                    ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(lRncs);
-                    listViewRncMain.setAdapter(adapter);
-                } else if (lRncs.get(0).get_tech() == 4) {
-                    ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(lRncs);
-                    listViewRncMain.setAdapter(adapter);
+                    if (lRncs.get(0).get_tech() == 3) {
+                        ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(lRncs);
+                        listViewRncMain.setAdapter(adapter);
+                    } else if (lRncs.get(0).get_tech() == 4) {
+                        ListMonitorMainLteAdapter adapter = new ListMonitorMainLteAdapter(lRncs);
+                        listViewRncMain.setAdapter(adapter);
+                    } else {
+                        listViewRncMain.setVisibility(View.GONE);
+                        fl.setVisibility(View.VISIBLE);
+                    }
+                    // Neighbours cell
+                    ArrayList<Rnc> arrayNeighCell = tel.getlNeigh();
+                    if (arrayNeighCell != null && arrayNeighCell.size() > 0) {
+                        ListMonitorPscAdapter adapterPsc = new ListMonitorPscAdapter(arrayNeighCell);
+                        listViewRncPsc.setAdapter(adapterPsc);
+                    } else listViewRncPsc.setVisibility(View.GONE);
+
                 } else {
                     listViewRncMain.setVisibility(View.GONE);
-                    fl.setVisibility(View.VISIBLE);
-                }
-                // Neighbours cell
-                ArrayList<Rnc> arrayNeighCell = tel.getlNeigh();
-                if(arrayNeighCell != null && arrayNeighCell.size() > 0) {
-                    ListMonitorPscAdapter adapterPsc = new ListMonitorPscAdapter(arrayNeighCell);
-                    listViewRncPsc.setAdapter(adapterPsc);
-                } else listViewRncPsc.setVisibility(View.GONE);
-
-            } else {
-                listViewRncMain.setVisibility(View.GONE);
-                listViewRncPsc.setVisibility(View.GONE);
-                fl_2g.setVisibility(View.GONE); //// TODO: 21/10/2015
-                fl.setVisibility(View.VISIBLE);
-
-                if (tel.getNetworkClass() == 2) {
-                    fl.setVisibility(View.GONE);
-                    fl_2g.setVisibility(View.VISIBLE);
-                    listViewRncMain.setVisibility(View.GONE);
                     listViewRncPsc.setVisibility(View.GONE);
+                    fl_2g.setVisibility(View.GONE); //// TODO: 21/10/2015
+                    fl.setVisibility(View.VISIBLE);
+
+                    if (tel.getNetworkClass() == 2) {
+                        fl.setVisibility(View.GONE);
+                        fl_2g.setVisibility(View.VISIBLE);
+                        listViewRncMain.setVisibility(View.GONE);
+                        listViewRncPsc.setVisibility(View.GONE);
+                    }
                 }
+                handler.postDelayed(this, 1000);
             }
-            handler.postDelayed(this, 1000);
         }
     };
 }

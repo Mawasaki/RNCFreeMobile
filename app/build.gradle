@@ -37,7 +37,7 @@ android {
 
         defaultConfig {
             versionCode version_Code
-            versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}-${versionBuild}"
         }
     } else {
         throw new GradleException("Could not read version.properties!")

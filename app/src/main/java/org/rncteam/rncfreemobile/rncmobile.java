@@ -42,6 +42,11 @@ public class rncmobile extends Application {
 
     public static boolean rncDataCharged;
 
+    // Permission
+    public static boolean accessCoarseLocation;
+    public static boolean writeExternalStorage;
+    public static boolean readPhoneState;
+
     public void onCreate(){
         super.onCreate();
 
@@ -102,7 +107,7 @@ public class rncmobile extends Application {
             String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
             String[] v_parts = version.split("-");
 
-            return v_parts[1];
+            return v_parts[0];
         } catch (PackageManager.NameNotFoundException e) {
             return e.toString();
         }
@@ -114,7 +119,7 @@ public class rncmobile extends Application {
             String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
             String[] v_parts = version.split("-");
 
-            return v_parts[2];
+            return v_parts[1];
         } catch (PackageManager.NameNotFoundException e) {
             return e.toString();
         }

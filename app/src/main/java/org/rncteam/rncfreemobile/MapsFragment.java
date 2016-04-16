@@ -51,9 +51,16 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =inflater.inflate(R.layout.fragment_maps,container,false);
 
-        // Retrive main classes
-        maps = rncmobile.getMaps();
-        tel = rncmobile.getTelephony();
+        if(rncmobile.accessCoarseLocation) {
+            // Retrive main classes
+            maps = rncmobile.getMaps();
+            tel = rncmobile.getTelephony();
+
+            setUpMapIfNeeded();
+
+            mMap.setInfoWindowAdapter(new MapsPopupAdapter(container));
+            mMap.setOnInfoWindowClickListener(this);
+        }
 
         // Retrieve UI
         ImageButton btnActionProfile = (ImageButton) v.findViewById(R.id.btn_action_profile);
@@ -66,11 +73,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         txtMapExtInfosTxt = (TextView) v.findViewById(R.id.map_ext_infos_txt);
         btnMapManCoo = (Button) v.findViewById(R.id.map_bt_man_coo);
         loadingPanelChart = (RelativeLayout) v.findViewById(R.id.loadingPanelChart);
-
-        setUpMapIfNeeded();
-
-        mMap.setInfoWindowAdapter(new MapsPopupAdapter(container));
-        mMap.setOnInfoWindowClickListener(this);
 
         btnActionProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +127,8 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     @Override
     public void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
+        if(rncmobile.accessCoarseLocation)
+            setUpMapIfNeeded();
     }
 
     private void setUpMapIfNeeded() {

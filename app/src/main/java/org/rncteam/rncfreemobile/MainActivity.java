@@ -46,37 +46,39 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-         if(checkPermissions()){
-             setContentView(R.layout.activity_main);
-             rncmobile.setMainActivity(this);
-             // Instantiate a ViewPager and a PagerAdapter.
-             mPager = (ViewPager) findViewById(R.id.pager);
-             PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-             mPager.setAdapter(mPagerAdapter);
+        setContentView(R.layout.activity_main);
+        rncmobile.setMainActivity(this);
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPager = (ViewPager) findViewById(R.id.pager);
+        PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(mPagerAdapter);
 
-             Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
-             // Init main classes
-             rncmobile.setTel(new Telephony());
-             // Initialize specific class
-             rncmobile.setMaps(new Maps());
+        checkPermissions();
 
-             setSupportActionBar(mToolbar);
-             getSupportActionBar().setDisplayShowHomeEnabled(true);
+        if(rncmobile.accessCoarseLocation) {
+            // Init main classes
+            rncmobile.setTel(new Telephony());
+            // Initialize specific class
+            rncmobile.setMaps(new Maps());
+        }
 
-             rncmobile.fragmentDrawer = (FragmentDrawer)
-                     getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-             rncmobile.fragmentDrawer.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
-             rncmobile.fragmentDrawer.setDrawerListener(this);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-             sp = rncmobile.getPreferences();
-             if(sp.getBoolean("screen", true)) {
-                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-             }
+        rncmobile.fragmentDrawer = (FragmentDrawer)
+                getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+        rncmobile.fragmentDrawer.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
+        rncmobile.fragmentDrawer.setDrawerListener(this);
 
-             displayView(0);
-             stopMonitorService();
-         }
+        sp = rncmobile.getPreferences();
+        if(sp.getBoolean("screen", true)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        displayView(0);
+        stopMonitorService();
     }
 
     @Override
@@ -85,8 +87,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        Telephony tel = rncmobile.getTelephony();
-        tel.stopListenManager();
+        if(rncmobile.accessCoarseLocation) {
+            Telephony tel = rncmobile.getTelephony();
+            tel.stopListenManager();
+        }
     }
 
     @Override
@@ -107,10 +111,12 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         super.onPause();
 
         // Store pos in prefs
-        Maps maps = rncmobile.getMaps();
-        Utils.storeLastPos(String.valueOf(maps.getLastPosLat()),
-                String.valueOf(maps.getLastPosLon()),
-                String.valueOf(maps.getLastZoom()));
+        if(rncmobile.accessCoarseLocation) {
+            Maps maps = rncmobile.getMaps();
+            Utils.storeLastPos(String.valueOf(maps.getLastPosLat()),
+                    String.valueOf(maps.getLastPosLon()),
+                    String.valueOf(maps.getLastZoom()));
+        }
     }
 
     public void onStop() {
@@ -217,14 +223,31 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         mPager.setCurrentItem(position);
     }
 
-    public boolean checkPermissions(){
-        if(((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) ||
-                (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) ||
-                (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+                rncmobile.accessCoarseLocation = false;
+            } else rncmobile.accessCoarseLocation = true;
+
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)) {
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_ASK_PERMISSIONS);
+                rncmobile.readPhoneState = false;
+            }
+            else rncmobile.readPhoneState = true;
+
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+                rncmobile.writeExternalStorage = false;
+            }
+            else rncmobile.writeExternalStorage = true;
         }
-        return true;
+        else {
+            rncmobile.accessCoarseLocation = true;
+            rncmobile.readPhoneState = true;
+            rncmobile.writeExternalStorage = true;
+        };
     }
 
     /**
