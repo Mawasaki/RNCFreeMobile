@@ -100,9 +100,10 @@ public class rncmobile extends Application {
     public static String appVersion() {
         try {
             String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-            String[] v_parts = version.split("-");
+            //String[] v_parts = version.split("-");
 
-            return v_parts[1];
+            //return v_parts[1];
+            return version;
         } catch (PackageManager.NameNotFoundException e) {
             return e.toString();
         }
@@ -110,11 +111,11 @@ public class rncmobile extends Application {
 
     public static String appBuild() {
         try {
-            //return String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
-            String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            return String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
+            /*String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionBuild;
             String[] v_parts = version.split("-");
 
-            return v_parts[2];
+            return v_parts[2];*/
         } catch (PackageManager.NameNotFoundException e) {
             return e.toString();
         }
