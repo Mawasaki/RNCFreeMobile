@@ -16,11 +16,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.rncteam.rncfreemobile.LogsDetailsActivity;
-import org.rncteam.rncfreemobile.MainActivity;
+import org.rncteam.rncfreemobile.activity.LogsDetailsActivity;
+import org.rncteam.rncfreemobile.activity.MainActivity;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
@@ -28,7 +25,7 @@ import org.rncteam.rncfreemobile.classes.Utils;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.util.ArrayList;
 import java.util.Date;

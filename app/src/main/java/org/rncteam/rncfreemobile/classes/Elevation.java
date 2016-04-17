@@ -20,7 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 import org.rncteam.rncfreemobile.tasks.ProfileTask;
 
 import java.util.ArrayList;

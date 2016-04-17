@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -20,8 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.classes.Utils;
@@ -99,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         launchMonitorService();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

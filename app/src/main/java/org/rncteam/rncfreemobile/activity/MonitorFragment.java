@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.adapters.ListMonitorMainLteAdapter;
 import org.rncteam.rncfreemobile.adapters.ListMonitorMainUmtsAdapter;
 import org.rncteam.rncfreemobile.adapters.ListMonitorPscAdapter;

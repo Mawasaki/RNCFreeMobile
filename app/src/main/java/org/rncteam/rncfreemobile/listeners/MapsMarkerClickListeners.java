@@ -3,7 +3,7 @@ package org.rncteam.rncfreemobile.listeners;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 /**
  * Created by cedricf_25 on 01/08/2015.

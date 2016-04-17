@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Rnc;

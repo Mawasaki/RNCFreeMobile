@@ -5,7 +5,7 @@ import android.location.Location;
 import com.google.android.gms.maps.GoogleMap;
 
 import org.rncteam.rncfreemobile.classes.Maps;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 /**
  * Created by cedricf_25 on 12/10/2015.

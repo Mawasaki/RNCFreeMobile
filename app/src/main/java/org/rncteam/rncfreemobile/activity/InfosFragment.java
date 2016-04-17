@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;

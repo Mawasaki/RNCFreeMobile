@@ -18,7 +18,7 @@ import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 import org.rncteam.rncfreemobile.tasks.AutoExportTask;
 
 import java.security.MessageDigest;

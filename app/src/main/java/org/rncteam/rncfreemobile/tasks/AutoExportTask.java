@@ -8,7 +8,7 @@ import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

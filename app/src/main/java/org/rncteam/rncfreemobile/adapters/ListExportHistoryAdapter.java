@@ -14,7 +14,7 @@ import android.widget.Toast;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.Utils;
 import org.rncteam.rncfreemobile.models.Export;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.util.List;
 

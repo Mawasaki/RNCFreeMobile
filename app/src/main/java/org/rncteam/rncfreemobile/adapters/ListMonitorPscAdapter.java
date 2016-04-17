@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.util.List;
 
@@ -56,18 +56,23 @@ public class ListMonitorPscAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Rnc rnc = lCell.get(position);
+        try{
+            Rnc rnc = lCell.get(position);
 
-        String psc_cid = String.valueOf(rnc.get_psc());
+            String psc_cid = String.valueOf(rnc.get_psc());
 
-        if(!rnc.NOT_IDENTIFIED && !rnc.get_txt().equals("-")) {
-            psc_cid += "  " + String.valueOf(rnc.get_rnc());
-            psc_cid += ":" + String.valueOf(rnc.get_cid());
+            if(!rnc.NOT_IDENTIFIED && !rnc.get_txt().equals("-")) {
+                psc_cid += "  " + String.valueOf(rnc.get_rnc());
+                psc_cid += ":" + String.valueOf(rnc.get_cid());
+            }
+
+            holder.txtPsc.setText(psc_cid);
+            holder.txtRssi.setText(String.valueOf((rnc.getLteRssi()) + " dBm"));
+            holder.txtTxt.setText(String.valueOf(rnc.get_txt()));
         }
-
-        holder.txtPsc.setText(psc_cid);
-        holder.txtRssi.setText(String.valueOf((rnc.getLteRssi()) + " dBm"));
-        holder.txtTxt.setText(String.valueOf(rnc.get_txt()));
+        catch (IndexOutOfBoundsException e){
+            lCell.clear();
+        }
 
         return convertView;
     }

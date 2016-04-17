@@ -1,19 +1,14 @@
 package org.rncteam.rncfreemobile.classes;
 
-import android.content.SharedPreferences;
-import android.os.Environment;
 import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.database.DatabaseInfo;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
-import java.io.File;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

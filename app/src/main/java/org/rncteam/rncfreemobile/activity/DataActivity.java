@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
@@ -19,7 +20,6 @@ import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.tasks.CsvRncDownloader;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;

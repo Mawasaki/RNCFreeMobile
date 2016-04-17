@@ -9,8 +9,7 @@ import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.rncmobile;
-import org.w3c.dom.Text;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.util.List;
 
@@ -85,7 +84,7 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         holder.txtSnr.setText(String.valueOf((rnc.getLteRssnr() / 10) + " dB"));
         holder.txtAsu.setText(String.valueOf(rnc.getLteAsu()));
         holder.txtCqi.setText(String.valueOf(rnc.getLteCqi()));
-        holder.txtTA.setText(String.valueOf(rnc.getLteTA() * 0.7812) + " km");
+        holder.txtTA.setText(String.valueOf(rnc.getLteTA() * 0.07812) + " km");
         holder.txtData.setText(rnc.get_txt());
 
         holder.txrFreq.setText(rnc.getFreqTxt() + ((rnc.getSectText().equals("-")) ? "" : " / " + rnc.getSectText()));

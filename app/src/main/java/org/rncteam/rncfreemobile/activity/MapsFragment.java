@@ -1,5 +1,6 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.adapters.MapsPopupAdapter;
 import org.rncteam.rncfreemobile.classes.Elevation;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;

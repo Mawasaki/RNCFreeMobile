@@ -1,7 +1,6 @@
 package org.rncteam.rncfreemobile.classes;
 
 import android.view.View;
-import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -17,15 +16,14 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.rncteam.rncfreemobile.MapsFragment;
+import org.rncteam.rncfreemobile.activity.MapsFragment;
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
 import org.rncteam.rncfreemobile.listeners.MapsLocationListeners;
 import org.rncteam.rncfreemobile.listeners.MapsLongClickListeners;
 import org.rncteam.rncfreemobile.listeners.MapsMarkerClickListeners;
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 /**
  * Created by cedricf_25 on 14/07/2015.

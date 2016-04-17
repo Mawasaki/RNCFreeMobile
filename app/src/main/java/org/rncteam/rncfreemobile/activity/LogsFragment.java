@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import android.widget.ListView;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.adapters.ListLogsMainAdapter;
 
 import org.rncteam.rncfreemobile.database.DatabaseLogs;

@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 /**
  * Created by cedric on 14/07/2015.
@@ -6,17 +6,13 @@ package org.rncteam.rncfreemobile;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.models.RncLogs;
 import org.rncteam.rncfreemobile.classes.Telephony;
-import org.rncteam.rncfreemobile.tasks.CrashReportTask;
 
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.LayoutInflater;
 
 import java.util.ArrayList;
 

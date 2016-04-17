@@ -4,7 +4,7 @@ import android.telephony.SignalStrength;
 
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

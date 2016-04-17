@@ -1,7 +1,9 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import org.rncteam.rncfreemobile.R;
 
 /**
  * Created by cedricf_25 on 12/10/2015.

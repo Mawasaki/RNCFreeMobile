@@ -4,11 +4,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 
 import org.rncteam.rncfreemobile.classes.Maps;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 import org.rncteam.rncfreemobile.tasks.AnfrDataTask;
 
 /**

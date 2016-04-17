@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.adapters.ListExportHistoryAdapter;
 import org.rncteam.rncfreemobile.database.DatabaseExport;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
