@@ -12,6 +12,9 @@ import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -79,6 +82,14 @@ public class CellNeighbours {
                                 lRnc.add(rnc);
                             }
                         }
+                        Collections.sort(lRnc,
+                                new Comparator<Rnc>() {
+                                    @Override
+                                    public int compare(Rnc lhs, Rnc rhs) {
+                                        return Integer.compare(rhs.getLteRssi(), lhs.getLteRssi());
+                                    }
+                                }
+                        );
                     }
                 } else {
                     List<NeighboringCellInfo> lNci = tel.getTelephonyManager().getNeighboringCellInfo();

@@ -101,6 +101,7 @@ public class LogsFragment extends Fragment {
 
     public void onPause() {
         super.onPause();
+        rncmobile.displayView = 1;
     }
 
     public void onStop() {

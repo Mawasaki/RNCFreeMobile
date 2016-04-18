@@ -40,8 +40,12 @@ public class rncmobile extends Application {
 
     // Permission
     public static boolean accessCoarseLocation;
+    public static boolean accessFineLocation;
     public static boolean writeExternalStorage;
     public static boolean readPhoneState;
+    public static int REQUEST_CODE_ASK_PERMISSIONS = 123;
+
+    public static int displayView;
 
     public void onCreate(){
         super.onCreate();

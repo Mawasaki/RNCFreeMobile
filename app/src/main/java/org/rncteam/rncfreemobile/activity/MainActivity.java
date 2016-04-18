@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     private static final int NUM_PAGES = 4;
 
-    final private int REQUEST_CODE_ASK_PERMISSIONS = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,10 +134,11 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-
-        stopMonitorService();
-        rncmobile.setMainActivity(this);
-        displayView(0);
+        if(rncmobile.displayView != 1 && rncmobile.displayView != 3){
+            stopMonitorService();
+            rncmobile.setMainActivity(this);
+            displayView(0);
+        }
     }
 
     @Override
@@ -228,18 +227,18 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
             if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, rncmobile.REQUEST_CODE_ASK_PERMISSIONS);
                 rncmobile.accessCoarseLocation = false;
             } else rncmobile.accessCoarseLocation = true;
 
             if ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)) {
-                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_ASK_PERMISSIONS);
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, rncmobile.REQUEST_CODE_ASK_PERMISSIONS);
                 rncmobile.readPhoneState = false;
             }
             else rncmobile.readPhoneState = true;
 
             if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, rncmobile.REQUEST_CODE_ASK_PERMISSIONS);
                 rncmobile.writeExternalStorage = false;
             }
             else rncmobile.writeExternalStorage = true;

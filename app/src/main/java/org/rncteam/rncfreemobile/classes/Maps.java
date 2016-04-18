@@ -1,5 +1,8 @@
 package org.rncteam.rncfreemobile.classes;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 
 import java.text.DecimalFormat;
@@ -16,6 +19,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.rncteam.rncfreemobile.activity.MainActivity;
 import org.rncteam.rncfreemobile.activity.MapsFragment;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.listeners.MapsChangeListeners;
@@ -94,7 +98,14 @@ public class Maps {
     }
 
     public void setMapMyLocationEnabled() {
-        mMap.setMyLocationEnabled(true);
+        if (ActivityCompat.checkSelfPermission(rncmobile.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(rncmobile.getAppContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, rncmobile.REQUEST_CODE_ASK_PERMISSIONS);
+            rncmobile.accessFineLocation = false;
+        } else {
+            rncmobile.accessFineLocation = true;
+            mMap.setMyLocationEnabled(true);
+        }
+
     }
 
     public void setCameraListener() {

@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Marker;
 
@@ -123,6 +125,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     public void onPause() {
         super.onPause();
         rncmobile.markerClicked = false;
+        rncmobile.displayView = 3;
     }
 
     @Override
@@ -165,5 +168,4 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
             }
         }
     };
-
 }
