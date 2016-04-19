@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.telephony.PhoneStateListener;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.HttpLog;
@@ -197,8 +198,9 @@ public class MonitorService extends Service {
                 stopSelf();
                 ((NotificationManager) rncmobile.getAppContext().getSystemService(Context.NOTIFICATION_SERVICE))
                         .cancelAll();
+                // Close application on cancel
+                System.exit(0);
             }
         }
     }
-
 }

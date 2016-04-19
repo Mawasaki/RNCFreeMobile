@@ -134,8 +134,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        stopMonitorService();
         if(rncmobile.displayView != 1 && rncmobile.displayView != 3){
-            stopMonitorService();
             rncmobile.setMainActivity(this);
             displayView(0);
         }
@@ -285,5 +285,4 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             return NUM_PAGES;
         }
     }
-
 }

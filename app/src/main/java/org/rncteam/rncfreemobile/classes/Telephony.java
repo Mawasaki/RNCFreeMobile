@@ -1,6 +1,8 @@
 package org.rncteam.rncfreemobile.classes;
 
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.telephony.CellInfo;
@@ -14,6 +16,8 @@ import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.activity.MainActivity;
+import org.rncteam.rncfreemobile.activity.MonitorService;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.Rnc;
@@ -308,8 +312,15 @@ public class Telephony {
 
     Runnable dispatchCI = new Runnable() {
         public void run() {
-            if ((signalChange || cellChange) && gsmCellLocation != null)
+            if ((signalChange || cellChange) && gsmCellLocation != null){
+                // Refresh notification bar
+                Intent intent = new Intent(rncmobile.getAppContext(), MonitorService.class);
+                intent.putExtra("foo", "bar");
+                rncmobile.getAppContext().stopService(intent);
+                rncmobile.getAppContext().startService(intent);
+
                 dispatchCellInfo();
+            }
             signalChange = false;
             cellChange = false;
         }
