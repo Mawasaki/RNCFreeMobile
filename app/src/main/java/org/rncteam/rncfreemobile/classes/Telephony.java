@@ -93,10 +93,13 @@ public class Telephony {
             rnc.set_tech(getNetworkClass());
             rnc.set_mcc(getMcc());
             rnc.set_mnc(getMnc());
+            rnc.set_lac(gsmCellLocation.getLac());
 
             // Checking LCID in log
-            //rnc.set_lac(gsmCellLocation.getLac());
-            rnc.set_lac(gsmCellLocation.getCid());
+            rnc.set_psc(gsmCellLocation.getCid());
+            if(gsmCellLocation.getCid() <= 0 || gsmCellLocation.getCid() >= 268435455){
+                return;
+            }
 
             rnc.set_lcid(gsmCellLocation.getCid());
             rnc.set_cid(rnc.getCid());
@@ -139,9 +142,9 @@ public class Telephony {
                         }
                     }
                 }
-                rnc.set_psc((psc == 0) ? -1 : psc);
+                //rnc.set_psc((psc == 0) ? -1 : psc);
             } else {
-                rnc.set_psc((gsmCellLocation.getPsc() == 0) ? -1 : psc);
+                //rnc.set_psc((gsmCellLocation.getPsc() == 0) ? -1 : psc);
             }
 
             // Log in roaming
