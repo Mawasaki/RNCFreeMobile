@@ -198,8 +198,6 @@ public class MonitorService extends Service {
                 stopSelf();
                 ((NotificationManager) rncmobile.getAppContext().getSystemService(Context.NOTIFICATION_SERVICE))
                         .cancelAll();
-                // Close application on cancel
-                System.exit(0);
             }
         }
     }

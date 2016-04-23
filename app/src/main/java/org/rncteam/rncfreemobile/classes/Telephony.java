@@ -93,7 +93,11 @@ public class Telephony {
             rnc.set_tech(getNetworkClass());
             rnc.set_mcc(getMcc());
             rnc.set_mnc(getMnc());
-            rnc.set_lac(gsmCellLocation.getLac());
+
+            // Checking LCID in log
+            //rnc.set_lac(gsmCellLocation.getLac());
+            rnc.set_lac(gsmCellLocation.getCid());
+
             rnc.set_lcid(gsmCellLocation.getCid());
             rnc.set_cid(rnc.getCid());
             rnc.set_rnc(rnc.getRnc());
@@ -297,7 +301,9 @@ public class Telephony {
 
             setSignalStrength(signalStrength);
             signalChange = true;
-            handler.postDelayed(dispatchCI, 500);
+            // Test to 0
+            //handler.postDelayed(dispatchCI, 500);
+            handler.postDelayed(dispatchCI, 0);
         }
 
         public void onCellLocationChanged(final CellLocation location) {
@@ -306,7 +312,9 @@ public class Telephony {
             setCellLocation(location);
             setGsmCellLocation();
             cellChange = true;
-            handler.postDelayed(dispatchCI, 500);
+            // Test to 0
+            //handler.postDelayed(dispatchCI, 500);
+            handler.postDelayed(dispatchCI, 0);
         }
     }
 
