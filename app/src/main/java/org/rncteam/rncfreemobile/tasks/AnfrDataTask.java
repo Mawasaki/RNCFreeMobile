@@ -34,7 +34,7 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
     private final Maps maps;
 
     // UI
-    private RelativeLayout lytPbLoading;
+    private RelativeLayout lytPbLoading = (RelativeLayout) rncmobile.getMainActivity().findViewById(R.id.loadingPanel);
 
     private ArrayList<Rnc> lRnc;
 
@@ -68,7 +68,6 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
 
         // Loader
         if (rncmobile.getMainActivity() != null) {
-            lytPbLoading = (RelativeLayout) rncmobile.getMainActivity().findViewById(R.id.loadingPanel);
             lytPbLoading.setVisibility(View.VISIBLE);
         }
     }
