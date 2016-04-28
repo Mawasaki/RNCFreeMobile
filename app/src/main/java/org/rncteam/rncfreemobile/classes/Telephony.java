@@ -96,10 +96,6 @@ public class Telephony {
             rnc.set_lac(gsmCellLocation.getLac());
 
             // Checking LCID in log
-            //rnc.set_psc(gsmCellLocation.getCid());
-            if(gsmCellLocation.getCid() <= 0 || gsmCellLocation.getCid() >= 268435455){
-                return;
-            }
 
             rnc.set_lcid(gsmCellLocation.getCid());
             rnc.set_cid(rnc.getCid());
@@ -168,7 +164,13 @@ public class Telephony {
             // Manage 3G/4G
             else if (getNetworkClass() == 3 || getNetworkClass() == 4)
             {
-                    /* Chris Patch */
+                /* Chris Patch */
+                /* 1) check CID */
+                if(gsmCellLocation.getCid() <= 0 || gsmCellLocation.getCid() >= 268435455){
+                    return;
+                }
+
+                /* 2) Check with logged cell and logged cell before */
                 if(loggedRnc != null) {
                     if(rnc.get_lcid() == loggedRnc.get_lcid() &&
                     rnc.get_mcc() != loggedRnc.get_mcc()) {

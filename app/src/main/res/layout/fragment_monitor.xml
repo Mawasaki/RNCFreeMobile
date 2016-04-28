@@ -64,14 +64,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Initializing..."
+                    android:text="Edge is not implemented."
                     android:textSize="20dp"
                     android:textColor="@android:color/black" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Checking telephony"
+                    android:text="Orange network"
                     android:textSize="16dp"
                     android:textStyle="italic"
                     android:textColor="#555555" />
