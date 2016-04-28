@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import org.rncteam.rncfreemobile.R;
+import org.rncteam.rncfreemobile.adapters.ListMonitorMainEdgeAdapter;
 import org.rncteam.rncfreemobile.adapters.ListMonitorMainLteAdapter;
 import org.rncteam.rncfreemobile.adapters.ListMonitorMainUmtsAdapter;
 import org.rncteam.rncfreemobile.adapters.ListMonitorPscAdapter;
@@ -104,9 +105,12 @@ public class MonitorFragment extends Fragment {
                 lRncs.add(tel.getLoggedRnc());
 
                 if (lRncs.get(0) != null &&
-                        (tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4)) {
+                        (tel.getNetworkClass() == 2 || tel.getNetworkClass() == 3 || tel.getNetworkClass() == 4)) {
 
-                    if (lRncs.get(0).get_tech() == 3) {
+                    if (lRncs.get(0).get_tech() == 2) {
+                        ListMonitorMainEdgeAdapter adapter = new ListMonitorMainEdgeAdapter(lRncs);
+                        listViewRncMain.setAdapter(adapter);
+                    } else if (lRncs.get(0).get_tech() == 3) {
                         ListMonitorMainUmtsAdapter adapter = new ListMonitorMainUmtsAdapter(lRncs);
                         listViewRncMain.setAdapter(adapter);
                     } else if (lRncs.get(0).get_tech() == 4) {

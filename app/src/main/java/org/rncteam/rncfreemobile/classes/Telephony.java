@@ -96,7 +96,7 @@ public class Telephony {
             rnc.set_lac(gsmCellLocation.getLac());
 
             // Checking LCID in log
-            rnc.set_psc(gsmCellLocation.getCid());
+            //rnc.set_psc(gsmCellLocation.getCid());
             if(gsmCellLocation.getCid() <= 0 || gsmCellLocation.getCid() >= 268435455){
                 return;
             }
@@ -109,7 +109,7 @@ public class Telephony {
             // Signal Strength
             if (signalStrength != null) {
                 rnc.setSignalStrength(signalStrength);
-                if (rnc.get_tech() == 3)
+                if (rnc.get_tech() == 2 || rnc.get_tech() == 3)
                     rnc.setUmtsRscp((2 * signalStrength.getGsmSignalStrength()) - 113);
 
                 if (rnc.get_tech() == 4) {
@@ -142,9 +142,9 @@ public class Telephony {
                         }
                     }
                 }
-                //rnc.set_psc((psc == 0) ? -1 : psc);
+                rnc.set_psc((psc == 0) ? -1 : psc);
             } else {
-                //rnc.set_psc((gsmCellLocation.getPsc() == 0) ? -1 : psc);
+                rnc.set_psc((gsmCellLocation.getPsc() == 0) ? -1 : psc);
             }
 
             // Log in roaming
@@ -161,8 +161,21 @@ public class Telephony {
             }
 
             // Protect some bad infos from API
-            // Manage only 3G/4G
-            if (getNetworkClass() == 3 || getNetworkClass() == 4) {
+            // Manage 2G
+            if(getNetworkClass() == 2) {
+                setLoggedRnc(rnc);
+            }
+            // Manage 3G/4G
+            else if (getNetworkClass() == 3 || getNetworkClass() == 4)
+            {
+                    /* Chris Patch */
+                if(loggedRnc != null) {
+                    if(rnc.get_lcid() == loggedRnc.get_lcid() &&
+                    rnc.get_mcc() != loggedRnc.get_mcc()) {
+                        return;
+                    }
+                }
+
                 if (rnc.get_mnc() == 15 && rnc.get_cid() > 0) {
                     /*if ((Integer.valueOf(rnc.get_real_rnc()) > 999) &&
                             (Integer.valueOf(rnc.get_real_rnc()) < 8000)) {*/
@@ -209,6 +222,9 @@ public class Telephony {
                             int logsSync = 0;
                             RncLogs rncLogs = new RncLogs();
                             rncLogs.set_date(sdf.format(new Date()));
+
+                            // update LCID in database
+                            dbr.updateLcid(rnc);
 
                             // if we detect an insertion, add in log
                             if (lastInsertId > 0) {

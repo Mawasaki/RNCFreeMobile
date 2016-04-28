@@ -121,6 +121,7 @@ public class DatabaseLogs extends Database {
         rncLog.set_tech(c.getInt(c.getColumnIndex(COL_RNCS_TECH)));
         rncLog.set_mcc(c.getInt(c.getColumnIndex(COL_RNCS_MCC)));
         rncLog.set_mnc(c.getInt(c.getColumnIndex(COL_RNCS_MNC)));
+        rncLog.set_lcid(c.getInt(c.getColumnIndex(COL_RNCS_LCID)));
         rncLog.set_cid(c.getInt(c.getColumnIndex(COL_RNCS_CID)));
         rncLog.set_lac(c.getInt(c.getColumnIndex(COL_RNCS_LAC)));
         rncLog.set_rnc(c.getInt(c.getColumnIndex(COL_RNCS_RNC)));

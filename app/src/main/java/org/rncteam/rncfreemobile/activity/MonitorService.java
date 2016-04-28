@@ -87,7 +87,7 @@ public class MonitorService extends Service {
                     if (tel.getNetworkClass() == 2) {
                         notification = new Notification.Builder(thisService)
                                 .setContentTitle(String.valueOf("RNC Free mobile"))
-                                .setContentText("Edge is not implemented")
+                                .setContentText("Edge is not monitored")
                                 .setSmallIcon(R.drawable.ic_notif_small_icon)
                                 .setLargeIcon(logoBitmap)
                                 .setAutoCancel(true)

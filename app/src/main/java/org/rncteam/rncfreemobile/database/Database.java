@@ -24,6 +24,7 @@ public class Database  extends SQLiteOpenHelper {
     protected static final String COL_RNCS_TECH   = "_tech";
     protected static final String COL_RNCS_MCC    = "_mcc";
     protected static final String COL_RNCS_MNC    = "_mnc";
+    protected static final String COL_RNCS_LCID   = "_lcid";
     protected static final String COL_RNCS_CID    = "_cid";
     protected static final String COL_RNCS_LAC    = "_lac";
     protected static final String COL_RNCS_RNC    = "_rnc";
@@ -37,6 +38,7 @@ public class Database  extends SQLiteOpenHelper {
             + COL_RNCS_TECH + " INTEGER NOT NULL, "
             + COL_RNCS_MCC + " INTEGER NOT NULL, "
             + COL_RNCS_MNC + " INTEGER NOT NULL, "
+            + COL_RNCS_LCID + " INTEGER NOT NULL, "
             + COL_RNCS_CID + " INTEGER NOT NULL, "
             + COL_RNCS_LAC + " INTEGER NOT NULL, "
             + COL_RNCS_RNC + " INTEGER NOT NULL, "

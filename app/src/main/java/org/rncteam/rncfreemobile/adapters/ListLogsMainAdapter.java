@@ -84,7 +84,8 @@ public class ListLogsMainAdapter extends BaseAdapter {
                 + String.valueOf(rncLog.get_rnc()) + " "
                 + String.valueOf(rncLog.get_cid()) + " "
                 + String.valueOf(rncLog.get_lac()) + " "
-                + String.valueOf(rncLog.get_psc()) + " ";
+                + String.valueOf(rncLog.get_psc()) + " ("
+                + String.valueOf(rncLog.get_lcid()) + ")";
 
         // Date
         String lDate; String fDate;

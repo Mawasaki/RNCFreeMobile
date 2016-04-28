@@ -14,6 +14,7 @@ public class RncLogs implements Serializable {
     private int _tech;
     private int _mcc;
     private int _mnc;
+    private int _lcid;
     private int _cid;
     private int _lac;
     private int _rnc;
@@ -77,6 +78,14 @@ public class RncLogs implements Serializable {
 
     public void set_mnc(int _mnc) {
         this._mnc = _mnc;
+    }
+
+    public int get_lcid() {
+        return _lcid;
+    }
+
+    public void set_lcid(int _lcid) {
+        this._lcid = _lcid;
     }
 
     public int get_cid() {
