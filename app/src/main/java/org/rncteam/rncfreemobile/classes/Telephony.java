@@ -173,7 +173,8 @@ public class Telephony {
                 /* 2) Check with logged cell and logged cell before */
                 if(loggedRnc != null) {
                     if(rnc.get_lcid() == loggedRnc.get_lcid() &&
-                    rnc.get_mcc() != loggedRnc.get_mcc()) {
+                    (rnc.get_tech() != loggedRnc.get_tech() ||
+                    rnc.get_mcc() != loggedRnc.get_mcc())) {
                         return;
                     }
                 }
@@ -323,8 +324,7 @@ public class Telephony {
             setSignalStrength(signalStrength);
             signalChange = true;
             // Test to 0
-            //handler.postDelayed(dispatchCI, 500);
-            handler.postDelayed(dispatchCI, 0);
+            handler.postDelayed(dispatchCI, 200);
         }
 
         public void onCellLocationChanged(final CellLocation location) {
