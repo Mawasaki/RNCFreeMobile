@@ -32,6 +32,9 @@ public class InfosFragment extends Fragment {
     private TextView txtLogsNbTotal;
     private TextView txtLogsNbUmts;
     private TextView txtLogsNbLte;
+    private TextView txtDebugFirst;
+    private TextView txtDebugSecond;
+    private TextView txtDebugTechno;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -49,9 +52,15 @@ public class InfosFragment extends Fragment {
         txtLogsNbUmts = (TextView) v.findViewById(R.id.txt_logs_nb_umts);
         txtLogsNbLte = (TextView) v.findViewById(R.id.txt_logs_nb_lte);
 
+        // Info debug
+        txtDebugFirst = (TextView) v.findViewById(R.id.txt_logs_debug_first);
+        txtDebugSecond = (TextView) v.findViewById(R.id.txt_logs_debug_second);
+        txtDebugTechno = (TextView) v.findViewById(R.id.txt_logs_debug_techno);
+
         setInfoRncMobile();
         setInfoVersion();
         setInfoLog();
+        setInfoDebug();
 
         return v;
     }
@@ -115,5 +124,11 @@ public class InfosFragment extends Fragment {
         txtLogsNbLte.setText("Total lte: " + nbLteLogs);
 
         dbl.close();
+    }
+
+    private void setInfoDebug(){
+        txtDebugFirst.setText("First check : " + rncmobile.debugFirst);
+        txtDebugSecond.setText("Second check : " + rncmobile.debugSecond);
+        txtDebugTechno.setText("Int techno : " + rncmobile.techno);
     }
 }

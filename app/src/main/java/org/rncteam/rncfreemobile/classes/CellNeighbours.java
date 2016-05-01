@@ -70,7 +70,7 @@ public class CellNeighbours {
                             rnc.setIsRegistered(cellInfoLte.isRegistered());
 
                             rnc.set_mcc(cellInfoLte.getCellIdentity().getMcc());
-                            rnc.set_mcc(cellInfoLte.getCellIdentity().getMnc());
+                            rnc.set_mnc(cellInfoLte.getCellIdentity().getMnc());
                             rnc.set_lac(cellInfoLte.getCellIdentity().getTac());
                             rnc.set_psc(cellInfoLte.getCellIdentity().getPci());
                             rnc.set_lcid(cellInfoLte.getCellIdentity().getCi());

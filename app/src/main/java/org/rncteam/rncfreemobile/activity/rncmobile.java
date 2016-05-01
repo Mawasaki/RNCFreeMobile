@@ -47,6 +47,10 @@ public class rncmobile extends Application {
 
     public static int displayView;
 
+    public static int debugFirst;
+    public static int debugSecond;
+    public static int techno;
+
     public void onCreate(){
         super.onCreate();
 
