@@ -12,7 +12,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -21,7 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 import org.rncteam.rncfreemobile.tasks.ProfileTask;
 
 import java.util.ArrayList;

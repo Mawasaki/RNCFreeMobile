@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.rncmobile;
-import org.w3c.dom.Text;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -21,6 +21,7 @@ import java.util.List;
 public class ListMonitorMainLteAdapter extends BaseAdapter {
 
     private static final String TAG = "ListMonitorMainLteAdapter";
+    private static final double meterTA = 0.07812;
 
     private List<Rnc> lCell;
 
@@ -85,7 +86,13 @@ public class ListMonitorMainLteAdapter extends BaseAdapter {
         holder.txtSnr.setText(String.valueOf((rnc.getLteRssnr() / 10) + " dB"));
         holder.txtAsu.setText(String.valueOf(rnc.getLteAsu()));
         holder.txtCqi.setText(String.valueOf(rnc.getLteCqi()));
-        holder.txtTA.setText(String.valueOf(rnc.getLteTA()));
+
+        if(rnc.getLteTA() * meterTA >= 1){
+            holder.txtTA.setText(String.valueOf(String.format("%.1f", rnc.getLteTA() * meterTA)) + " km");
+        } else {
+            holder.txtTA.setText(String.valueOf(String.format("%.2f", rnc.getLteTA() * meterTA)) + " km");
+        }
+
         holder.txtData.setText(rnc.get_txt());
 
         holder.txrFreq.setText(rnc.getFreqTxt() + ((rnc.getSectText().equals("-")) ? "" : " / " + rnc.getSectText()));

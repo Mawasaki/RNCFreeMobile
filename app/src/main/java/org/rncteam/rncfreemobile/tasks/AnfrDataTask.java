@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -19,7 +18,7 @@ import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Rnc;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +34,7 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
     private final Maps maps;
 
     // UI
-    private RelativeLayout lytPbLoading;
+    private RelativeLayout lytPbLoading = (RelativeLayout) rncmobile.getMainActivity().findViewById(R.id.loadingPanel);
 
     private ArrayList<Rnc> lRnc;
 
@@ -69,7 +68,6 @@ public class AnfrDataTask extends AsyncTask<String, String, JSONObject> {
 
         // Loader
         if (rncmobile.getMainActivity() != null) {
-            lytPbLoading = (RelativeLayout) rncmobile.getMainActivity().findViewById(R.id.loadingPanel);
             lytPbLoading.setVisibility(View.VISIBLE);
         }
     }

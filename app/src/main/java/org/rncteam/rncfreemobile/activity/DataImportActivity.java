@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;

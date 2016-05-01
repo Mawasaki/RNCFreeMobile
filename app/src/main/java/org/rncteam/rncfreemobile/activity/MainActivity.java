@@ -1,11 +1,15 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.classes.Utils;
@@ -37,9 +42,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         rncmobile.setMainActivity(this);
-
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
         PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -47,10 +52,14 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        // Init main classes
-        rncmobile.setTel(new Telephony());
-        // Initialize specific class
-        rncmobile.setMaps(new Maps());
+        checkPermissions();
+
+        if(rncmobile.accessCoarseLocation) {
+            // Init main classes
+            rncmobile.setTel(new Telephony());
+            // Initialize specific class
+            rncmobile.setMaps(new Maps());
+        }
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -75,8 +84,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        Telephony tel = rncmobile.getTelephony();
-        tel.stopListenManager();
+        if(rncmobile.accessCoarseLocation) {
+            Telephony tel = rncmobile.getTelephony();
+            tel.stopListenManager();
+        }
     }
 
     @Override
@@ -85,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         launchMonitorService();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,10 +110,12 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         super.onPause();
 
         // Store pos in prefs
-        Maps maps = rncmobile.getMaps();
-        Utils.storeLastPos(String.valueOf(maps.getLastPosLat()),
-                String.valueOf(maps.getLastPosLon()),
-                String.valueOf(maps.getLastZoom()));
+        if(rncmobile.accessCoarseLocation) {
+            Maps maps = rncmobile.getMaps();
+            Utils.storeLastPos(String.valueOf(maps.getLastPosLat()),
+                    String.valueOf(maps.getLastPosLon()),
+                    String.valueOf(maps.getLastZoom()));
+        }
     }
 
     public void onStop() {
@@ -119,10 +134,11 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if(sp.getBoolean("screen", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-
         stopMonitorService();
-        rncmobile.setMainActivity(this);
-        displayView(0);
+        if(rncmobile.displayView != 1 && rncmobile.displayView != 3){
+            rncmobile.setMainActivity(this);
+            displayView(0);
+        }
     }
 
     @Override
@@ -207,6 +223,33 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         mPager.setCurrentItem(position);
     }
 
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, rncmobile.REQUEST_CODE_ASK_PERMISSIONS);
+                rncmobile.accessCoarseLocation = false;
+            } else rncmobile.accessCoarseLocation = true;
+
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)) {
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, rncmobile.REQUEST_CODE_ASK_PERMISSIONS);
+                rncmobile.readPhoneState = false;
+            }
+            else rncmobile.readPhoneState = true;
+
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, rncmobile.REQUEST_CODE_ASK_PERMISSIONS);
+                rncmobile.writeExternalStorage = false;
+            }
+            else rncmobile.writeExternalStorage = true;
+        }
+        else {
+            rncmobile.accessCoarseLocation = true;
+            rncmobile.readPhoneState = true;
+            rncmobile.writeExternalStorage = true;
+        };
+    }
+
     /**
      * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
      * sequence.
@@ -215,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
 
         @Override
         public Fragment getItem(int position) {
@@ -241,5 +285,4 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             return NUM_PAGES;
         }
     }
-
 }

@@ -6,12 +6,11 @@ import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.rncteam.rncfreemobile.ExportLogsActivity;
+import org.rncteam.rncfreemobile.activity.ExportLogsActivity;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.database.DatabaseExport;
@@ -19,7 +18,7 @@ import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.models.Export;
 import org.rncteam.rncfreemobile.models.RncLogs;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

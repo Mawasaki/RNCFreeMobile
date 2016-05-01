@@ -22,7 +22,7 @@ import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.classes.Telephony;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 /**
  * Created by cedricf_25 on 01/08/2015.

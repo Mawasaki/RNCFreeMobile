@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.adapters.NavigationDrawerAdapter;
 import org.rncteam.rncfreemobile.classes.NavDrawerItem;
 import org.rncteam.rncfreemobile.tasks.StatsTask;

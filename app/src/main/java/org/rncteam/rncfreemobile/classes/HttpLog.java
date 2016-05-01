@@ -1,6 +1,5 @@
 package org.rncteam.rncfreemobile.classes;
 
-import org.rncteam.rncfreemobile.rncmobile;
 import org.rncteam.rncfreemobile.tasks.CrashReportTask;
 
 /**

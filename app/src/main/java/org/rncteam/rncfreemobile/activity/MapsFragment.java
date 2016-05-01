@@ -1,5 +1,6 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.adapters.MapsPopupAdapter;
 import org.rncteam.rncfreemobile.classes.Elevation;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
@@ -12,6 +13,7 @@ import android.support.annotation.Nullable;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Marker;
 
@@ -51,9 +54,16 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v =inflater.inflate(R.layout.fragment_maps,container,false);
 
-        // Retrive main classes
-        maps = rncmobile.getMaps();
-        tel = rncmobile.getTelephony();
+        if(rncmobile.accessCoarseLocation) {
+            // Retrive main classes
+            maps = rncmobile.getMaps();
+            tel = rncmobile.getTelephony();
+
+            setUpMapIfNeeded();
+
+            mMap.setInfoWindowAdapter(new MapsPopupAdapter(container));
+            mMap.setOnInfoWindowClickListener(this);
+        }
 
         // Retrieve UI
         ImageButton btnActionProfile = (ImageButton) v.findViewById(R.id.btn_action_profile);
@@ -66,11 +76,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
         txtMapExtInfosTxt = (TextView) v.findViewById(R.id.map_ext_infos_txt);
         btnMapManCoo = (Button) v.findViewById(R.id.map_bt_man_coo);
         loadingPanelChart = (RelativeLayout) v.findViewById(R.id.loadingPanelChart);
-
-        setUpMapIfNeeded();
-
-        mMap.setInfoWindowAdapter(new MapsPopupAdapter(container));
-        mMap.setOnInfoWindowClickListener(this);
 
         btnActionProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,12 +125,14 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
     public void onPause() {
         super.onPause();
         rncmobile.markerClicked = false;
+        rncmobile.displayView = 3;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
+        if(rncmobile.accessCoarseLocation)
+            setUpMapIfNeeded();
     }
 
     private void setUpMapIfNeeded() {
@@ -161,5 +168,4 @@ public class MapsFragment extends Fragment implements GoogleMap.OnInfoWindowClic
             }
         }
     };
-
 }

@@ -8,9 +8,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.rncteam.rncfreemobile.classes.AnfrInfos;
 import org.rncteam.rncfreemobile.classes.Maps;
 import org.rncteam.rncfreemobile.classes.Telephony;
-import org.rncteam.rncfreemobile.rncmobile;
-
-import java.util.ArrayList;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 /**
  * Created by cedricf_25 on 02/11/2015.

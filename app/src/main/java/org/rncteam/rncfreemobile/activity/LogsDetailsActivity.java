@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 
 import android.app.Activity;
@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;

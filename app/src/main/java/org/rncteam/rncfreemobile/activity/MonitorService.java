@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,7 +13,9 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.telephony.PhoneStateListener;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.classes.Telephony;
 import org.rncteam.rncfreemobile.models.Rnc;
@@ -85,7 +87,7 @@ public class MonitorService extends Service {
                     if (tel.getNetworkClass() == 2) {
                         notification = new Notification.Builder(thisService)
                                 .setContentTitle(String.valueOf("RNC Free mobile"))
-                                .setContentText("Edge is not implemented")
+                                .setContentText("Edge is not monitored")
                                 .setSmallIcon(R.drawable.ic_notif_small_icon)
                                 .setLargeIcon(logoBitmap)
                                 .setAutoCancel(true)
@@ -199,5 +201,4 @@ public class MonitorService extends Service {
             }
         }
     }
-
 }

@@ -31,6 +31,7 @@ public class DatabaseRnc extends Database {
         v.put(COL_RNCS_TECH, rnc.get_tech());
         v.put(COL_RNCS_MCC, rnc.get_mcc());
         v.put(COL_RNCS_MNC, rnc.get_mnc());
+        v.put(COL_RNCS_LCID, rnc.get_lcid());
         v.put(COL_RNCS_CID, rnc.getCid());
         v.put(COL_RNCS_LAC, rnc.get_lac());
         v.put(COL_RNCS_RNC, rnc.getRnc());
@@ -43,7 +44,7 @@ public class DatabaseRnc extends Database {
     }
 
     public void addMassiveRnc(List<Rnc> lRnc) {
-        String sql = "INSERT INTO "+ TABLE_RNCS +" VALUES (?,?,?,?,?,?,?,?,?,?,?);";
+        String sql = "INSERT INTO "+ TABLE_RNCS +" VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
         SQLiteStatement statement = mdb.compileStatement(sql);
         mdb.beginTransaction();
 
@@ -54,13 +55,14 @@ public class DatabaseRnc extends Database {
             statement.bindLong(2, lRnc.get(i).get_tech());
             statement.bindLong(3, lRnc.get(i).get_mcc());
             statement.bindLong(4, lRnc.get(i).get_mnc());
-            statement.bindLong(5, lRnc.get(i).get_cid());
-            statement.bindLong(6, lRnc.get(i).get_lac());
-            statement.bindLong(7, lRnc.get(i).get_rnc());
-            statement.bindLong(8, lRnc.get(i).get_psc());
-            statement.bindDouble(9, lRnc.get(i).get_lat());
-            statement.bindDouble(10, lRnc.get(i).get_lon());
-            statement.bindString(11, lRnc.get(i).get_txt());
+            statement.bindLong(5, -1);
+            statement.bindLong(6, lRnc.get(i).get_cid());
+            statement.bindLong(7, lRnc.get(i).get_lac());
+            statement.bindLong(8, lRnc.get(i).get_rnc());
+            statement.bindLong(9, lRnc.get(i).get_psc());
+            statement.bindDouble(10, lRnc.get(i).get_lat());
+            statement.bindDouble(11, lRnc.get(i).get_lon());
+            statement.bindString(12, lRnc.get(i).get_txt());
 
             statement.execute();
         }
@@ -79,7 +81,18 @@ public class DatabaseRnc extends Database {
 
         v.put(COL_RNCS_LAT, rnc.get_lat());
         v.put(COL_RNCS_LON, rnc.get_lon());
+        v.put(COL_RNCS_LCID, rnc.get_lcid());
         v.put(COL_RNCS_TXT, rnc.get_txt());
+
+        mdb.update(TABLE_RNCS, v, COL_RNCS_RNC + " = ? AND "
+                        + COL_RNCS_CID + " = ?",
+                new String[]{String.valueOf(rnc.get_rnc()), String.valueOf(rnc.get_cid())});
+    }
+
+    public void updateLcid(Rnc rnc) {
+        ContentValues v = new ContentValues();
+
+        v.put(COL_RNCS_LCID, rnc.get_lcid());
 
         mdb.update(TABLE_RNCS, v, COL_RNCS_RNC + " = ? AND "
                         + COL_RNCS_CID + " = ?",
@@ -258,13 +271,14 @@ public class DatabaseRnc extends Database {
         rnc.set_tech(c.getInt(1));
         rnc.set_mcc(c.getInt(2));
         rnc.set_mnc(c.getInt(3));
-        rnc.set_cid(c.getInt(4));
-        rnc.set_lac(c.getInt(5));
-        rnc.set_rnc(c.getInt(6));
-        rnc.set_psc(c.getInt(7));
-        rnc.set_lat(c.getDouble(8));
-        rnc.set_lon(c.getDouble(9));
-        rnc.set_txt(c.getString(10));
+        rnc.set_mnc(c.getInt(4));
+        rnc.set_cid(c.getInt(5));
+        rnc.set_lac(c.getInt(6));
+        rnc.set_rnc(c.getInt(7));
+        rnc.set_psc(c.getInt(8));
+        rnc.set_lat(c.getDouble(9));
+        rnc.set_lon(c.getDouble(10));
+        rnc.set_txt(c.getString(11));
 
         return rnc;
     }

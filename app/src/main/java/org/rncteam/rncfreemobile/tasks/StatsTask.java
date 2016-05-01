@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.classes.HttpLog;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.util.HashMap;
 

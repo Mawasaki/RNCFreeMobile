@@ -10,8 +10,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.rncteam.rncfreemobile.R;
-import org.rncteam.rncfreemobile.models.Rnc;
 import org.rncteam.rncfreemobile.activity.rncmobile;
+import org.rncteam.rncfreemobile.models.Rnc;
 
 import java.util.List;
 
@@ -19,12 +19,12 @@ import java.util.List;
  * Created by cedricf_25 on 16/07/2015.
  */
 
-public class ListMonitorMainUmtsAdapter extends BaseAdapter {
-    private static final String TAG = "ListMonitorMainUmtsAdapter";
+public class ListMonitorMainEdgeAdapter extends BaseAdapter {
+    private static final String TAG = "ListMonitorMainEdgeAdapter";
 
     private final List<Rnc> lCell;
 
-    public ListMonitorMainUmtsAdapter(List<Rnc> listCell) {
+    public ListMonitorMainEdgeAdapter(List<Rnc> listCell) {
         this.lCell = listCell;
     }
 
@@ -47,20 +47,15 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
             holder = new ViewHolder();
             LayoutInflater li = (LayoutInflater) rncmobile.getAppContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = li.inflate(R.layout.listview_monitor_main_umts,
+            convertView = li.inflate(R.layout.listview_monitor_main_edge,
                     parent, false);
 
             holder.txtOpe = (TextView) convertView.findViewById(R.id.txt_operator);
-            holder.txtCi = (TextView) convertView.findViewById(R.id.txt_ci);
-            holder.txtCid = (TextView) convertView.findViewById(R.id.txt_cid);
+            holder.txtCid = (TextView) convertView.findViewById(R.id.txt_cid_e);
             holder.txtLac = (TextView) convertView.findViewById(R.id.txt_lac);
-            holder.txtRnc = (TextView) convertView.findViewById(R.id.txt_rnc);
-            holder.txtPsc = (TextView) convertView.findViewById(R.id.txt_psc);
-            holder.txtRscp = (TextView) convertView.findViewById(R.id.txt_rscp);
-            holder.txtData = (TextView) convertView.findViewById(R.id.txt_data);
-            holder.txrFreq = (TextView) convertView.findViewById(R.id.txt_freq_sect);
+            holder.txtRxl = (TextView) convertView.findViewById(R.id.txt_rxl);
 
-            holder.fl_background = (FrameLayout) convertView.findViewById(R.id.fl_monitor_umts_general);
+            holder.fl_background = (FrameLayout) convertView.findViewById(R.id.fl_monitor_edge_general);
 
             convertView.setTag(holder);
         } else {
@@ -70,20 +65,15 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
         Rnc rnc = lCell.get(position);
 
         holder.txtOpe.setText(rnc.getNetworkName());
-        holder.txtCi.setText(String.valueOf(rnc.get_lcid()));
         holder.txtCid.setText(String.valueOf(rnc.getCid()));
         holder.txtLac.setText(String.valueOf(rnc.get_lac()));
-        holder.txtRnc.setText(String.valueOf(rnc.getRnc()));
-        holder.txtPsc.setText(String.valueOf(rnc.get_psc()));
-        holder.txtRscp.setText(String.valueOf(rnc.getUmtsRscp()) + " dBm");
-        holder.txtData.setText(rnc.get_txt());
+        holder.txtRxl.setText(String.valueOf(rnc.getUmtsRscp()) + " dBm");
 
         // Roaming
         if(rnc.get_mnc() != 15)
             holder.fl_background.setBackgroundColor(Color.parseColor("#DDDDDD"));
         else {
             holder.fl_background.setBackgroundColor(Color.parseColor("#FFFFFF"));
-            holder.txrFreq.setText(rnc.getFreqTxt() + ((rnc.getSectText().equals("-")) ? "" : " / " + rnc.getSectText()));
         }
 
 
@@ -92,14 +82,9 @@ public class ListMonitorMainUmtsAdapter extends BaseAdapter {
 
     private class ViewHolder {
         TextView txtOpe;
-        TextView txtCi;
         TextView txtCid;
         TextView txtLac;
-        TextView txtRnc;
-        TextView txtPsc;
-        TextView txtRscp;
-        TextView txtData;
-        TextView txrFreq;
+        TextView txtRxl;
 
         FrameLayout fl_background;
     }

@@ -3,7 +3,7 @@ package org.rncteam.rncfreemobile.tasks;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.rncteam.rncfreemobile.rncmobile;
+import org.rncteam.rncfreemobile.activity.rncmobile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

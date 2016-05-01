@@ -1,4 +1,4 @@
-package org.rncteam.rncfreemobile;
+package org.rncteam.rncfreemobile.activity;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.rncteam.rncfreemobile.R;
 import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
@@ -31,6 +32,9 @@ public class InfosFragment extends Fragment {
     private TextView txtLogsNbTotal;
     private TextView txtLogsNbUmts;
     private TextView txtLogsNbLte;
+    private TextView txtDebugFirst;
+    private TextView txtDebugSecond;
+    private TextView txtDebugTechno;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -48,9 +52,15 @@ public class InfosFragment extends Fragment {
         txtLogsNbUmts = (TextView) v.findViewById(R.id.txt_logs_nb_umts);
         txtLogsNbLte = (TextView) v.findViewById(R.id.txt_logs_nb_lte);
 
+        // Info debug
+        txtDebugFirst = (TextView) v.findViewById(R.id.txt_logs_debug_first);
+        txtDebugSecond = (TextView) v.findViewById(R.id.txt_logs_debug_second);
+        txtDebugTechno = (TextView) v.findViewById(R.id.txt_logs_debug_techno);
+
         setInfoRncMobile();
         setInfoVersion();
         setInfoLog();
+        setInfoDebug();
 
         return v;
     }
@@ -114,5 +124,11 @@ public class InfosFragment extends Fragment {
         txtLogsNbLte.setText("Total lte: " + nbLteLogs);
 
         dbl.close();
+    }
+
+    private void setInfoDebug(){
+        txtDebugFirst.setText("First check : " + rncmobile.debugFirst);
+        txtDebugSecond.setText("Second check : " + rncmobile.debugSecond);
+        txtDebugTechno.setText("Int techno : " + rncmobile.techno);
     }
 }
