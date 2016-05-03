@@ -13,6 +13,7 @@ import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class InfosFragment extends Fragment {
     private TextView txtLogsNbTotal;
     private TextView txtLogsNbUmts;
     private TextView txtLogsNbLte;
+    private TextView txtDebugCountDispatch;
     private TextView txtDebugBadCI;
     private TextView txtDebugIntTechno;
     private TextView txtDebugMncMcc;
@@ -56,6 +58,7 @@ public class InfosFragment extends Fragment {
         txtLogsNbLte = (TextView) v.findViewById(R.id.txt_logs_nb_lte);
 
         // Info debug
+        txtDebugCountDispatch = (TextView) v.findViewById(R.id.txt_logs_debug_countDispatch);
         txtDebugBadCI = (TextView) v.findViewById(R.id.txt_logs_debug_badCI);
         txtDebugIntTechno = (TextView) v.findViewById(R.id.txt_logs_debug_intTechno);
         txtDebugMncMcc = (TextView) v.findViewById(R.id.txt_logs_debug_mncMcc);
@@ -133,6 +136,7 @@ public class InfosFragment extends Fragment {
     }
 
     private void setInfoDebug(){
+        txtDebugCountDispatch.setText("Count dispatch : " + rncmobile.debugCountDispatch);
         txtDebugBadCI.setText("Count bad CI : " + rncmobile.debugBadCI);
         txtDebugIntTechno.setText("Count bad int techno : " + rncmobile.debugIntTechno);
         txtDebugMncMcc.setText("Count bad Mnc / Mcc : " + rncmobile.debugMncMcc);

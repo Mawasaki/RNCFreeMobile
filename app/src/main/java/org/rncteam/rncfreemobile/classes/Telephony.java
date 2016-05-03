@@ -84,6 +84,7 @@ public class Telephony {
     }
 
     public void dispatchCellInfo() {
+        rncmobile.debugCountDispatch ++;
         try {
             /* Chris Patch */
                 /* 1) Check Bad CI */

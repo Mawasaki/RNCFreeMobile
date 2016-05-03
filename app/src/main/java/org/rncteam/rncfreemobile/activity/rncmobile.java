@@ -52,6 +52,7 @@ public class rncmobile extends Application {
     public static int debugMncMcc;
     public static int debugLast;
     public static int debugUnknownTechno;
+    public static int debugCountDispatch;
     public static int techno;
 
     public void onCreate(){
