@@ -80,12 +80,17 @@ public class ListLogsMainAdapter extends BaseAdapter {
 
         final RncLogs rncLog = lCell.get(position);
 
-        String mainInfo = String.valueOf((rncLog.get_tech() == 3) ? "3G" : "4G" ) + " "
+        /*String mainInfo = String.valueOf((rncLog.get_tech() == 3) ? "3G" : "4G" ) + " "
                 + String.valueOf(rncLog.get_rnc()) + " "
                 + String.valueOf(rncLog.get_cid()) + " "
                 + String.valueOf(rncLog.get_lac()) + " "
                 + String.valueOf(rncLog.get_psc()) + " ("
-                + String.valueOf(rncLog.get_lcid()) + ")";
+                + String.valueOf(rncLog.get_lcid()) + ")";*/
+        String mainInfo = String.valueOf((rncLog.get_tech() == 3) ? "3G" : "4G" ) + " "
+                + String.valueOf(rncLog.get_rnc()) + " "
+                + String.valueOf(rncLog.get_cid()) + " "
+                + String.valueOf(rncLog.get_lac()) + " "
+                + String.valueOf(rncLog.get_lcid());
 
         // Date
         String lDate; String fDate;
