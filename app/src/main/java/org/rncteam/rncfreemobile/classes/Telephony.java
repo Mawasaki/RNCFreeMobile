@@ -85,6 +85,7 @@ public class Telephony {
 
     public void dispatchCellInfo() {
         rncmobile.debugCountDispatch ++;
+        int networkClass = getNetworkClass();
         try {
             /* Chris Patch */
                 /* 1) Check Bad CI */
@@ -108,7 +109,7 @@ public class Telephony {
             /* 4) Check with logged cell and logged cell before */
             if (loggedRnc != null) {
                 if (gsmCellLocation.getCid() == loggedRnc.get_lcid() &&
-                        (getNetworkClass() != loggedRnc.get_tech() ||
+                        (networkClass != loggedRnc.get_tech() ||
                                 getMcc() != loggedRnc.get_mcc())) {
                     rncmobile.debugLast ++;
                     return;
@@ -122,7 +123,7 @@ public class Telephony {
 
             // fill telephony information
             rnc.setIsRegistered(true);
-            rnc.set_tech(getNetworkClass());
+            rnc.set_tech(networkClass);
             rnc.set_mcc(getMcc());
             rnc.set_mnc(getMnc());
             rnc.set_lac(gsmCellLocation.getLac());
@@ -190,11 +191,11 @@ public class Telephony {
 
             // Protect some bad infos from API
             // Manage 2G
-            if (getNetworkClass() == 2) {
+            if (networkClass == 2) {
                 setLoggedRnc(rnc);
             }
             // Manage 3G/4G
-            else if (getNetworkClass() == 3 || getNetworkClass() == 4) {
+            else if (networkClass == 3 || networkClass == 4) {
                 if (rnc.get_mnc() == 15 && rnc.get_cid() > 0) {
                     /*if ((Integer.valueOf(rnc.get_real_rnc()) > 999) &&
                             (Integer.valueOf(rnc.get_real_rnc()) < 8000)) {*/
