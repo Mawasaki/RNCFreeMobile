@@ -84,35 +84,48 @@ public class Telephony {
     }
 
     public void dispatchCellInfo() {
-        rncmobile.debugCountDispatch ++;
+        rncmobile.debugCountDispatch++;
         int networkClass = getNetworkClass();
+        int testci = gsmCellLocation.getCid();
         try {
-            /* Chris Patch */
-                /* 1) Check Bad CI */
-            if (gsmCellLocation.getCid() <= 0 || gsmCellLocation.getCid() >= 268435455) {
-                rncmobile.debugBadCI ++;
+           /* Chris Patch */
+               /* 1) Check Bad CI */
+            if (testci <= 0 || testci >= 268435455) {
+                rncmobile.debugBadCI++;
                 return;
             }
 
-            /* 2) Check Bad Int techno value */
-            if(telephonyManager.getNetworkType() <= 0 || telephonyManager.getNetworkType() >= 500){
-                rncmobile.debugIntTechno ++;
+           /* 2) Check Bad Int techno value */
+            if (telephonyManager.getNetworkType() <= 0 || telephonyManager.getNetworkType() >= 500) {
+                rncmobile.debugIntTechno++;
                 return;
             }
 
-            /* 3) Check Bad Mnc/Mcc value */
-            if(getMcc() <= 0 || getMnc() <= 0 || getMcc() >= 256 || getMnc() >= 1000){
-                rncmobile.debugMncMcc ++;
+           /* 3) Check Bad Mnc/Mcc value */
+            if (getMcc() <= 0 || getMnc() <= 0 || getMcc() >= 256 || getMnc() >= 1000) {
+                rncmobile.debugMncMcc++;
                 return;
             }
 
-            /* 4) Check with logged cell and logged cell before */
+           /* 4) Check with logged cell and logged cell before */
             if (loggedRnc != null) {
-                if (gsmCellLocation.getCid() == loggedRnc.get_lcid() &&
+                if (testci == loggedRnc.get_lcid() &&
                         (networkClass != loggedRnc.get_tech() ||
                                 getMcc() != loggedRnc.get_mcc())) {
-                    rncmobile.debugLast ++;
+                    rncmobile.debugLast++;
                     return;
+                } else {
+                    if (networkClass != loggedRnc.get_tech()) {
+                        // Loop 25 * 50ms
+                        for (int i = 0 ; i <= 25; i++) {
+                            Thread.sleep(50);
+                            int testci2 = gsmCellLocation.getCid();
+                            if (testci != testci2) {
+                                testci = testci2;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -129,8 +142,7 @@ public class Telephony {
             rnc.set_lac(gsmCellLocation.getLac());
 
             // Checking LCID in log
-
-            rnc.set_lcid(gsmCellLocation.getCid());
+            rnc.set_lcid(testci);
             rnc.set_cid(rnc.getCid());
             rnc.set_rnc(rnc.getRnc());
             rnc.setNetworkName(getNetworkName());
@@ -465,7 +477,7 @@ public class Telephony {
             case TelephonyManager.NETWORK_TYPE_LTE:
                 return 4;
             default:
-                if(networkType != 0){
+                if (networkType != 0) {
                     rncmobile.debugUnknownTechno = networkType;
                 }
                 return 0;

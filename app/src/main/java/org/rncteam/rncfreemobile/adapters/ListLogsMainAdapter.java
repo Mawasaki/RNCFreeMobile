@@ -254,7 +254,7 @@ public class ListLogsMainAdapter extends BaseAdapter {
         } else if (idType == 4){
             return "4G";
         } else {
-            return "-";
+            return "["+idType+"]";
         }
     }
 }
