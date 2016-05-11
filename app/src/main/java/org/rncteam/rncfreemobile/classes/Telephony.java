@@ -59,6 +59,8 @@ public class Telephony {
 
     private ArrayList<Rnc> lNeigh;
 
+    private SharedPreferences sp = rncmobile.getPreferences();
+
     public Telephony() {
         // Initialize Telephony attributes
         Context context = rncmobile.getAppContext();
@@ -84,21 +86,48 @@ public class Telephony {
     }
 
     public void dispatchCellInfo() {
+        rncmobile.debugCountDispatch++;
+        int networkClass = getNetworkClass();
+        int testci = gsmCellLocation.getCid();
         try {
-            /* Chris Patch */
-                /* 1) check CID */
-            if (gsmCellLocation.getCid() <= 0 || gsmCellLocation.getCid() >= 268435455) {
-                rncmobile.debugFirst ++;
+           /* Chris Patch */
+               /* 1) Check Bad CI */
+            if (testci <= 0 || testci >= 268435455) {
+                rncmobile.debugBadCI++;
                 return;
             }
 
-                /* 2) Check with logged cell and logged cell before */
+           /* 2) Check Bad Int techno value */
+            if (telephonyManager.getNetworkType() <= 0 || telephonyManager.getNetworkType() >= 500) {
+                rncmobile.debugIntTechno++;
+                return;
+            }
+
+           /* 3) Check Bad Mnc/Mcc value */
+            if (getMcc() <= 0 || getMnc() <= 0 || getMcc() >= 256 || getMnc() >= 1000) {
+                rncmobile.debugMncMcc++;
+                return;
+            }
+
+           /* 4) Check with logged cell and logged cell before */
             if (loggedRnc != null) {
-                if (gsmCellLocation.getCid() == loggedRnc.get_lcid() &&
-                        (getNetworkClass() != loggedRnc.get_tech() ||
+                if (testci == loggedRnc.get_lcid() &&
+                        (networkClass != loggedRnc.get_tech() ||
                                 getMcc() != loggedRnc.get_mcc())) {
-                    rncmobile.debugSecond ++;
+                    rncmobile.debugLast++;
                     return;
+                } else {
+                    if (networkClass != loggedRnc.get_tech()) {
+                        int loops = Integer.parseInt(sp.getString("loops", "0"));
+                        for (int i = 0 ; i <= loops; i++) {
+                            Thread.sleep(50);
+                            int testci2 = gsmCellLocation.getCid();
+                            if (testci != testci2) {
+                                testci = testci2;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -109,14 +138,13 @@ public class Telephony {
 
             // fill telephony information
             rnc.setIsRegistered(true);
-            rnc.set_tech(getNetworkClass());
+            rnc.set_tech(networkClass);
             rnc.set_mcc(getMcc());
             rnc.set_mnc(getMnc());
             rnc.set_lac(gsmCellLocation.getLac());
 
             // Checking LCID in log
-
-            rnc.set_lcid(gsmCellLocation.getCid());
+            rnc.set_lcid(testci);
             rnc.set_cid(rnc.getCid());
             rnc.set_rnc(rnc.getRnc());
             rnc.setNetworkName(getNetworkName());
@@ -177,11 +205,11 @@ public class Telephony {
 
             // Protect some bad infos from API
             // Manage 2G
-            if (getNetworkClass() == 2) {
+            if (networkClass == 2) {
                 setLoggedRnc(rnc);
             }
             // Manage 3G/4G
-            else if (getNetworkClass() == 3 || getNetworkClass() == 4) {
+            else if (networkClass == 3 || networkClass == 4) {
                 if (rnc.get_mnc() == 15 && rnc.get_cid() > 0) {
                     /*if ((Integer.valueOf(rnc.get_real_rnc()) > 999) &&
                             (Integer.valueOf(rnc.get_real_rnc()) < 8000)) {*/
@@ -451,6 +479,9 @@ public class Telephony {
             case TelephonyManager.NETWORK_TYPE_LTE:
                 return 4;
             default:
+                if (networkType != 0) {
+                    rncmobile.debugUnknownTechno = networkType;
+                }
                 return 0;
         }
     }

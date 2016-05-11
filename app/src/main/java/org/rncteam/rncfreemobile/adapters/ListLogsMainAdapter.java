@@ -80,12 +80,18 @@ public class ListLogsMainAdapter extends BaseAdapter {
 
         final RncLogs rncLog = lCell.get(position);
 
-        String mainInfo = String.valueOf((rncLog.get_tech() == 3) ? "3G" : "4G" ) + " "
+        /*String mainInfo = String.valueOf((rncLog.get_tech() == 3) ? "3G" : "4G" ) + " "
                 + String.valueOf(rncLog.get_rnc()) + " "
                 + String.valueOf(rncLog.get_cid()) + " "
                 + String.valueOf(rncLog.get_lac()) + " "
                 + String.valueOf(rncLog.get_psc()) + " ("
-                + String.valueOf(rncLog.get_lcid()) + ")";
+                + String.valueOf(rncLog.get_lcid()) + ")";*/
+
+        String mainInfo = String.valueOf(getNetworkTxt(rncLog.get_tech())) + " "
+                + String.valueOf(rncLog.get_rnc()) + ":"
+                + String.valueOf(rncLog.get_cid()) + " "
+                + String.valueOf(rncLog.get_lac()) + " "
+                + String.valueOf(rncLog.get_lcid());
 
         // Date
         String lDate; String fDate;
@@ -97,7 +103,8 @@ public class ListLogsMainAdapter extends BaseAdapter {
         fDate = Utils.get_formated_date_abbrev(rncLog.get_date());
 
         holder.txtMainInfo.setText(mainInfo);
-        holder.txtDate.setText(String.valueOf(fDate));
+        //holder.txtDate.setText(String.valueOf(fDate));
+        holder.txtDate.setText(""); // Suppression du il y a (temporaire)
         holder.txtTxt.setText(String.valueOf(rncLog.get_txt()));
         holder.txtOperator.setText(lDate);
 
@@ -237,5 +244,17 @@ public class ListLogsMainAdapter extends BaseAdapter {
         TextView txtOperator;
         ImageView imvSync;
         FrameLayout fm_background;
+    }
+
+    private String getNetworkTxt(int idType){
+        if(idType == 2){
+            return "2G";
+        } else if (idType == 3){
+            return "3G";
+        } else if (idType == 4){
+            return "4G";
+        } else {
+            return "["+idType+"]";
+        }
     }
 }

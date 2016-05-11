@@ -13,6 +13,7 @@ import org.rncteam.rncfreemobile.database.DatabaseInfo;
 import org.rncteam.rncfreemobile.database.DatabaseLogs;
 import org.rncteam.rncfreemobile.database.DatabaseRnc;
 import org.rncteam.rncfreemobile.models.RncLogs;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,12 @@ public class InfosFragment extends Fragment {
     private TextView txtLogsNbTotal;
     private TextView txtLogsNbUmts;
     private TextView txtLogsNbLte;
-    private TextView txtDebugFirst;
-    private TextView txtDebugSecond;
+    private TextView txtDebugCountDispatch;
+    private TextView txtDebugBadCI;
+    private TextView txtDebugIntTechno;
+    private TextView txtDebugMncMcc;
+    private TextView txtDebugLast;
+    private TextView txtDebugUnknownIntTechno;
     private TextView txtDebugTechno;
 
     @Override
@@ -53,8 +58,12 @@ public class InfosFragment extends Fragment {
         txtLogsNbLte = (TextView) v.findViewById(R.id.txt_logs_nb_lte);
 
         // Info debug
-        txtDebugFirst = (TextView) v.findViewById(R.id.txt_logs_debug_first);
-        txtDebugSecond = (TextView) v.findViewById(R.id.txt_logs_debug_second);
+        txtDebugCountDispatch = (TextView) v.findViewById(R.id.txt_logs_debug_countDispatch);
+        txtDebugBadCI = (TextView) v.findViewById(R.id.txt_logs_debug_badCI);
+        txtDebugIntTechno = (TextView) v.findViewById(R.id.txt_logs_debug_intTechno);
+        txtDebugMncMcc = (TextView) v.findViewById(R.id.txt_logs_debug_mncMcc);
+        txtDebugLast = (TextView) v.findViewById(R.id.txt_logs_debug_last);
+        txtDebugUnknownIntTechno = (TextView) v.findViewById(R.id.txt_logs_debug_unknownIntTechno);
         txtDebugTechno = (TextView) v.findViewById(R.id.txt_logs_debug_techno);
 
         setInfoRncMobile();
@@ -127,8 +136,12 @@ public class InfosFragment extends Fragment {
     }
 
     private void setInfoDebug(){
-        txtDebugFirst.setText("First check : " + rncmobile.debugFirst);
-        txtDebugSecond.setText("Second check : " + rncmobile.debugSecond);
-        txtDebugTechno.setText("Int techno : " + rncmobile.techno);
+        txtDebugCountDispatch.setText("Count dispatch : " + rncmobile.debugCountDispatch);
+        txtDebugBadCI.setText("Count bad CI : " + rncmobile.debugBadCI);
+        txtDebugIntTechno.setText("Count bad int techno : " + rncmobile.debugIntTechno);
+        txtDebugMncMcc.setText("Count bad Mnc / Mcc : " + rncmobile.debugMncMcc);
+        txtDebugLast.setText("Count bad last : " + rncmobile.debugLast);
+        txtDebugUnknownIntTechno.setText("Last unknown int techno : " + rncmobile.debugUnknownTechno);
+        txtDebugTechno.setText("Current int techno : " + rncmobile.techno);
     }
 }
