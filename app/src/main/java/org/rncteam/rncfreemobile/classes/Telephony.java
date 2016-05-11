@@ -119,12 +119,15 @@ public class Telephony {
                 } else {
                     if (networkClass != loggedRnc.get_tech()) {
                         int loops = Integer.parseInt(sp.getString("loops", "0"));
+                        if (loops<=4) {
+                            int loops = 20;
+                        }
                         for (int i = 0 ; i <= loops; i++) {
                             Thread.sleep(50);
                             int testci2 = gsmCellLocation.getCid();
                             if (testci != testci2 && testci2 >= 1 && testci2 <= 268435455) {
                                 testci = testci2;
-                                rncmobile.maxloop= i;
+                                rncmobile.maxloop=i;
                                 break;
                             }
                         }
