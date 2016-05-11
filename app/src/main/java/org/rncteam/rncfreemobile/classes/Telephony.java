@@ -59,6 +59,8 @@ public class Telephony {
 
     private ArrayList<Rnc> lNeigh;
 
+    private SharedPreferences sp = rncmobile.getPreferences();
+
     public Telephony() {
         // Initialize Telephony attributes
         Context context = rncmobile.getAppContext();
@@ -116,8 +118,8 @@ public class Telephony {
                     return;
                 } else {
                     if (networkClass != loggedRnc.get_tech()) {
-                        // Loop 25 * 50ms
-                        for (int i = 0 ; i <= 25; i++) {
+                        int loops = Integer.parseInt(sp.getString("loops", "0"));
+                        for (int i = 0 ; i <= loops; i++) {
                             Thread.sleep(50);
                             int testci2 = gsmCellLocation.getCid();
                             if (testci != testci2) {
