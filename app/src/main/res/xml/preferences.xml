@@ -35,9 +35,9 @@
             android:summary="Enregistre les cid lorque l'appli n'est pas éxécutée">
         </CheckBoxPreference>
         <EditTextPreference
-            android:title="Nombre de checks sur testCi (50ms)"
+            android:title="Nombre de checks anti transition *(50ms)"
             android:key="loops"
-            android:summary="Modifie la fréquence lors du test de techno">
+            android:summary="Testez valeur 5 - 200 pour filtrer bug transition">
         </EditTextPreference>
 
 
