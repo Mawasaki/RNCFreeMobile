@@ -119,7 +119,7 @@ public class Telephony {
                 } else {
                     if (networkClass != loggedRnc.get_tech()) {
                         int loops = Integer.parseInt(sp.getString("loops", "0"));
-                        if (loops<=4) {
+                        if (loops<=4 || loops>=1200) {
                             int loops = 20;
                         }
                         for (int i = 0 ; i <= loops; i++) {
