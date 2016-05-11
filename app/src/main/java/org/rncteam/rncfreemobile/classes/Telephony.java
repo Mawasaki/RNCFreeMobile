@@ -122,8 +122,9 @@ public class Telephony {
                         for (int i = 0 ; i <= loops; i++) {
                             Thread.sleep(50);
                             int testci2 = gsmCellLocation.getCid();
-                            if (testci != testci2) {
+                            if (testci != testci2 && testci2 >= 1 && testci2 <= 268435455) {
                                 testci = testci2;
+                                rncmobile.maxloop= i;
                                 break;
                             }
                         }
